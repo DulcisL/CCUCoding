@@ -1,0 +1,14 @@
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.AssemblyInfoInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.AssemblyInfo.cs
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.csproj.CoreCompileInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\bin\Debug\net8.0\properties.exe
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\bin\Debug\net8.0\properties.deps.json
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\bin\Debug\net8.0\properties.runtimeconfig.json
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\bin\Debug\net8.0\properties.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\bin\Debug\net8.0\properties.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\refint\properties.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\properties.genruntimeconfig.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\introtoC#\properties\obj\Debug\net8.0\ref\properties.dll

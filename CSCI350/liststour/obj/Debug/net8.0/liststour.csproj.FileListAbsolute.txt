@@ -1,0 +1,14 @@
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\bin\Debug\net8.0\liststour.exe
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\bin\Debug\net8.0\liststour.deps.json
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\bin\Debug\net8.0\liststour.runtimeconfig.json
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\bin\Debug\net8.0\liststour.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\bin\Debug\net8.0\liststour.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.AssemblyInfoInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.AssemblyInfo.cs
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.csproj.CoreCompileInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\refint\liststour.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\liststour.genruntimeconfig.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\liststour\obj\Debug\net8.0\ref\liststour.dll

@@ -1,0 +1,15 @@
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\bin\Debug\net5.0\C#Prog.exe
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\bin\Debug\net5.0\C#Prog.deps.json
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\bin\Debug\net5.0\C#Prog.runtimeconfig.json
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\bin\Debug\net5.0\C#Prog.runtimeconfig.dev.json
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\bin\Debug\net5.0\C#Prog.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\bin\Debug\net5.0\C#Prog.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.AssemblyInfoInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.AssemblyInfo.cs
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.csproj.CoreCompileInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\refint\C#Prog.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\C#Prog.genruntimeconfig.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\C#Prog\obj\Debug\net5.0\ref\C#Prog.dll

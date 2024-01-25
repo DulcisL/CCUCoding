@@ -1,0 +1,14 @@
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\bin\Debug\net8.0\branchesnloops.exe
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\bin\Debug\net8.0\branchesnloops.deps.json
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\bin\Debug\net8.0\branchesnloops.runtimeconfig.json
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\bin\Debug\net8.0\branchesnloops.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\bin\Debug\net8.0\branchesnloops.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.AssemblyInfoInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.AssemblyInfo.cs
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.csproj.CoreCompileInputs.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\refint\branchesnloops.dll
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.pdb
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\branchesnloops.genruntimeconfig.cache
+C:\Users\dolce\OneDrive\Documents\CSCI\branchesnloops\obj\Debug\net8.0\ref\branchesnloops.dll
