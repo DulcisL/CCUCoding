@@ -1,0 +1,12 @@
+def my_func(text, *args):
+ print(len(args))
+ print('text',text)
+ print('arg2',args[0])
+ print('arg3',args[1])
+ print(type(args))
+ 
+print('Start')
+my_func('Function', 1, [1,3])
+print('----')
+my_func('Second Function',[2,6],2)
+print('End')
