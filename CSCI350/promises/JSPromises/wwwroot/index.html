@@ -1,0 +1,91 @@
+<script>
+
+    var myFunction = function (username) {
+        return new Promise(
+            (resolve, reject) => {
+                setTimeout(function () { resolve(username + "'s promise is resolved"); }, 3000);
+            }
+        );
+    }
+    myFunction("Ella")
+        .then(successMessage => { console.log(successMessage); })
+        //Pass the function
+        .then(() => myFunction("Fiona"))
+        .then(
+            successMessage => {
+                console.log(successMessage);
+            }
+        )
+        .then(() => myFunction("Harold"))
+        .then(
+            successMessage => {
+                console.log(successMessage);
+            }
+        )
+        .catch(
+            errorMessage => {
+                console.log("Error: " + errorMessage);
+            }
+        )
+
+    console.log("Hi!");
+    console.log("How are you?");
+
+    myFunction("Gary")
+        .then(
+            successMessage => {
+                console.log(successMessage);
+            }
+        )
+        .catch(
+            errorMessage => {
+                console.log("Error: " + errorMessage);
+            }
+        )
+
+    console.log("How is your day?");
+
+    var setBackgroundColor = function () {
+        console.log("Starting Background color change...");
+        //call a webservice that will give a color
+        fetch("https://localhost:5001/decorations/bgcolor/a")
+            .then(
+                response => {
+                    return response.text()
+                }
+            )
+            .then(
+                text => {
+                    document.getElementById("stage").style.backgroundColor = text; 
+                    console.log("Completed Background change");
+                }
+            )
+    }
+    //no need for callbacks with async
+    async function setBackgroundColorAsync(){
+        console.log("Starting the background color change");
+        let response = await fetch("https://localhost:5001/decorations/bgcolor/a");
+        let text = await response.text();
+        document.getElementById("stage").style.backgroundColor = text;
+        console.log("Completed Background change");
+    }
+    var setBorder = function () {
+        console.log("Starting Border change...");
+        //call a webservice that will give a color
+        fetch("https://localhost:5001/decorations/border/a")
+            .then(
+                response => {
+                    return response.text()
+                }
+            )
+            .then(
+                text => {
+                    document.getElementById("stage").style.border = text; console.log("Completed Border change");
+                }
+            )
+    }
+</script>
+
+<h2 id="stage"> Welcome!</h2>
+<p><button onClick="setBackgroundColorAsync()">Click to decorate with background color</button></p>
+<p><button onclick="setBorder()">Click to decorate border</button></p>

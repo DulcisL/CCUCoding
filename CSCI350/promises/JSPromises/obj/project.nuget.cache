@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "ob89P8Dc0jFNROUz4fOdsHCO8fQ2PVLY2FCRlgwymXQvE7G72kpuu6Rsyi5PhApl5WbJprxqA9t4o8A7oXraGw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\promises\\JSPromises\\JSPromises.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\dolce\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\dolce\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\dolce\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
+    "C:\\Users\\dolce\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\5.6.3\\swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
+    "C:\\Users\\dolce\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\5.6.3\\swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",
+    "C:\\Users\\dolce\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\5.6.3\\swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512"
+  ],
+  "logs": []
+}
