@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj": {}
+    "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\promises\\JSPromises\\JSPromises.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj": {
+    "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\promises\\JSPromises\\JSPromises.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj",
-        "projectName": "dependencyInjection",
-        "projectPath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj",
+        "projectUniqueName": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\promises\\JSPromises\\JSPromises.csproj",
+        "projectName": "JSPromises",
+        "projectPath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\promises\\JSPromises\\JSPromises.csproj",
         "packagesPath": "C:\\Users\\dolce\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\obj\\",
+        "outputPath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\promises\\JSPromises\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -22,15 +22,15 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net5.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net5.0": {
+            "targetAlias": "net5.0",
             "projectReferences": {}
           }
         },
@@ -41,8 +41,14 @@
         }
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[5.6.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -55,11 +61,14 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
