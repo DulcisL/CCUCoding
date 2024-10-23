@@ -1,0 +1,313 @@
+root:x:0:0:root:/root/bin/bash
+bin:x:1:1:bin:/bin:
+daemon:x:2:2:daemon:/sbin:
+adm:x:3:4:adm:/var/adm:
+mail:x:8:12:mail:/var/spool/mail:
+news:x:9:13:news:/var/spool/news:
+aaronl:x:100:1000:larry d aaron:/acct/s1/aaronl:/bin/sh
+aarons:x:110:1000:steve aaron:/acct/s1/aarons:/bin/sh
+abclark1:x:128:1000:austin clark:/acct/s1/abclark1:/bin/sh
+aaronsd:x:12:1000:daniel s aaron:/acct/s1/aaronsd:/bin/csh
+abelj:x:73:1000:josh abel:/acct/s1/abelj:/bin/sh
+abernetj:x:54:1000:jack abernet:/acct/s1/abernetj:/bin/sh
+abourahm:x:17:1000:maxine abourahm:/acct/s1/abourahm:/bin/tcsh
+acierno:x:160:1000:ryan acierno:/acct/s1/acierno:/bin/bash
+ackerma4:x:107:1000:larry ackerman:/acct/s1/ackerma4:/bin/sh
+adairjd:x:81:1000:josh d adair:/acct/s1/adairjd:/bin/sh
+adamsjm3:x:19:1000:john m adams:/acct/s1/adamsjm3:/bin/sh
+adamsjr2:x:207:1000:jerry r adams:/acct/s1/adamsjr2:/bin/csh
+addiscr:x:121:1000:chris r addis:/acct/s1/addiscr:/bin/bash
+addyl:x:223:1000:linda addy:/acct/s1/addyl:/bin/csh
+adongo:x:123:1000:sospeter onyango o adongo:/acct/s1/adongo:/bin/sh
+agafonon:x:24:1000:natalie v agafonova:/acct/s1/agafanon:/bin/sh
+agostas:x:255:1000:william n agostas:/acct/s1/agostas:/bin/sh
+agrawal2:x:260:1000:nina agrawal:/acct/s1/agrawal2:/bin/csh
+agrawaln:x:207:1000:naveen agrawal:/acct/s1/agrawaln:/bin/tcsh
+akbrengel:x:234:1000:aaron Brengelman:/acct/s1/akbrengel:/bin/sh
+akella:x:128:1000:allan kellaman:/acct/s1/akella:/bin/sh
+alabri:x:9:1000:ali alabrihm:/acct/s1/alabri:/bin/sh
+alam:x:301:1000:micheal alam:/acct/s1/alam:/bin/sh
+alexanbh:31:1000:brian h alexander:/acct/s1/alexanbh:/bin/bash
+alis:x:72:1000:lori alister:/acct/s1/alis:/bin/sh
+almutaiz:x:163:1000:soshe almutaiz:/acct/s1/almutaiz:/bin/sh
+alnuaimi:x:3:1000: abdulla al-nuaimi:/acct/s1/alnuami:/bin/sh
+alon:x:39:1000:albert alon:/acct/s1/alon:/bin/csh
+amatod:x:360:1000:david amato:/acct/s1/amatod:/bin/csh
+amickj:x:107:1000:josh amick:/acct/s1/amickj:/bin/tcsh
+ammadison:x:128:1000:ashley madison:/acct/s1/ammadison:/bin/sh
+ampew:x:128:1000:adrien pew:/acct/s1/ampew:/bin/sh
+armstrhb:x:208:1000:henry b armstrong:/acct/s1/armstrhb:/bin/tcsh
+asa:x:44:1000:michael j asa:/acct/s1/asa:/bin/sh
+austinj:x:140:1000:jessica austin:/acct/s1/austinj:/bin/sh
+backusa:x:410:1000:anne m backus:/acct/s1/backusa:/bin/sh
+bairm:x:142:1000:michael bair:/acct/s1/barirm:/bin/sh
+baileya6:x:35:1000:adam bailey:/acct/s1/baileya6:/bin/sh
+baileypk:x:299:1000:princess k bailey:/acct/s1/baileypk:/bin/bash
+baileyrt:x:450:1000:randall t bailey:/acct/s1/baileyrt:/bin/sh
+bakerme:x:146:1000:matthew e baker:/acct/s1/:/bin/sh
+banks3:x:47:1000:tanya banks:/acct/s1/banks3:/bin/sh
+barkerjc:x:117:1000:jerry barker:/acct/s1/:/bin/csh
+barkleyc:x:482:1000:charles barkley:/acct/s1/barkley:/bin/sh
+barlowe:x:549:1000:johnathon barlowe:/acct/s1/barlowe:/bin/sh
+barrowjo:x:501:1000:john barrow:/acct/s1/barrowjo:/bin/sh
+bassettc:x:510:1000:chelsea bassett:/acct/s1/bassettc:/bin/sh
+batalonp:x:52:1000:paul batalon:/acct/s1/batalonp:/bin/sh
+bartholg:x:290:1000:gerald f bartholom:/acct/s1/bartholomg:/bin/csh
+bartholm:x:77:1000:matthew c bartholom:/acct/s1/bartholm:/bin/bash
+bassettc:x:671:1000:charles bassett:/acct/s1/bassettc:/bin/sh
+batalonp:x:38:1000:peter batalon:/acct/s1/batalonp:/bin/csh
+batesm:x:333:1000:matthew bates:/acct/s1/batesm:/bin/csh
+batesv:x:632:1000:victoria bates:/acct/s1/batesv:/bin/csh
+bathazi:x:321:1000:victor bathazi:/acct/s1/bathazi:/bin/csh
+baughw:x:214:1000:william baughman:/acct/s1/baughw:/bin/csh
+bellamrl:x:111:1000:regina l bellamy:/acct/s1/bellamrl:/bin/csh
+besri:x:452:1000:kamal besri:/acct/s1/besri:/bin/sh
+blkulcsar:x:128:1000:brandon kulcsar:/acct/s1/blkulcsar:/bin/sh
+bolandrm:x:100:1000:rachel boland:/acct/s1/bolandrm:/bin/bash
+boomhowe:x:99:1000:edward boomhower:/acct/s1/boomhowe:/bin/sh
+bowieb:x:782:1000:ben bowie:/acct/s1/bowieb:/bin/sh
+brazeljm:x:341:1000:james m brazel:/acct/s1/brazeljm:/bin/csh
+btian:x:128:1000:baihe tian:/acct/s1/btian:/bin/sh
+btparke1:x:128:1000:blakley parker:/acct/s1/btparke1:/bin/sh
+btslade:x:128:1000:braeden slade:/acct/s1/btslade:/bin/sh
+burras:x:290:1000:andy burras:/acct/s1/burras:/bin/sh
+bwjohns2:x:128:1000:bailey johnson:/acct/s1/bwjohns:/bin/sh
+byrnesj:x:75:1000:jerry byrnes:/acct/s1/byrnesj:/bin/sh
+caedwar1:x:128:1000:christian edwards:/acct/s1/caedwar1:/bin/sh
+calcuttj:x:499:1000:james calcutt:/acct/s1/calcuttj:/bin/sh
+calder:x:322:1000:josh calder:/acct/s1/calder:/bin/csh
+cardwelm:x:787:1000:mike cardwell:/acct/s1/cardwelm:/bin/sh
+carrollh:x:378:1000:linda h carroll:/acct/s1/carrollh:/bin/sh
+carothed:x:871:1000:daniel carothers:/acct/s1/carothed:/bin/sh
+carverd:x:523:1000:david carver:/acct/s1/carverd:/bin/sh
+catheyc:x:811:1000:charles cathey:/acct/s1/catheyc:/bin/tcsh
+cephas:x:188:1000:rodney cephas:/acct/s1/cephas:/bin/csh
+chandlcj:x:901:1000:chris j chandler:/acct/s1/chandlcj:/bin/sh
+chandle3:x:56:1000:enrique chandler:/acct/s1/chandle3:/bin/csh
+chappelc:x:276:1000:christopher chappel:/acct/s1/chappelc:/bin/csh
+cheni:x:777:1000:i-shan cheni:/acct/s1/cheni:/bin/tcsh
+chouchen:x:289:1000:harold chouchen:/acct/s1/chouchen:/bin/csh
+choudary:x:231:1000:richard choudary:/acct/s1/choudary:/bin/csh
+churcha:x:829:1000:alan church:/acct/s1/churcha:/bin/sh
+cjguarino:x:128:1000:charles guarino:/acct/s1/cjguarino:/bin/sh
+clarkec:x:486:1000:christopher clarke:/acct/s1/clarkec:/bin/csh
+clarkhk:x:318:1000:henry k clark:/acct/s1/clarkhk:/bin/sh
+clybulrm:x:53:1000:lawrence m clyburn:/acct/s1/clyburlm:/bin/sh
+coleam2:x:842:1000:angela m cole:/acct/s1/coleam2:/bin/sh
+colebr:x:297:1000:brent r cole:/acct/s1/colebr:/bin/sh
+colejh:x:542:1000:jeremy h cole:/acct/s1/colejh:/bin/csh
+colemaj2:x:177:1000:tenevia s coleman:/acct/s1/colemaj2:/bin/sh
+colesj:x:621:1000:raijon coles:/acct/s1/colesj:/bin/sh
+collin44:x:57:1000:steve collins:/acct/s1/collin44:/bin/csh
+conyersa:x:299:1000:albert conyers:/acct/s1/conyersa:/bin/sh
+cookad:x:944:1000:alan d cook:/acct/s1/cookad:/bin/bash
+copebe:x:32:1000:brian cope:/acct/s1/copebe:/bin/csh
+corleyas:x:29:1000:antoine s corley:/acct/s1/corleyas:/bin/sh
+corp:x:16:1000:vincent corp:/acct/s1/corp:/bin/tcsh
+crawfocr:x:422:1000:christy r crawford:/acct/s1/crawfocr:/bin/csh
+crooksb:x:528:1000:bethany crooks:/acct/s1/crooksb:/bin/sh
+crosbybs:x:271:1000:bill s crosby:/acct/s1/crosbybs:/bin/sh
+dangj:x:7:1000:jiangbo dang:/acct/s1/dangj:/bin/tcsh
+danielaa:x:714:1000:andrea a daniel:/acct/s1/andrea:/bin/sh
+davisaj2:x:189:1000:anthony j davis:/acct/s1/davisaj2:/bin/sh
+davisdw:x:722:1000:daniel w davis:/acct/s1/davisdw:/bin/sh
+davisjc:x:852:1000:jerry c davis:/acct/s1/davisjc:/bin/sh
+davista3:x:108:1000:thema a davis:/acct/s1/davista3:/bin/sh
+davistk:x:22:1000:terry k davis:/acct/s1/davistk:/bin/sh
+dawsont:x:39:1000:tomika dawson:/acct/s1/dawsont:/bin/sh
+dayjd:x:726:1000:johnathan d day:/acct/s1/dayjd:/bin/sh
+dbanner:x:62:1000:david banner:/acct/s1/dbanner:/bin/tcsh
+dcscott0:x:39:1000:davon c scott:/acct/s1/dcscott0:/bin/csh
+deasl:x:783:1000:lanoriss deas:/acct/s1/deasl:/bin/sh
+delaunoi:x:481:1000:steven delaunois:/acct/s1/delaunio:/bin/csh
+dewallace:x:128:1000:dylan wallace:/acct/s1/dewallace:/bin/sh
+droppsm:x:378:1000:michael dropps:/acct/s1/droppsm:/bin/sh
+duritsch:x:830:1000:david duritsch:/acct/s1/duritsch:/bin/sh
+easoncm2:x:945:1000:charlene m eason:/acct/s1/easoncm2:/bin/sh
+edwardlw:x:437:1000:laverne w edwards:/acct/s1/edwardlw:/bin/sh
+edwardrg:x:610:1000:randy g edwards:/acct/s1/edwardrg:/bin/sh
+edwardta:x:399:1000:tammy a edwards:/acct/s1/edwardta:/bin/sh
+egbert:x:274:1000:eddie egbert:/acct/s1/egbert:/bin/sh
+eitel:x:187:1000:harvey eitel:/acct/s1/eitel:/bin/tcsh
+elderm:x:125:1000:matt elder:/acct/s1/elderm:/bin/csh
+ellefson:x:851:1000:elizabeth ellefson:/acct/s1/ellefson:/bin/sh
+elliotkj:x:377:1000:kenneth j elliot:/acct/s1/elliotkj:/bin/sh
+ellisfb:x:721:1000:franklin b ellis:/acct/s1/ellisfb:/bin/sh
+ellisjd:x:999:1000:jacqulyn d ellis:/acct/s1/ellisjd:/bin/sh
+elmorel:x:448:1000:langford elmore:/acct/s1/elmorel:/bin/sh
+englishs:x:383:1000:sean english:/acct/s1/englishs:/bin/sh
+erinle:x:181:1000:victoria erinle:/acct/s1/erinle:/bin/sh
+espinoj:x:818:1000:jan espinosa:/acct/s1/espinoj:/bin/sh
+espinoss:x:914:1000:steven espinosa:/acct/s1/espinoss:/bin/sh
+estesm:x:547:1000:mario estes:/acct/s1/estesm:/bin/sh
+eubanksb:x:240:1000:brent eubanks:/acct/s1/eubanksb:/bin/sh
+eubanksm:x:671:1000:margaret eubanks:/acct/s1/eubanksm:/bin/sh
+eversm:x:248:1000:matthew evers:/acct/s1/eversm:/bin/csh
+faberj:x:111:1000:jennifer faber:/acct/s1/faberj:/bin/sh
+fairfaxd:x:830:1000:donald fairfax:/acct/s1/fairfaxd:/bin/sh
+farkasj:x:392:1000:johnathan farkas:/acct/s1/farkas:/bin/sh
+felder:x:63:1000:corey felder:/acct/s1/felder:/bin/sh
+fengx:x:26:1000:xizhou feng:/acct/s1/fengx:/bin/sh
+fennerb:x:428:1000:benjamen fenner:/acct/s1/fennerb:/bin/tcsh
+ferrelkb:x:363:1000:kenneth b ferrel:/acct/s1/ferrelkb:/bin/sh
+fjiang:x:128:1000:feng jiang:/acct/s1/fjiang:/bin/sh
+flannerr:x:373:1000:rachel flannery:/acct/s1/flannerr:/bin/sh
+fombyj:x:839:1000:johnathan fomby:/acct/s1/fombyj:/bin/sh
+fordag:x:384:1000:adam g ford:/acct/s1/fordag:/bin/sh
+fowlerkd:x:831:1000:kevin d fowler:/acct/s1/fowlerkd:/bin/sh
+fullwood:x:242:1000:john fullwood:/acct/s1/fullwood:/bin/csh
+fultonsp:x:371:1000:spencer p fulton:/acct/s1/fultonsp:/bin/sh
+gadsdekm:x:46:1000:kimberley m gadsden:/acct/s1/gadsekm:/bin/csh
+gates:x:623:1000:antonio gates:/acct/s1/gates:/bin/sh
+gauseg:x:286:1000:greg gause:/acct/s1/gauseg:/bin/sh
+gdsmith1:x:128:1000:garrick smith:/acct/s1/gdsmith1:/bin/sh
+gibsonmc:x:735:1000:martha c gibson:/acct/s1/gibsonmc:/bin/sh
+grantad:x:372:1000:anthony grant:/acct/s1/grantad:/bin/csh
+graycm:x:418:1000:chase gray:/acct/s1/graycm:/bin/tcsh
+guidrylg:x:810:1000:lauren g guidry:/acct/s1/guidrylg:/bin/sh
+gunnellb:x:61:1000:brad gunnells:/acct/s1/gunnells:/bin/csh
+haleycr:x:612:1000:christy r haley:/acct/s1/haleycr:/bin/csh
+hammond:x:321:1000:dow hammond:/acct/s1/hammond:/bin/sh
+harmouch:x:171:1000:ali harmouchi:/acct/s1/harmouchi:/bin/sh
+harperad:x:151:1000:anthony d harper:/acct/s1/harperad:/bin/sh
+hatfiela:x:812:1000:amelia hatfield:/acct/s1/hatfiela:/bin/sh
+hedx:x:391:1000:david hedx:/acct/s1/hedx:/bin/csh
+hitee:x:893:1000:everett hite:/acct/s1/hitee:/bin/sh
+holderfi:x:32:1000:vance holderfield:/acct/s1/holderfi:/bin/sh
+icard:x:611:1000:robert w icard:/acct/s1/icard:/bin/csh
+imj:x:936:1000:jungho im:/acct/s1imj/:/bin/csh
+infingem:x:127:1000:ryan m infinger:/acct/s1/infingem:/bin/sh
+ingram3:x:426:1000:stephanie ingram:/acct/s1/ingram3:/bin/sh
+ingramg:x:893:1000:gerald ingram:/acct/s1/ingramg:/bin/sh
+iotovaa:x:89:1000:andre iotova:/acct/s1/iotovaa:/bin/sh
+isaly:x:239:1000:stephanie isaly:/acct/s1/islay:/bin/sh
+ivol:x:281:1000:stacey ivol:/acct/s1/ivol:/bin/sh
+jacksots:x:987:1000:tracet s jackson:/acct/s1/jacksots:/bin/sh
+jacobjm:x:838:1000:jeremy m jacobs:/acct/s1/jacobjm:/bin/csh
+jain:x:927:1000:alain jain:/acct/s1/jain:/bin/sh
+janelle:x:318:1000:jordan janelle:/acct/s1/janelle:/bin/tcsh
+janies:x:51:1000:jefferyl janies:/acct/s1/janies:/bin/sh
+jay:x:74:1000:justin d jay:/acct/s1/jay:/bin/sh
+jeffcoajb:x:728:1000:jeffrey b jeffcoat:/acct/s1/jeffcoajb:/bin/csh
+jefferpn:x:372:1000:patricia n jeffers:/acct/s1/jefferpn:/bin/sh
+jenksr:x:830:1000:rafael jenks:/acct/s1/jenksr:/bin/sh
+jettl:x:303:1000:lashawn c jett:/acct/s1/jettl:/bin/sh
+jettz:x:238:1000:zachart jett:/acct/s1/jettz:/bin/sh
+jiangh:x:88:1000:hong jiang:/acct/s1/jiangh:/bin/csh
+jiaz:x:843:1000:zhongyuan jia:/acct/s1/jiaz:/bin/sh	
+jinj:x:277:1000:jin jin:/acct/s1/jin:/bin/csh
+jmcguire:x:128:1000:jeremy mcguire:/acct/s1/jmcguire:/bin/sh
+jmtodd2:x:128:1000:jeremy todd:/acct/s1/jmtodd2:/bin/sh
+johns283:x:839:1000:travis t johnson:/acct/s1/johns283:/bin/sh
+johns322:x:583:1000:stephen p johnson:/acct/s1/johns322:/bin/sh
+johnso66:x:362:1000:anthony johnson:/acct/s1/johnso66:/bin/sh
+jonesc:x:823:1000:carroll jones:/acct/s1/jonesc:/bin/sh
+jordansr:x:537:1000:ryan s jordan:/acct/s1/jordansr:/bin/csh
+joycead:x:562:1000:adam d joyce:/acct/s1/joycead:/bin/sh
+joyej:x:935:1000:jessica joye:/acct/s1/joyej:/bin/sh
+jurisa:x:938:1000:joseph t jursia:/acct/s1/jurisa:/bin/sh
+kjmarti5:x:128:1000:kelby martin:/acct/s1/kjmarti5:/bin/sh
+lswhite3:x:128:1000:leaerialle white:/acct/s1/lswhite3:/bin/sh
+paik:x:942:1000:sung-hyun paik:/acct/s1/paik:/bin/sh
+pait:x:162:1000:andrew pait:/acct/s1/pait:/bin/tcsh
+pakala:x:282:1000:ahmit pakala:/acct/s1/pakala:/bin/csh
+pakalasb:x:487:1000:suman b pakala:/acct/s1/pakalasb:/bin/sh
+palmerw2:x:820:1000:william palmer:/acct/s1/pamlmerw2:/bin/sh
+parksj:x:1029:1000:jerome parks:/acct/s1/parksj:/bin/sh
+parrc:x:902:1000:clifford parr:/acct/s1/parrc:/bin/sh
+peeblebk:x:485:1000:brian k peebles:/acct/s1/peeblebk:/bin/sh
+peekla:x:1023:1000:larry a peek:/acct/s1/peekla:/bin/sh
+peet:x:1255:1000:jesse peete:/acct/s1/peet:/bin/sh
+pei:x:792:1000:pei pei:/acct/s1/pei:/bin/sh
+pennw:x:1027:1000:william penn:/acct/s1/pennw:/bin/sh
+perryrl:x:1322:1000:renard l perry:/acct/s1/perryrl:/bin/sh
+peterso3:x:1323:1000:amy peterson:/acct/s1/peterso3:/bin/sh
+petroff:x:114:1000:william petroff:/acct/s1/petroff:/bin/sh
+pettyw:x:1111:1000:william petty:/acct/s1/petty:/bin/sh
+pinkett:x:824:1000:eric pinkett:/acct/s1/pinkett:/bin/sh
+pittss:x:1413:1000:stephanie pitts:/acct/s1/pitts:/bin/csh
+porterd2:x:946:1000:darren porter:/acct/s1/porterd2:/bin/sh
+pottsaj:x:1523:1000:amber j potts:/acct/s1/pottsaj:/bin/tcsh
+pratte:x:1556:1000:eric pratt:/acct/s1/pratte:/bin/sh
+pruettj:x:1398:1000:jennifer pruett:/acct/s1/pruettj:/bin/sh
+quickjt:x:899:1000:jeff t quick:/acct/s1/quickjt:/bin/sh
+quillers:x:13:1000:stephanie quillers:/acct/s1/quillers:/bin/sh
+rjcroes:x:128:1000:rodolfo croes:/acct/s1/rjcroes/bin/sh
+rkjohns3:x:128:1000:robert johnson:/acct/s1/rkjohns3:/bin/sh
+salleym:x:1213:1000:mark salley:/acct/s1/:/bin/bash
+samson:x:1058:1000:eric samson:/acct/s1/samson:/bin/sh
+samsonj:x:432:1000:jeff samson:/acct/s1/samsonj:/bin/tcsh
+sanderjs:x:48:1000:jerry s sanders:/acct/s1/sanderjs:/bin/sh
+sanderts:x:632:1000:ted s sanders:/acct/s1/sanderts:/bin/csh
+sandovaj:x:1428:1000:anthony j sandoval:/acct/s1/:/bin/sh
+sanquint:x:299:1000:lavoris sanquintin:/acct/s1/sanquintin:/bin/sh
+santhapu:x:39:1000:naveen santhapureen:/acct/s1/santhapu:/bin/csh
+saxenas:x:692:1000:serena saxena:/acct/s1/saxenas:/bin/tcsh
+sayger:x:820:1000:carl sayger:/acct/s1/sayger:/bin/sh
+saylorc:x:928:1000:chris saylor:/acct/s1/saylorc:/bin/csh
+schaafm:x:620:1000:mark schaaf:/acct/s1/schaafm:/bin/sh
+schepd:x:1529:1000:daniel schep:/acct/s1/schepd:/bin/sh
+schmidbm:x:1420:1000:brian m schmidt:/acct/s1/schmidbm:/bin/sh
+schulthd:x:1037:1000:daniel schulthes:/acct/s1/schulthd:/bin/sh
+scriveat:x:492:1000:arnold t scriven:/acct/s1/scriveat:/bin/sh
+scurryjm:x:1422:1000:james m scurry:/acct/s1/scurryjm:/bin/sh
+seabromc:x:1192:1000:marquista c seabrook:/acct/s1/:/bin/sh
+seatonm:x:1273:1000:matthew seaton:/acct/s1/seatonm:/bin/sh
+sehgal:x:1343:1000:varun sehgal:/acct/s1/sehgal:/bin/sh
+sennrk:x:1532:1000:richard k senn:/acct/s1/sennrk:/bin/sh
+sepichard:x:128:1000:samuel pichardo:/acct/s1/sepichard:/bin/sh
+sessionv:x:1623:1000:veronica sessions:/acct/s1/sessionv:/bin/sh
+snjohns3:x:128:1000:steven johnson:/acct/s1/snjohns3:/bin/sh
+shawaa:x:829:1000:adriel a shaw:/acct/s1/shawaa:/bin/sh
+shawa2:x:1489:1000:andrell a shaw:/acct/s1/:/bin/sh
+sheafd:x:621:1000:daniel sheaf:/acct/s1/sheafd:/bin/csh
+shirleyd:x:1212:1000:david shirley:/acct/s1/shirleyd:/bin/sh
+shorts:x:1930:1000:stephanie short:/acct/s1/shorts:/bin/sh
+shullja:x:739:1000:jeffrey a shull:/acct/s1/shullja:/bin/sh
+shutek:x:294:1000:kayla shute:/acct/s1/sjutek:/bin/sh
+siglerr:x:643:1000:rakishi sigler:/acct/s1/siglerr:/bin/sh
+siminm:x:703:1000:mikhail simin:/acct/s1/siminm:/bin/sh
+simsej:x:424:1000:eburrell j sims:/acct/s1/simsej:/bin/sh
+sirianne:x:1526:1000:eric sirianne:/acct/s1/sirianne:/bin/sh
+sloantj:x:891:1000:tessica j sloan:/acct/s1/sloantj:/bin/sh
+slsulliva:x:128:1000:sean sullivan:/acct/s1/slsulliva:/bin/sh
+smolley:x:500:1000:steven smolley:/acct/s1/smolley:/bin/sh
+snowgm:x:620:1000:greg m snow:/acct/s1/snowgm:/bin/sh
+so:x:27:1000:anthony so:/acct/s1/so:/bin/sh
+stafforl:x:1923:1000:laurie stafford:/acct/s1/stafforl:/bin/sh
+staggda:x:1833:1000:david a stagg:/acct/s1/staggda:/bin/sh
+sweeneyk:x:1638:1000:kevin sweeney:/acct/s1/sweeneyk:/bin/sh
+sweet:x:1283:1000:matthew sweet:/acct/s1/sweet:/bin/sh
+sxie:x:128:1000:shangxuan xie:/acct/s1/sxie:/bin/sh
+tabor:x:1738:1000:vernon tabor:/acct/s1/tabor:/bin/sh
+talatam:x:1007:1000:anil talatam:/acct/s1/talatam:/bin/sh
+tatham:x:1723:1000:jessica tatham:/acct/s1/tatham:/bin/sh
+teasdel:x:293:1000:john teasdel:/acct/s1/teasdel:/bin/sh
+teasdell:x:1628:1000:linda teasdel:/acct/s1/teasdell:/bin/sh
+thakurv:x:215:1000:vivek thakur:/acct/s1/thakurv:/bin/bash
+thatch:x:1631:1000:christopher thatch:/acct/s1/thatch:/bin/tcsh
+toddwr:x:1529:1000:wayne r todd:/acct/s1/toddwr:/bin/sh
+todorova:x:721:1000:ivanka todorova:/acct/s1/todorova:/bin/sh
+toland:x:7:1000:tyrone toland:/acct/s1/toland:/bin/sh
+topps:x:489:1000:stephanie topps:/acct/s1/topps:/bin/sh
+turkett:x:3:1000:william turkett:/acct/s1/turkett:/bin/tcsh
+turnerw:x:1429:1000:wayne turner:/acct/s1/turnerw:/bin/sh
+twitty:x:308:1000:adam twitty:/acct/s1/twitty:/bin/sh
+twumasia:x:188:1000:philip twumais-ankrah:/acct/s1/twumasia:/bin/sh
+tylerz:x:1529:1000:zachary tyler:/acct/s1/tylerz:/bin/sh
+uginoe:x:1873:1000:elizabeth ugninoe:/acct/s1/uginoe:/bin/sh
+ullum:x:1099:1000:jennifer ullum:/acct/s1/ullum:/bin/sh
+unruec:x:134:1000:caitlin unrue:/acct/s1/unruec:/bin/sh
+wu52:x:938:1000:annie wu:/acct/s1/wu52:/bin/sh
+wyrick:x:1727:1000:charles wyrick:/acct/s1/wyrick:/bin/sh
+xu4:x:1529:1000:sen xu:/acct/s1/xu4:/bin/sh
+xub:x:1832:1000:buli xu:/acct/s1/xub:/bin/sh
+yandle:x:377:1000:ryan yandle:/acct/s1/yandle:/bin/sh
+yarborgs:x:119:1000:grady yarborough:/acct/s1/yarborgs:/bin/sh
+yef:x:1732:1000:fei ye:/acct/s1/yef:/bin/sh
+yoncek:x:313:1000:kimberley yonce:/acct/s1/yoncek:/bin/sh
+yoone:x:22:1000:neville yoone:/acct/s1/yoone:/bin/sh
+yue2:x:1326:1000:feng yue:/acct/s1/yue2:/bin/sh
+yuyan:x:1599:1000:yuyan wang:/acct/s1/yuyan:/bin/sh
+zhovercas:x:128:1000:zachary overcash:/acct/s1/zhovercas:/bin/sh
+zyang:x:128:1000:zhiyong yang:/acct/s1/zyang:/bin/sh

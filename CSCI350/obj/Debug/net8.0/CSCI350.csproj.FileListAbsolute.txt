@@ -1,0 +1,14 @@
+/home/chief/Documents/CSCI/CSCI350/bin/Debug/net8.0/CSCI350
+/home/chief/Documents/CSCI/CSCI350/bin/Debug/net8.0/CSCI350.deps.json
+/home/chief/Documents/CSCI/CSCI350/bin/Debug/net8.0/CSCI350.runtimeconfig.json
+/home/chief/Documents/CSCI/CSCI350/bin/Debug/net8.0/CSCI350.dll
+/home/chief/Documents/CSCI/CSCI350/bin/Debug/net8.0/CSCI350.pdb
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.GeneratedMSBuildEditorConfig.editorconfig
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.AssemblyInfoInputs.cache
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.AssemblyInfo.cs
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.csproj.CoreCompileInputs.cache
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.dll
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/refint/CSCI350.dll
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.pdb
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/CSCI350.genruntimeconfig.cache
+/home/chief/Documents/CSCI/CSCI350/obj/Debug/net8.0/ref/CSCI350.dll

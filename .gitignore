@@ -1,0 +1,21 @@
+#Ignored files
+cat .gitignore
+
+#Ignore build files
+build/
+
+#Ignore docs files
+docs/
+doc/
+
+#Ignore bin files
+bin/
+
+#Ignore sample directories
+mod0/
+
+#Ignore pdfs
+*.[pdf]
+
+#Ignore temp files
+*~
