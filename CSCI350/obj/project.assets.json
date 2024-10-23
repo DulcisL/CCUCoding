@@ -1,36 +1,36 @@
 {
   "version": 3,
   "targets": {
-    "net5.0": {}
+    "net8.0": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
-    "net5.0": []
+    "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\dolce\\.nuget\\packages\\": {}
+    "/home/chief/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI.csproj",
-      "projectName": "CSCI",
-      "projectPath": "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI.csproj",
-      "packagesPath": "C:\\Users\\dolce\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\obj\\",
+      "projectUniqueName": "/home/chief/Documents/CSCI/CSCI350/CSCI350.csproj",
+      "projectName": "CSCI350",
+      "projectPath": "/home/chief/Documents/CSCI/CSCI350/CSCI350.csproj",
+      "packagesPath": "/home/chief/.nuget/packages/",
+      "outputPath": "/home/chief/Documents/CSCI/CSCI350/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\dolce\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/chief/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "net5.0"
+        "net8.0"
       ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "projectReferences": {}
         }
       },
@@ -41,8 +41,8 @@
       }
     },
     "frameworks": {
-      "net5.0": {
-        "targetAlias": "net5.0",
+      "net8.0": {
+        "targetAlias": "net8.0",
         "imports": [
           "net461",
           "net462",
@@ -59,7 +59,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/snap/dotnet-sdk/233/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
