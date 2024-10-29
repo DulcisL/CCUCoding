@@ -21,7 +21,14 @@
  */
 Deck::Deck (){
     //Create the deck 
-    buildDeck();
+    buildDeck(false);
+}
+//Make a paramaterized constructor for multiple decks
+Deck::Deck(int numDecks, bool isFaceUp){
+    int count = 0;
+    while (count < numDecks){
+        buildDeck(isFaceUp);
+    }
 }
 
 /*buildDeck
@@ -29,13 +36,13 @@ Desc: Creates 52 individual cards by way of a nested for loop and stores it in t
 Params -> deck (Vector) - contains the array to be used to store the deck (passed by reference)
 Return -> none
 */
-void Deck::buildDeck(){
+void Deck::buildDeck(bool isFaceUp){
     //run 13 times to make card
     for (int i = 1; i < 14; i ++){
         //run 4 times to get suits
         for (int j = 1; j < 5; j++){
             //make the card
-            Card card = Card(i,j,true);
+            Card card = Card(i,j,isFaceUp);
             //push the card to the vector
             _deck.push_back(card);
         }
