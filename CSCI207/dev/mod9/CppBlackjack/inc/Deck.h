@@ -25,7 +25,7 @@ class Deck {
         Params -> none
         Return -> none
         */
-        void buildDeck();
+        void buildDeck(bool isFaceUp);
 
         /*Shuffle
         Desc: Shuffles the deck to be random
@@ -41,6 +41,9 @@ class Deck {
 
         //Call the constructor
         Deck();
+
+        //Paramaterized constructor
+        Deck(int numDecks, bool isFaceUp);
 
         /*deal
         Desc: Deals cards to the user and removes them from the vector
