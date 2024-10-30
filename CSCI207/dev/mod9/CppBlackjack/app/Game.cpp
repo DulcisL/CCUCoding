@@ -14,7 +14,16 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <cmath>
 
+
+/** main
+* @desc: The main game logic
+* @param - none
+* @return - none
+*/
 main(){
     //Initialize variables
     bool quit = false;
@@ -41,14 +50,14 @@ main(){
 
         //Get players
         while (i < numPlayers){
+            //initialize temp vars
             int threshold;
-            string playerName;
-            Player player;
+            string playerGetName;
 
             if (i < numPlayers - 1){
-                //Get name
-                cout << "What is the name of player %i? \n";
-                getline(cin, playerName);
+                //Get GetName
+                cout << "What is the GetName of player %i? \n";
+                getline(cin, playerGetName);
 
                 //Get threshold for player
                 //get rand number %2  for threshold
@@ -63,37 +72,39 @@ main(){
                 }
             }
             //Add Dealer
-            if (i <= numPlayers){
+            if (i == numPlayers){
                 //Add dealer
-                playerName = "Dealer";
+                playerGetName = "Dealer";
                 //Dealer has a threshold of 17
                 threshold = 17;
             }
-            players.push_back(player(playerName, threshold));
+            //make the player
+            players.push_back(Player(playerGetName, threshold));
+            i += 1;
         }
 
         //Deal opening hand of 2 cards
         int count = 1;
         while (count <= 2){
             //Go through each player and deal a card then repeat
-            for (i == 0, i < sizeof(players), i++) {
+            for (i == 0; i < players.size(); i++) {
                 Player player = players[i];
-                player.Deal();
+                player.Deal(deck);
             }  
         }
         
         //play game
         //check for black jack on deal
-        for (i == 0, i < sizeof(players), i++){
-            if (players[i].score == 21){
+        for (i == 0; i < players.size(); i++){
+            if (players[i].CalculateScore() == 21){
                 //Check the dealer and end round if true
-                if (players.[i].name() == "Dealer"){
+                if (players[i].GetName() == "Dealer"){
                     quit = true;
                 }
                 //Check for players 
-                if (players[i].name() != "Dealer"){
-                    //If players have blackjack on deal win else lose
-                    players[i].status() = "Win";
+                if (players[i].GetName() != "Dealer"){
+                    //If players have blackjack on deal Wins else lose
+                    players[i].status = "Wins";
                 }
             }
         }
@@ -102,53 +113,103 @@ main(){
             continue;
         }
         //Deal cards as players need them
-        for (i == 0, i < sizeof(players), i++){
+        for (i == 0; i < players.size(); i++){
             //If score is less than 21 deal a card
-            while (players[i].score < 21 && player[i].score <= players[i].threshold()){
-                players[i].Deal()
+            while (players[i].CalculateScore() < 21 && players[i].CalculateScore() <= players[i].threshold){
+                players[i].Deal(deck);
             }
             //move on to next player
             continue;
         }  
 
-        //Check for win or lose
-        for (i == 0, i < sizeof(players), i++){
-            if (players[i].score() == 21){
-                players[i].status == "Win";
-            }
-            if (players[i].score() > 21){
-                players[i].status = "Busted";
-            }
-            //Otherwise check against the dealer
-            if (players[i].score < 21 && i < sizeOf(players)){
-                if (players[i].score < players[sizeOf(players)].score && players[sizeOf(players)].status() != "Busted"){
-                    players[i].status() = "Loses";
+        //Check for Wins or loses
+        Player dealer = players[players.size()];
+        for (i == 0; i < (players.size() - 1); i++){
+            Player player = players[i];
+
+            //make sure dealer didn't bust or get 21
+            if (dealer.CalculateScore() < 21){
+                if (player.CalculateScore() == 21){
+                    player.status == "Wins";
+                    continue;
                 }
-                if (players[i].score >= players[sizeOf(players)].score && players[i].status() != "Busted"){
-                    players[i].status() = "Wins";
+                if (player.CalculateScore() > 21){
+                    player.status = "Busted";
+                    continue;
+                }
+                //Otherwise check against the dealer
+                if (player.CalculateScore() < dealer.CalculateScore()){
+                    players[i].status = "Lost";
+                    continue;
+                }
+                if (player.CalculateScore() >= dealer.CalculateScore() && player.CalculateScore() <= 21){
+                    players[i].status = "Wins";
+                    continue;
+                }
+            }
+            //Check if dealer got 21
+            if (dealer.CalculateScore() == 21){
+                //If player doesn't have 21 lost
+                if (player.CalculateScore() < 21 || player.CalculateScore() > 21){
+                    if (player.CalculateScore() > 21){
+                        player.status = "Busted";
+                    }
+                    else {
+                        player.status = "Lost";
+                    }
+                    continue;
+                }
+                //If player ties dealer CalculateScore
+                if (player.CalculateScore() == 21){
+                    //get the number of cards in hand
+                    if (player.GetHand().size() < dealer.GetHand().size()){
+                        player.status = "Wins";
+                        continue;
+                    }
+                    else {
+                        player.status = "Lost";
+                        continue;
+                    }
+                }
+            }
+            //If Dealer busts
+            if (dealer.CalculateScore() > 21){
+                //If player didn't bust they win
+                if (player.CalculateScore() <= 21){
+                    player.status = "Wins";
+                }
+                else{
+                    player.status = "Busted";
                 }
             }
         }
 
         //print the results
-        cout << setw(16) << "Players" << setw(5) << "Score" << setw(5)<< "Win/Loss" << endl;
+        cout << setw(16) << "Players" << setw(5) << "CalculateScore" << setw(5)<< "Wins/Loss" << endl;
         cout << "___________________________________________________" << endl;
-        for (i == 0, i < sizeof(players), i++){
-            cout << '*' << setw(15) << players[i].name() << setw(5) << players[i].score() << setw(5) << player[i].status() << endl;
+        for (i = 0; i < players.size(); i++){
+            cout << '*' << setw(15) << players[i].GetName() << setw(5) << players[i].CalculateScore() << setw(5) << players[i].status << endl;
         }
 
         //Ask user if they would like to play another round
-        cout << "Would you like to play another round? (Y/N) " << endl;
-        cin >> input;
-        if (input == 'y' || input == 'Y'){
-            //run the game again
-            quit = false;
-            continue;
-        }
-        if (input == 'n' || input == 'N'){
-            //end the game
-            quit == true;
-            break;
+        char input;
+        while (true){
+            cout << "Would you like to play another round? (Y/N) " << endl;
+            cin >> input;
+            //Error check
+            if (input == 'y' || input == 'Y'){
+                //run the game again
+                quit = false;
+                continue;
+            }
+            if (input == 'n' || input == 'N'){
+                //end the game
+                quit == true;
+                break;
+            }
+            else {
+                cout << "That was not a valid choice, please try again" << endl;
+            }
         }
     }
     
