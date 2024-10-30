@@ -15,7 +15,7 @@
 #include <iostream>
 
 /**
- * @brief Parameterized Construct a new Deck
+ * @brief Construct a new Deck
  *
  * @param None
  */
@@ -23,18 +23,24 @@ Deck::Deck (){
     //Create the deck 
     buildDeck(false);
 }
-//Make a paramaterized constructor for multiple decks
+/**
+ * @brief Parameterized Construct a new Deck
+ *
+ * @param int numDecks - the number of decks needed for the game
+ * @param bool isFaceUp - If the deck should be face up (false) or face down(true)
+ */
 Deck::Deck(int numDecks, bool isFaceUp){
     int count = 0;
+    //Build a new deck until the number of decks required is met
     while (count < numDecks){
         buildDeck(isFaceUp);
     }
 }
 
-/*buildDeck
-Desc: Creates 52 individual cards by way of a nested for loop and stores it in the deck vector
-Params -> deck (Vector) - contains the array to be used to store the deck (passed by reference)
-Return -> none
+/** buildDeck
+* @desc: Creates 52 individual cards by way of a nested for loop and stores it in the deck vector
+* @param - deck (Vector) - contains the array to be used to store the deck (passed by reference)
+* @return - none
 */
 void Deck::buildDeck(bool isFaceUp){
     //run 13 times to make card
@@ -42,7 +48,7 @@ void Deck::buildDeck(bool isFaceUp){
         //run 4 times to get suits
         for (int j = 1; j < 5; j++){
             //make the card
-            Card card = Card(i,j,isFaceUp);
+            Card card = Card(i, j, isFaceUp);
             //push the card to the vector
             _deck.push_back(card);
         }
@@ -51,11 +57,11 @@ void Deck::buildDeck(bool isFaceUp){
     Shuffle();
 }
 
-/*Shuffle
-Desc: Shuffles the deck to be random
-Params -> deck (vector) - Store the deck to be shuffled (passed by reference)
-          numShuffles - number of times for the deck to be shuffled
-Returns -> none
+/** Shuffle
+* @desc: Shuffles the deck to be random
+* @param - deck (vector) - Store the deck to be shuffled (passed by reference)
+* @param - numShuffles - number of times for the deck to be shuffled
+* @return - none
 */
 void Deck::Shuffle(){
     //Initialize
@@ -79,11 +85,11 @@ void Deck::Shuffle(){
     }   
 }
 
-/*deal
-Desc: Deals cards to the user and removes them from the vector
-Params -> Vector<Card> deck - Contains the deck of cards (passed by reference)
-          int numCards - The number of cards to be dealt
-Returns -> none
+/** deal
+* @desc: Deals cards to the user and removes them from the vector
+* @param Vector<Card> deck - Contains the deck of cards (passed by reference)
+* @param int numCards - The number of cards to be dealt
+* @return - none
 */
 Card Deck::deal(){
     //Check if deck is empty
@@ -105,19 +111,19 @@ Card Deck::deal(){
     }
 }
 
-/*sizeOf
-Desc: returns the size of the deck
-Params -> none
-Returns -> int size of deck
+/** sizeOf
+* @desc: returns the size of the deck
+* @param -> none
+* @return -> int size of deck
 */
 int Deck::sizeOf(){
     return _deck.size();
 }
 
-/*ToString
-Desc: Used to print out the deck
-Params -> deck (vector) - the deck to be printed
-Returns -> none
+/** ToString
+* @desc: Used to print out the deck
+* @param -> deck (vector) - the deck to be printed
+* @return -> none
 */
 string  Deck::ToString(){
     //Initialize
