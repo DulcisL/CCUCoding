@@ -21,7 +21,7 @@
  */
 Deck::Deck (){
     //Create the deck 
-    buildDeck(false);
+    buildDeck(1, false);
 }
 /**
  * @brief Parameterized Construct a new Deck
@@ -29,12 +29,9 @@ Deck::Deck (){
  * @param int numDecks - the number of decks needed for the game
  * @param bool isFaceUp - If the deck should be face up (false) or face down(true)
  */
-Deck::Deck(int numDecks, bool isFaceUp){
-    int count = 0;
-    //Build a new deck until the number of decks required is met
-    while (count < numDecks){
-        buildDeck(isFaceUp);
-    }
+Deck::Deck(int numDecks){
+    //Build a new deck with the number of decks needed
+    buildDeck(numDecks, false);
 }
 
 /** buildDeck
@@ -42,11 +39,14 @@ Deck::Deck(int numDecks, bool isFaceUp){
 * @param - deck (Vector) - contains the array to be used to store the deck (passed by reference)
 * @return - none
 */
-void Deck::buildDeck(bool isFaceUp){
+void Deck::buildDeck(int decksNeeded, bool isFaceUp){
+    //Get number of cards needed
+    int numRoyals = decksNeeded * 4;
+    int numFaceCards = decksNeeded * 13;
     //run 13 times to make card
-    for (int i = 1; i < 14; i ++){
+    for (int i = 1; i < numFaceCards; i ++){
         //run 4 times to get suits
-        for (int j = 1; j < 5; j++){
+        for (int j = 1; j < numRoyals; j++){
             //make the card
             Card card = Card(i, j, isFaceUp);
             //push the card to the vector
@@ -128,9 +128,21 @@ int Deck::sizeOf(){
 string  Deck::ToString(){
     //Initialize
     string deckString;
-    for (Card i : _deck){
-        //call the card ToString
-        deckString = deckString + i.ToString() + "\n";
+    for (Card c : _deck){
+        //Flip the card
+        if (c.isFaceUp == false){
+            c.isFaceUp = true;
+            //call the card ToString
+            deckString = deckString + c.ToString() + "\n";
+            //Flip card back
+            c.isFaceUp = false;
+        }
+        else{
+            //call the card ToString
+            deckString = deckString + c.ToString() + "\n";
+        }
+        
+        
     }
     return deckString;
 }

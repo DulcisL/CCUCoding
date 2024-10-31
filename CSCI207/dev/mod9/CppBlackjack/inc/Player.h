@@ -41,10 +41,11 @@ class Player{
     ///         
     Player(string nameIn, int thresholdIn);
 
-    /// @brief _status is the status of the player if they win/lost/busted
+    /// @brief status - a string containing the status of the player if they win/lost/busted
     ///         
     ///             Set by game logic at the end of the round
     string status;
+
     /// @brief threshold is a int containing the max score the player will take hits if below
     ///         
     ///         The int is set in the constructor
@@ -53,19 +54,19 @@ class Player{
     /// @brief GetName - used to get the name of the player
     /// @return - Return a string of the player name
     ///
-    string Player::GetName();
+    string GetName();
     
     /// @brief GetHand - gets the hand of the player
     /// @return - Return a vector of the players hand
     ///
-    vector<Card> Player::GetHand();
+    vector<Card> GetHand();
 
     //Functions 
 
     /// @brief Deal used to add a card to the persons hand
     /// @param vector Deck - Holds the deck the game is being played from
     ///
-    void Deal(vector<Deck> Deck);
+    void Deal(Card card);
 
     /// @brief Check score of current hand
     ///

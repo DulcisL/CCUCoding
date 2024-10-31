@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
 /// @brief The constructor for setting up the class
 /// @param string nameIn - takes the name of the player
@@ -45,8 +46,8 @@ vector<Card> Player::GetHand(){
 /// @brief Deal used to add a card to the persons hand
 /// @param vector Deck - Holds the deck the game is being played from
 ///
-void Player::Deal(vector<Deck> Deck){
-    _hand.push_back(Deck.deal());
+void Player::Deal(Card card){
+    _hand.push_back(card);
     return;
 }
 
@@ -75,6 +76,6 @@ string Player::ToString(){
     for (Card c: _hand){
         temp += c.ToString() + ", ";
     }
-    temp += " }\nStatus: " + status;
+    temp += " }\nStatus: " + status + "\nThreshold: " + std::to_string(threshold) + "\n";
     return temp;
 }
