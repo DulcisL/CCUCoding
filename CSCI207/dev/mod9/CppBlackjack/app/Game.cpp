@@ -16,48 +16,83 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <cmath>
+#include <math.h>
 
-
-/** main
-* @desc: The main game logic
+/** Blackjack
+* @desc: The main function of the Blackjack game
 * @param - none
 * @return - none
 */
-main(){
+void Blackjack(){
     //Initialize variables
     bool quit = false;
-    srand(time(nullptr));
     vector <Player> players;
+    //Seed rand
+    srand(time(nullptr));
 
     //Set up loop for players to play rounds
     while (quit != true){
-        int numPlayers = 0;
+        int numPlayers;
+        string temp;
         int i = 0;
-        int decksNeeded = 0;
+        float decksNeeded = 0;
         bool endRound;
 
-        //Get number of players
-        cout << "How many players do you want in the game?" << endl;
-        getline(cin, numPlayers);
-
-        //account for more than 7 players
-        decksNeeded = ceil(numPlayers / 7);
-        // make deck face down
-        Deck deck(decksNeeded, false);
+        //Set up loop to error check
+        while (true){
+            //Get number of players
+            cout << "How many players do you want in the game? (must be less than 7)" << endl;
+            cin >> temp;
+            //convert to an int
+            numPlayers = stoi(temp);
+            if (numPlayers > 0){
+                if (numPlayers > 7){
+                    cout << "Can't have that many players in a game, please try again." << endl;
+                    continue;
+                }
+                else {
+                    break;
+                }
+            }
+            else{
+                cout << "That was not a valid number please try again" << endl;
+                cin.clear();
+            }
+        }
+        
         //Add a spot for the dealer
         numPlayers += 1;
+       cout << numPlayers << endl;
+        //account for more than 7 players players
+        decksNeeded = ceil(numPlayers / 7.0);
+        cout << decksNeeded << endl;
 
-        //Get players
+        //Set up the deck
+        Deck deck(decksNeeded);
+
+        //Get players set up
         while (i < numPlayers){
             //initialize temp vars
             int threshold;
-            string playerGetName;
-
+            string playerName = "";
+            //get all the players
             if (i < numPlayers - 1){
-                //Get GetName
-                cout << "What is the GetName of player %i? \n";
-                getline(cin, playerGetName);
+                
+                while(true){
+                    //Get GetName
+                    cout << "What is the name of player "<< (i + 1) << "?" << endl;\
+                    cin.clear();
+                    cin >> playerName;
+
+                    //Check if a name was entered
+                    if (playerName.size() <=0){
+                        cout << "That was not a valid input" << endl;
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
+                }
 
                 //Get threshold for player
                 //get rand number %2  for threshold
@@ -72,39 +107,45 @@ main(){
                 }
             }
             //Add Dealer
-            if (i == numPlayers){
+            else{
                 //Add dealer
-                playerGetName = "Dealer";
+                playerName = "Dealer";
                 //Dealer has a threshold of 17
                 threshold = 17;
             }
             //make the player
-            players.push_back(Player(playerGetName, threshold));
+            players.push_back(Player(playerName, threshold));
             i += 1;
         }
 
         //Deal opening hand of 2 cards
-        int count = 1;
-        while (count <= 2){
+        int count = 0;
+        while (count < 2){
             //Go through each player and deal a card then repeat
-            for (i == 0; i < players.size(); i++) {
-                Player player = players[i];
-                player.Deal(deck);
-            }  
+            for (Player p: players){
+                Card card = deck.deal();
+                p.Deal(card);
+            } 
+            count ++; 
+        }
+
+        cout << "The openning hand was dealt" << endl;
+        for (Player p: players){
+            p.ToString();
         }
         
         //play game
         //check for black jack on deal
-        for (i == 0; i < players.size(); i++){
-            if (players[i].CalculateScore() == 21){
+        for (Player p: players){
+            if (p.CalculateScore() == 21){
                 //Check the dealer and end round if true
-                if (players[i].GetName() == "Dealer"){
+                if (p.GetName() == "Dealer"){
                     quit = true;
                 }
                 //Check for players 
-                if (players[i].GetName() != "Dealer"){
+                if (p.GetName() != "Dealer"){
                     //If players have blackjack on deal Wins else lose
-                    players[i].status = "Wins";
+                    p.status = "Wins";
                 }
             }
         }
@@ -113,24 +154,25 @@ main(){
             continue;
         }
         //Deal cards as players need them
-        for (i == 0; i < players.size(); i++){
+        for (Player p: players){
             //If score is less than 21 deal a card
-            while (players[i].CalculateScore() < 21 && players[i].CalculateScore() <= players[i].threshold){
-                players[i].Deal(deck);
+            while (p.CalculateScore() < 21 && p.CalculateScore() <= p.threshold){
+                Card card = deck.deal();
+                p.Deal(card);
             }
             //move on to next player
             continue;
         }  
 
         //Check for Wins or loses
-        Player dealer = players[players.size()];
+        Player dealer = players[players.size() - 1];
         for (i == 0; i < (players.size() - 1); i++){
             Player player = players[i];
 
             //make sure dealer didn't bust or get 21
             if (dealer.CalculateScore() < 21){
                 if (player.CalculateScore() == 21){
-                    player.status == "Wins";
+                    player.status = "Wins";
                     continue;
                 }
                 if (player.CalculateScore() > 21){
@@ -215,4 +257,15 @@ main(){
     
     //Tell player goodbye
     cout << "Thanks for playing" << endl;
+}
+
+/** main
+* @desc: The main function
+* @param - none
+* @return - none
+*/
+int main(){
+    //Call the function to play blackjack
+    Blackjack();
+    return 0;
 }

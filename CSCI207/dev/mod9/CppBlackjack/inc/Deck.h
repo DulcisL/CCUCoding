@@ -25,7 +25,7 @@ class Deck {
         Params -> none
         Return -> none
         */
-        void buildDeck(bool isFaceUp);
+        void buildDeck(int decksNeeded, bool isFaceUp);
 
         /*Shuffle
         Desc: Shuffles the deck to be random
@@ -35,15 +35,17 @@ class Deck {
         void Shuffle();
 
     public: 
-    
-        //Public attributes
-        
+
+        /** Parameterized constructor
+        * @desc: Constructs a deck of the needed size
+        * @param -> int numDecks - the number of decks needed to play
+        * @param -> isFaceUp - a boolean value of if the cards are face up or down
+        * @return -> none
+        */
+        Deck(int numDecks);
 
         //Call the constructor
         Deck();
-
-        //Paramaterized constructor
-        Deck(int numDecks, bool isFaceUp);
 
         /*deal
         Desc: Deals cards to the user and removes them from the vector
