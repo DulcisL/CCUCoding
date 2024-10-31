@@ -74,6 +74,13 @@ public:
     int GetValue();
 
     /**
+     * @brief change an ace to a specified value
+     *
+     * @return none
+     */
+    void SetValue(int newValue);
+
+    /**
      * @brief Simple string output that represents this playing card face up or face down
      *
      * @return string - card representation

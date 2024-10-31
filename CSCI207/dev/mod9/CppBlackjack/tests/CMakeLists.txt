@@ -1,6 +1,6 @@
 add_executable(
     blackjacktests
-    Blackjacktest.cpp
+    BlackjackTest.cpp
 )
 
 target_link_libraries(
