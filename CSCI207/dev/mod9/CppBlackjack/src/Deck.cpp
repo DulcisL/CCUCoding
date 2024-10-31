@@ -29,29 +29,31 @@ Deck::Deck (){
  * @param int numDecks - the number of decks needed for the game
  * @param bool isFaceUp - If the deck should be face up (false) or face down(true)
  */
-Deck::Deck(int numDecks){
+Deck::Deck(int numDecks, bool isFaceUp){
     //Build a new deck with the number of decks needed
-    buildDeck(numDecks, false);
+    buildDeck(numDecks, isFaceUp);
 }
 
 /** buildDeck
 * @desc: Creates 52 individual cards by way of a nested for loop and stores it in the deck vector
-* @param - deck (Vector) - contains the array to be used to store the deck (passed by reference)
+* @param - decksNeeded - int contains the number of decks needed to play the game
+* @param - isFaceUp - bool containing the value if the cards should be face up or down.
 * @return - none
 */
 void Deck::buildDeck(int decksNeeded, bool isFaceUp){
-    //Get number of cards needed
-    int numRoyals = decksNeeded * 4;
-    int numFaceCards = decksNeeded * 13;
-    //run 13 times to make card
-    for (int i = 1; i < numFaceCards; i ++){
-        //run 4 times to get suits
-        for (int j = 1; j < numRoyals; j++){
-            //make the card
-            Card card = Card(i, j, isFaceUp);
-            //push the card to the vector
-            _deck.push_back(card);
+    int count = 0;
+    while (count < decksNeeded){
+        //run 13 times to make card
+        for (int i = 1; i < 14; i ++){
+            //run 4 times to get suits
+            for (int j = 1; j <= 4; j++){
+                //make the card
+                Card card = Card(i, j, isFaceUp);
+                //push the card to the vector
+                _deck.push_back(card);
+            }
         }
+        count ++;
     }
     //Shuffle the deck
     Shuffle();

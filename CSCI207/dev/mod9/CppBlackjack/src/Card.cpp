@@ -63,6 +63,15 @@ int Card::GetValue() // Scope resolution operator
 }
 
 /**
+ * @brief change an ace to a specified value
+ *
+ * @return none
+ */
+void Card::SetValue(int newValue){
+    _value = newValue;
+}
+
+/**
  * @brief converts the card integer to a string representation,
  *          example: 1 = Ace, 11 = Jack, 12 = Queen, 13 = King
  *

@@ -44,10 +44,11 @@ vector<Card> Player::GetHand(){
 //Functions 
 
 /// @brief Deal used to add a card to the persons hand
-/// @param vector Deck - Holds the deck the game is being played from
+/// @param card - Card class that is the card the player is receiving
 ///
 void Player::Deal(Card card){
     _hand.push_back(card);
+    
     return;
 }
 

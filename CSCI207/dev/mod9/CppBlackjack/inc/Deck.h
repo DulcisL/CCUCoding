@@ -42,7 +42,7 @@ class Deck {
         * @param -> isFaceUp - a boolean value of if the cards are face up or down
         * @return -> none
         */
-        Deck(int numDecks);
+        Deck(int numDecks, bool isFaceUp);
 
         //Call the constructor
         Deck();
