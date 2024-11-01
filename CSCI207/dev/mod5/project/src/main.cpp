@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
             if (cin.fail()){
                 //Clear cin so you don't get stuck in infinite loop
                 cin.clear();
-                cin. ignore(10000, '\n');
+                cin.ignore(10000, '\n');
                 throw invalid_argument("Argument was not a number");        
                 }
             //if the choice is out of range
