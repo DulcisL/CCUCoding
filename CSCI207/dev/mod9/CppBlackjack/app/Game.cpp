@@ -104,7 +104,7 @@ int main(){
                 quit = true;
                 
                 //check players for a blackjack
-                for (i == 0; i < players.size() -1; i++){
+                for (i = 0; i < players.size() -1; i++){
                     if (Score(players[i]) < 21){
                         players[i].Status = "Loses";
                     }
@@ -149,6 +149,8 @@ int main(){
                 quit = false;
                 //Clear the vector
                 players.clear();
+                cin.clear();
+                std::cin.ignore(10000, '\n');
                 break;
             }
             if (input == 'n' || input == 'N'){
@@ -282,8 +284,6 @@ int PlayerSetup(vector<Player> &players){
     //Set up loop to error check
     while (true){
         cout << "How many players do you want in the game? " << endl;
-        temp.clear();
-        cin.ignore(10000, '\n');
         cin.clear();
         std::getline(std::cin, temp);
         //convert to an int
@@ -296,12 +296,13 @@ int PlayerSetup(vector<Player> &players){
                 throw -1;
             }
         }
-        //catchinvalid inputs
+        //catch invalid inputs
         catch(...){
             cout << temp << " was not a valid number (number must be > 0), please try again" << endl;
         }
         //Clear the input
         cin.clear();
+        std::cin.ignore(10000, '\n');
     }
 
     //Add a spot for the dealer
