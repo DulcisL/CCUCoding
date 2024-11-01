@@ -116,6 +116,7 @@ int main(){
         }
         if (quit == true){
             //Check for round end due to blackjack on deal
+            Results(players, decksNeeded);
             continue;
         }
         //Deal cards as players need them
@@ -282,14 +283,21 @@ int PlayerSetup(vector<Player> &players){
         cout << "How many players do you want in the game? " << endl;
         cin >> temp;
         //convert to an int
-        numPlayers = stoi(temp);
-        if (numPlayers > 0){
-            break;
+        try{
+            numPlayers = stoi(temp);
+            if (numPlayers > 0){
+                break;
+            }
+            else{
+                throw -1;
+            }
         }
-        else{
-            cout << "That was not a valid number please try again" << endl;
+        //catchinvalid inputs
+        catch(...){
+            cout << temp << " was not a valid number (number must be > 0), please try again" << endl;
             cin.clear();
         }
+        
     }
 
     //Add a spot for the dealer
@@ -308,13 +316,13 @@ int PlayerSetup(vector<Player> &players){
         if (i < numPlayers - 1){
             
             while(true){
-                //Get GetName
+                //Get name
                 cout << "What is the name of player "<< (i + 1) << "?" << endl;\
                 cin.clear();
-                cin >> playerName;
+                std::getline(std::cin, playerName);
 
                 //Check if a name was entered
-                if (playerName.size() <=0){
+                if (playerName.size() <= 0){
                     cout << "That was not a valid input" << endl;
                     continue;
                 }
