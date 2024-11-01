@@ -23,7 +23,7 @@
 Player::Player(string nameIn, int thresholdIn){
     //set attributes
     _name = nameIn;
-    threshold = thresholdIn;
+    Threshold = thresholdIn;
 }
 
 //Getters
@@ -46,9 +46,8 @@ vector<Card> Player::GetHand(){
 /// @brief Deal used to add a card to the persons hand
 /// @param card - Card class that is the card the player is receiving
 ///
-void Player::Deal(Card card){
-    _hand.push_back(card);
-    
+void Player::Deal(Deck &deck){
+    _hand.push_back(deck.Deal());
     return;
 }
 
@@ -77,6 +76,6 @@ string Player::ToString(){
     for (Card c: _hand){
         temp += c.ToString() + ", ";
     }
-    temp += " }\nStatus: " + status + "\nThreshold: " + std::to_string(threshold) + "\n";
+    temp += " }\nStatus: " + Status + "\nThreshold: " + std::to_string(Threshold) + "\n";
     return temp;
 }

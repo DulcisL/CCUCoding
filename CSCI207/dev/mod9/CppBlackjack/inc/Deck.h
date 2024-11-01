@@ -32,7 +32,7 @@ class Deck {
         Params -> numShuffles - number of times for the deck to be shuffled
         Returns -> none
         */
-        void Shuffle();
+        void shuffle();
 
     public: 
 
@@ -52,14 +52,14 @@ class Deck {
         Params -> none
         Returns -> card
         */
-        Card deal();
+        Card Deal();
 
         /*sizeOf
         Desc: returns the size of the deck
         Params -> none
         Returns -> int size of deck
         */
-        int sizeOf();
+        int SizeOf();
 
         /*ToString
         Desc: Used to print out the deck

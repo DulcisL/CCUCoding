@@ -56,16 +56,16 @@ void Deck::buildDeck(int decksNeeded, bool isFaceUp){
         count ++;
     }
     //Shuffle the deck
-    Shuffle();
+    shuffle();
 }
 
-/** Shuffle
+/** shuffle
 * @desc: Shuffles the deck to be random
 * @param - deck (vector) - Store the deck to be shuffled (passed by reference)
 * @param - numShuffles - number of times for the deck to be shuffled
 * @return - none
 */
-void Deck::Shuffle(){
+void Deck::shuffle(){
     //Initialize
     int numShuffles = 1000;
     //seed the rand
@@ -87,13 +87,13 @@ void Deck::Shuffle(){
     }   
 }
 
-/** deal
+/** Deal
 * @desc: Deals cards to the user and removes them from the vector
 * @param Vector<Card> deck - Contains the deck of cards (passed by reference)
 * @param int numCards - The number of cards to be dealt
 * @return - none
 */
-Card Deck::deal(){
+Card Deck::Deal(){
     //Check if deck is empty
     if (!_deck.empty()){
         //Inform player
@@ -113,12 +113,12 @@ Card Deck::deal(){
     }
 }
 
-/** sizeOf
+/** SizeOf
 * @desc: returns the size of the deck
 * @param -> none
 * @return -> int size of deck
 */
-int Deck::sizeOf(){
+int Deck::SizeOf(){
     return _deck.size();
 }
 
