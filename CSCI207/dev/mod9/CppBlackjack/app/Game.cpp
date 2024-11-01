@@ -86,6 +86,7 @@ int main(){
         //Set up the deck
         Deck deck(decksNeeded, true);
 
+        //play game
         //Deal opening hand of 2 cards
         int count = 0;
         while (count < 2){
@@ -95,22 +96,21 @@ int main(){
             }
             count ++; 
         }
-        
-        //play game
+
         //check for blackjack on deal
-        for (Player& p: players){
-            if (Score(p) == 21){
-                //Check the dealer and end round if true
-                if (p.GetName() == "Dealer"){
-                    quit = true;
-                }
-                //Check for players 
-                if (p.GetName() != "Dealer"){
-                    //If players have blackjack on deal Wins else lose
-                    p.Status = "Wins";
-                }
-                else{
-                    p.Status = "Loses";
+        if (Score(players[players.size() -1]) == 21){
+            //Check the dealer and end round if true
+            if (players[players.size() -1].GetName() == "Dealer"){
+                quit = true;
+                
+                //check players for a blackjack
+                for (i == 0; i < players.size() -1; i++){
+                    if (Score(players[i]) < 21){
+                        players[i].Status = "Loses";
+                    }
+                    else{
+                        players[i].Status = "Wins";
+                    }
                 }
             }
         }
@@ -119,6 +119,7 @@ int main(){
             Results(players, decksNeeded);
             continue;
         }
+
         //Deal cards as players need them
         for (Player& p: players){
             //If score is less than 21 deal a card
@@ -141,7 +142,7 @@ int main(){
         char input;
         while (true){
             cout << "Would you like to play another round? (Y/N) " << endl;
-            cin >> input;
+            cin  >> input;
             //Error check
             if (input == 'y' || input == 'Y'){
                 //run the game again
@@ -281,7 +282,10 @@ int PlayerSetup(vector<Player> &players){
     //Set up loop to error check
     while (true){
         cout << "How many players do you want in the game? " << endl;
-        cin >> temp;
+        temp.clear();
+        cin.ignore(10000, '\n');
+        cin.clear();
+        std::getline(std::cin, temp);
         //convert to an int
         try{
             numPlayers = stoi(temp);
@@ -295,9 +299,9 @@ int PlayerSetup(vector<Player> &players){
         //catchinvalid inputs
         catch(...){
             cout << temp << " was not a valid number (number must be > 0), please try again" << endl;
-            cin.clear();
         }
-        
+        //Clear the input
+        cin.clear();
     }
 
     //Add a spot for the dealer
@@ -317,7 +321,7 @@ int PlayerSetup(vector<Player> &players){
             
             while(true){
                 //Get name
-                cout << "What is the name of player "<< (i + 1) << "?" << endl;\
+                cout << "What is the name of player "<< (i + 1) << "?" << endl;
                 cin.clear();
                 std::getline(std::cin, playerName);
 
