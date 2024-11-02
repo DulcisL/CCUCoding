@@ -66,7 +66,7 @@ class Player{
     /// @brief Deal used to add a card to the persons hand
     /// @param vector Deck - Holds the deck the game is being played from
     ///
-    void Deal(Deck &deck);
+    void AddCard(Card Card);
 
     /// @brief Check score of current hand
     ///
