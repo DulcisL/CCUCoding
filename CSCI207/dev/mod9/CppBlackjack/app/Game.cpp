@@ -31,14 +31,7 @@ void FindWinners(vector<Player>& players);
 * @param - vector<Deck> deck - a vector containing the cards in play
 * @return - none
 */
-void DealCards(Player& player, vector<Deck>& deck);
 
-/** TieBreaker
-* @desc: A function to determine who wins in a tie against the dealer
-* @param - Player player - A player instance
-* @param - Player dealer - The dealer
-* @return - none
-*/
 void TieBreaker(Player& player, Player& dealer);
 
 /** Score
@@ -92,7 +85,8 @@ int main(){
         while (count < 2){
             //Go through each player and deal a card then repeat
             for (Player& p: players){
-                p.Deal(deck);
+                Card card = deck.Deal();
+                p.AddCard(card);
             }
             count ++; 
         }
@@ -124,7 +118,8 @@ int main(){
         for (Player& p: players){
             //If score is less than 21 deal a card
             while (Score(p)  < 21 && Score(p) <= p.Threshold){
-                p.Deal(deck);
+                Card card = deck.Deal();
+                p.AddCard(card);
             }
             //move on to next player
             continue;
