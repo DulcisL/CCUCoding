@@ -15,42 +15,57 @@
 #include <iostream>
 
 /**
- * @brief Parameterized Construct a new Deck
+ * @brief Construct a new Deck
  *
  * @param None
  */
 Deck::Deck (){
     //Create the deck 
-    buildDeck();
+    buildDeck(1, false);
+}
+/**
+ * @brief Parameterized Construct a new Deck
+ *
+ * @param int numDecks - the number of decks needed for the game
+ * @param bool isFaceUp - If the deck should be face up (false) or face down(true)
+ */
+Deck::Deck(int numDecks, bool isFaceUp){
+    //Build a new deck with the number of decks needed
+    buildDeck(numDecks, isFaceUp);
 }
 
-/*buildDeck
-Desc: Creates 52 individual cards by way of a nested for loop and stores it in the deck vector
-Params -> deck (Vector) - contains the array to be used to store the deck (passed by reference)
-Return -> none
+/** buildDeck
+* @desc: Creates 52 individual cards by way of a nested for loop and stores it in the deck vector
+* @param - decksNeeded - int contains the number of decks needed to play the game
+* @param - isFaceUp - bool containing the value if the cards should be face up or down.
+* @return - none
 */
-void Deck::buildDeck(){
-    //run 13 times to make card
-    for (int i = 1; i < 14; i ++){
-        //run 4 times to get suits
-        for (int j = 1; j < 5; j++){
-            //make the card
-            Card card = Card(i,j,true);
-            //push the card to the vector
-            _deck.push_back(card);
+void Deck::buildDeck(int decksNeeded, bool isFaceUp){
+    int count = 0;
+    while (count < decksNeeded){
+        //run 13 times to make card
+        for (int i = 1; i < 14; i ++){
+            //run 4 times to get suits
+            for (int j = 1; j <= 4; j++){
+                //make the card
+                Card card = Card(i, j, isFaceUp);
+                //push the card to the vector
+                _deck.push_back(card);
+            }
         }
+        count ++;
     }
     //Shuffle the deck
-    Shuffle();
+    shuffle();
 }
 
-/*Shuffle
-Desc: Shuffles the deck to be random
-Params -> deck (vector) - Store the deck to be shuffled (passed by reference)
-          numShuffles - number of times for the deck to be shuffled
-Returns -> none
+/** shuffle
+* @desc: Shuffles the deck to be random
+* @param - deck (vector) - Store the deck to be shuffled (passed by reference)
+* @param - numShuffles - number of times for the deck to be shuffled
+* @return - none
 */
-void Deck::Shuffle(){
+void Deck::shuffle(){
     //Initialize
     int numShuffles = 1000;
     //seed the rand
@@ -72,13 +87,13 @@ void Deck::Shuffle(){
     }   
 }
 
-/*deal
-Desc: Deals cards to the user and removes them from the vector
-Params -> Vector<Card> deck - Contains the deck of cards (passed by reference)
-          int numCards - The number of cards to be dealt
-Returns -> none
+/** Deal
+* @desc: Deals cards to the user and removes them from the vector
+* @param Vector<Card> deck - Contains the deck of cards (passed by reference)
+* @param int numCards - The number of cards to be dealt
+* @return - none
 */
-Card Deck::deal(){
+Card Deck::Deal(){
     //Check if deck is empty
     if (!_deck.empty()){
         //Inform player
@@ -98,26 +113,38 @@ Card Deck::deal(){
     }
 }
 
-/*sizeOf
-Desc: returns the size of the deck
-Params -> none
-Returns -> int size of deck
+/** SizeOf
+* @desc: returns the size of the deck
+* @param -> none
+* @return -> int size of deck
 */
-int Deck::sizeOf(){
+int Deck::SizeOf(){
     return _deck.size();
 }
 
-/*ToString
-Desc: Used to print out the deck
-Params -> deck (vector) - the deck to be printed
-Returns -> none
+/** ToString
+* @desc: Used to print out the deck
+* @param -> deck (vector) - the deck to be printed
+* @return -> none
 */
 string  Deck::ToString(){
     //Initialize
     string deckString;
-    for (Card i : _deck){
-        //call the card ToString
-        deckString = deckString + i.ToString() + "\n";
+    for (Card c : _deck){
+        //Flip the card
+        if (c.isFaceUp == false){
+            c.isFaceUp = true;
+            //call the card ToString
+            deckString = deckString + c.ToString() + "\n";
+            //Flip card back
+            c.isFaceUp = false;
+        }
+        else{
+            //call the card ToString
+            deckString = deckString + c.ToString() + "\n";
+        }
+        
+        
     }
     return deckString;
 }
