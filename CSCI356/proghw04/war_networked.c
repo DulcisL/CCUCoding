@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     int totalRounds = atoi(argv[1]);
+    //If totalRounds is negative abort
     if (totalRounds <= 0) {
         fprintf(stderr, "Error: The number of rounds must be a positive integer.\n");
         exit(EXIT_FAILURE);
@@ -57,34 +58,22 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     if (CID1 > 0) {
-        close(parentToChild1[0]);  // Parent write only
-        close(childToParent1[1]);  // Child read only
+        //Set up child to parent messaging over network
     } else {
-        close(parentToChild1[1]);  // Parent write only
-        close(childToParent1[0]);  // Child read only
+        //Set up parent to child messaging over network
+
         //Call childprocess
         ChildProcess(childToParent1, parentToChild1);
-        //Kill process
+        //Kill child process
+        kill(CID1);
+        //Exit gracefully
         exit(0);
     }
 
     //repeat above for child 2
-    CID2 = fork();
-    if (CID2 == -1) {
-        perror("Fork Failed");
-        exit(EXIT_FAILURE);
-    }
-    if (CID2 > 0) {
-        close(parentToChild2[0]);
-        close(childToParent2[1]);
-    } else {
-        close(parentToChild2[1]);
-        close(childToParent2[0]);
-        ChildProcess(childToParent2, parentToChild2);
-        exit(0);
-    }
+    
 
-    while (roundCount <= totalRounds && totalRounds != 0) {
+    while (roundCount < totalRounds && totalRounds != 0) {
         //set default values
         int card1 = 0, card2 = 0, suit1 = 0, suit2 = 0;
         char temp[25], temp2[25];
@@ -93,13 +82,13 @@ int main(int argc, char *argv[]) {
         result[0] = '\0';
         // Write to child to send card
         char* message = "Get Card";
-        write(parentToChild1[1], message, strlen(message) + 1);
-        write(parentToChild2[1], message, strlen(message) + 1);
+        //Message childrent to get a card
 
         // Read from child to get card
-        read(childToParent1[0], temp, sizeof(temp));
+        //Get message from children for card
+
+        //Convert to integer
         card1 = atoi(temp);
-        read(childToParent2[0], temp2, sizeof(temp2));
         card2 = atoi(temp2);
 
         // Play game
@@ -112,29 +101,28 @@ int main(int argc, char *argv[]) {
 
             //Ask for suit
             char* message = "Suit Up";
-            write(parentToChild1[1], message, strlen(message) + 1);
-            write(parentToChild2[1], message, strlen(message) + 1);
-            //Get suit
-            read(childToParent1[0], temp, sizeof(temp));
+            //pass message to children for suit
+
+            //read from children suit
+            
             //Convert to int
             suit1 = atoi(temp);
-            read(childToParent2[0], temp2, sizeof(temp2));
             suit2 = atoi(temp2);
             //Call game logic
             strcpy(result, WarGames(suit1, suit2));
             
         }
         //print preround results
-        printf("Round %d Stats -> Child 1: %d wins Child 2: %d wins Ties: %d \n", roundCount + 1, winCount1, winCount2, tieCount);
+        printf("Round %d Stats -> Child 1: %d win(s) Child 2: %d win(s) Ties: %d \n", roundCount + 1, winCount1, winCount2, tieCount);
         
         //check and store results
-        if (strcmp(result, "It is a tie") == 0){
+        if (strcmp(result, "It is a tie\n") == 0){
             tieCount +=1;
         }
-        if (strcmp(result, "Child 1 wins") == 0){
+        if (strcmp(result, "Child 1 wins\n") == 0){
             winCount1 += 1;
         }
-        if (strcmp(result, "Child 2 wins") == 0){
+        if (strcmp(result, "Child 2 wins\n") == 0){
             winCount2 += 1;
         }
         roundCount +=1;
@@ -148,13 +136,14 @@ int main(int argc, char *argv[]) {
         printf("------------------------------------------------\n\n");
     }
     //print overall winner
-    printf("Child 1 had %d wins, Child 2 had %d wins\n",winCount1, winCount2);
-    printf("The grand winner is %s \n", WarGames(winCount1, winCount2));
+    printf("Tournament Results\n");
+    printf("------------------------------------------------\n\n");
+    printf("Child 1 had %d wins, Child 2 had %d wins\n", winCount1, winCount2);
+    printf("%s\n", WarGames(winCount1, winCount2));
 
     // Kill Children processes
     char* message = "EXIT";
-    write(parentToChild1[1], message, strlen(message) + 1);
-    write(parentToChild2[1], message, strlen(message) + 1);
+    //Tell children to exit
 }
 
 /*
