@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj": {}
+    "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj": {
+    "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj",
+        "projectUniqueName": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj",
         "projectName": "dependencyInjection",
-        "projectPath": "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj",
+        "projectPath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\dependencyInjection.csproj",
         "packagesPath": "C:\\Users\\dolce\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dolce\\OneDrive\\Documents\\CSCI\\CSCI350\\dependencyInjection\\obj\\",
+        "outputPath": "C:\\Users\\dolce\\OneDrive\\Documents\\Coastal\\CSCI\\CSCI350\\dependencyInjection\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

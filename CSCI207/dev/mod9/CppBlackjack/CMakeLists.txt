@@ -14,8 +14,6 @@ add_subdirectory(src)
 add_subdirectory(app)
 add_subdirectory(inc)
 
-# Add this to the bottom of the file for googletest unit testing
-
 include(FetchContent)
 FetchContent_Declare(
   googletest

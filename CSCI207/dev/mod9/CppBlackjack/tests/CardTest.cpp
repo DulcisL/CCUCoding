@@ -10,8 +10,7 @@ Desc: Contains the main function
 Params -> none
 Returns -> int for success
 */
-int main()
-{
+int main(){
     //Test with one card
     Card card(1, 1, true);
     cout << card.ToString() << endl;

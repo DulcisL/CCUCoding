@@ -1,25 +1,81 @@
 /**
  * @file Player.cpp
  * @author Lakota Dolce
- * @brief This is the definition (source) file for a person
+ * @brief This is the definition (source) file for a player
  * @version 0.1
  * @date 2024-10-08
  *
  */
 #include "Player.h"
 #include "Card.h"
+#include "Deck.h"
 
 #include <vector>
 #include <string.h>
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
-/**
- * @brief Parameterized Construct a new Person
- *
- * @param None
- */
-Player::Player(){
-
+/// @brief The constructor for setting up the class
+/// @param string nameIn - takes the name of the player
+/// @param int thresholdIn  - takes the players cut off for taking cards
+///         
+Player::Player(string nameIn, int thresholdIn){
+    //set attributes
+    _name = nameIn;
+    Threshold = thresholdIn;
 }
 
+//Getters
+/// @brief GetName - used to get the name of the player
+/// @return - Return a string of the player name
+///
+string Player::GetName(){
+    return _name;
+}
+
+/// @brief GetHand - gets the hand of the player
+/// @return - Return a vector of the players hand
+///
+vector<Card> Player::GetHand(){
+    return _hand;
+}
+
+//Functions 
+
+/// @brief AddCard used to add a card to the persons hand
+/// @param card - Card class that is the card the player is receiving
+///
+void Player::AddCard(Card card){
+    _hand.push_back(card);
+    return;
+}
+
+/// @brief Check score of current hand
+///
+int Player::CalculateScore(){
+    int total = 0;
+    //get the value of each card and add to score
+    for (Card c: _hand){
+        total += c.GetValue();
+    }
+    return total;
+}
+
+/// @brief Gets the number of cards in a players hand
+///
+int Player::NumCards(){
+    return _hand.size();
+}
+
+/// @brief The ToString used to print out the person class
+///
+string Player::ToString(){
+    string temp;
+    temp += "\nName: " + _name + "\nHand: {"; 
+    for (Card c: _hand){
+        temp += c.ToString() + ", ";
+    }
+    temp += " }\nStatus: " + Status + "\nThreshold: " + std::to_string(Threshold) + "\n";
+    return temp;
+}

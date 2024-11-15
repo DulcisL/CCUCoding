@@ -12,3 +12,11 @@ C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\dependencyInjection\obj\Debug\net
 C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.pdb
 C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.genruntimeconfig.cache
 C:\Users\dolce\OneDrive\Documents\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\ref\dependencyInjection.dll
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.AssemblyInfoInputs.cache
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.AssemblyInfo.cs
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.csproj.CoreCompileInputs.cache
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.sourcelink.json
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.dll
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\refint\dependencyInjection.dll
+C:\Users\dolce\OneDrive\Documents\Coastal\CSCI\CSCI350\dependencyInjection\obj\Debug\net8.0\dependencyInjection.pdb
