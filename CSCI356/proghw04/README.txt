@@ -20,3 +20,4 @@ Known errors or bugs / needed features:
     Need to reap child methods when exiting
     Formatting is messed up when printing
     Loop off by 1
+    Need to implement make for compiling
