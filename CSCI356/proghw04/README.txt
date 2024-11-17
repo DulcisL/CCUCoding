@@ -8,14 +8,13 @@ Description:
     There can be no tie at the end of the rounds and so a sudden death round may be needed
 
 How to run:
-    To run this project you will need to use Make version XX.XXX at a minimum.
+    This project was built using make 3.82
     To compile use:
-        'make --build build'
+        'make'
     Once compiled run using:
-        './build/War (#rounds)'
+        './war (#rounds)'
 
 Known errors or bugs / needed features:
     Formatting is messed up when printing
     Loop off by 1
-    Need to implement make for compiling
     Fails on runtime (indefinite runtime, gets stuck on socket creation)

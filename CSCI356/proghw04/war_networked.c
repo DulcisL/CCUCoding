@@ -12,6 +12,7 @@ Dr. Fuchs
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 // Function prototypes
 char* WarGames(int card1, int card2);
@@ -45,69 +46,72 @@ int main(int argc, char *argv[]) {
     int roundCount = 0, winCount1 = 0, winCount2 = 0, tieCount = 0;
     char result[25];
     struct sockaddr_un serv_addr;
-    int sockfd, c1, c2;
+    int sockfd, c1, c2, size, binded, listening;
     char* socket_path = "WarTournament";
     printf("Tournament has been initialized\n");
 
+    // Clear socket if existing still
+    if (unlink(socket_path) == -1 && errno != ENOENT) {
+        perror("Error removing old socket file");
+        exit(EXIT_FAILURE);
+    }
+    printf("Old socket file cleared if existed\n");
+    
     //Create Socket
     sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    printf("socket created");
 
     //Check if Socket was successful
     if (sockfd < 0){
-        perror("Socket error");
+        perror("Socket error\n");
+        unlink(socket_path);
         exit(EXIT_FAILURE);
     }
 
     // Set up socket
     serv_addr.sun_family = AF_UNIX;
     strcpy(serv_addr.sun_path, socket_path);
-    printf("socket path created");
+    printf("socket path created\n");
     //Clear socket
     unlink(socket_path);
-    printf("socket path cleared");
+    printf("socket path cleared\n");
 
     //Bind to server socket
-    if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
-        perror("Bind error occurred");
+    size = sizeof(serv_addr);
+    binded = bind(sockfd, (struct sockaddr *) &serv_addr, size);
+    if( binded < 0){
+        perror("Bind error occurred\n");
+        unlink(socket_path);
         exit(EXIT_FAILURE);
     }
-    printf("socket bound");
+    printf("socket bound %d\n", binded);
 
-    //Check for listenning
-    if(listen(sockfd, 1) < 0){
-        perror("Listen error");
+    //Check for listening
+    listening = listen(sockfd, 5);
+    if(listening < 0){
+        perror("Listen error\n");
+        unlink(socket_path);
         exit(EXIT_FAILURE);
     }
-    //Accept connection
-    c1 = accept(sockfd, NULL, NULL);
-    if(c1 < 0){
-        perror("Accept error");
-        exit(EXIT_FAILURE);
-    }
-    printf("Connection to contestant 1 is good\n");
-    c2 = accept(sockfd, NULL, NULL);
-    if(c2 < 0){
-        perror("Accept error");
-        exit(EXIT_FAILURE);
-    }
-    printf("Connection to contestant 2 is good\n");
+    printf("Socket is listening with backlog of 5, %d\n", listening);
+
+    // Allow server socket setup to finalize
+    printf("Server socket ready, forking children...\n");
+    sleep(1); 
 
     // Set up child processes
     CID1 = fork();
     //Check if fork was a success
     if (CID1 == -1) {
         perror("Fork Failed");
+        unlink(socket_path);
         exit(EXIT_FAILURE);
     }
     if (CID1 > 0) {
 
     }
     else {
-
         //Call childprocess
         ChildProcess(socket_path);
-        
         //Exit gracefully
         exit(0);
     }
@@ -116,6 +120,7 @@ int main(int argc, char *argv[]) {
     CID2 = fork();
     if (CID2 == -1) {
         perror("Fork Failed");
+        unlink(socket_path);
         exit(EXIT_FAILURE);
     }
     if (CID2 > 0) {
@@ -125,16 +130,36 @@ int main(int argc, char *argv[]) {
         ChildProcess(socket_path);
         exit(0);
     }
+
+    //Accept connection
+    c1 = accept(sockfd, NULL, NULL);
+    printf("%d\n", c1);
+    if(c1 < -1){
+        perror("Accept error\n");
+        unlink(socket_path);
+        exit(EXIT_FAILURE);
+    }
+    printf("Connection to contestant 1 is good\n");
+
+    //Repeat for connection 2
+    c2 = accept(sockfd, NULL, NULL);
+    printf("%d\n", c2);
+    if(c2 < -1){
+        perror("Accept error\n");
+        unlink(socket_path);
+        exit(EXIT_FAILURE);
+    }
+    printf("Connection to contestant 2 is good\n");
     
     while (roundCount < totalRounds && totalRounds != 0) {
     PlayRound(c1, &roundCount, &winCount1, &winCount2, &tieCount, CID1, CID2);
-}
+    }
 
-// Handle sudden death if there's a tie
-while (winCount1 == winCount2) {
-    printf("Welcome to sudden death\n");
-    PlayRound(c1, &roundCount, &winCount1, &winCount2, &tieCount, CID1, CID2);
-}
+    // Handle sudden death if there's a tie
+    while (winCount1 == winCount2) {
+        printf("Welcome to sudden death\n");
+        PlayRound(c1, &roundCount, &winCount1, &winCount2, &tieCount, CID1, CID2);
+    }
 
     //print overall winner
     printf("Tournament Results\n");
@@ -142,11 +167,12 @@ while (winCount1 == winCount2) {
     printf("Child 1 had %d wins, Child 2 had %d wins\n", winCount1, winCount2);
     printf("%s\n", WarGames(winCount1, winCount2));
 
-    // Kill Children processes
+    //Kill Children processes
     char* message = "EXIT";
     //Tell children to exit
     write(sockfd, message, strlen(message) + 1);
-    wait(NULL);
+
+    //close socket
     close(sockfd);
     unlink(socket_path);
     exit(EXIT_SUCCESS);
@@ -330,20 +356,20 @@ void ChildProcess(char* socket_path) {
     strcpy(s_addr.sun_path, socket_path);
 
     //Check connection to server
-    for (int i= 0; i < 5; i++){
-        connect_check = connect(sockfd, (struct sockaddr *) &s_addr, sizeof(s_addr));
-        if(connect_check < 0){
-            perror("Child connection unsuccessful");
-            usleep(1000);
-        }
-        else {
-            break;
-        }
+    for (int i = 0; i < 5; i++) {
+    connect_check = connect(sockfd, (struct sockaddr *) &s_addr, sizeof(s_addr));
+    if (connect_check == 0) {
+        printf("Child %d connected successfully\n", getpid());
+        break;
     }
-    if (connect_check == -1){
-        perror("Child unable to connect");
+    perror("Child connection unsuccessful, retrying...");
+    sleep(1);
+    }
+    if (connect_check != 0) {
+        perror("Child unable to connect after retries");
         exit(EXIT_FAILURE);
     }
+
 
     while (1) {
         int card = 0, suit = 0;
