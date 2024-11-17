@@ -40,7 +40,6 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error: The number of rounds must be a positive integer.\n");
         exit(EXIT_FAILURE);
     }
-    printf("-----Welcome to the War Tournament-----\n");
     // Initialize
     pid_t CID1, CID2;
     int roundCount = 0, winCount1 = 0, winCount2 = 0, tieCount = 0;
@@ -133,7 +132,6 @@ int main(int argc, char *argv[]) {
 
     //Accept connection
     c1 = accept(sockfd, NULL, NULL);
-    printf("%d\n", c1);
     if(c1 < -1){
         perror("Accept error\n");
         unlink(socket_path);
@@ -143,14 +141,13 @@ int main(int argc, char *argv[]) {
 
     //Repeat for connection 2
     c2 = accept(sockfd, NULL, NULL);
-    printf("%d\n", c2);
     if(c2 < -1){
         perror("Accept error\n");
         unlink(socket_path);
         exit(EXIT_FAILURE);
     }
     printf("Connection to contestant 2 is good\n");
-    
+    printf("\n-----Welcome to the War Tournament-----\n");
     while (roundCount < totalRounds && totalRounds != 0) {
     PlayRound(c1, &roundCount, &winCount1, &winCount2, &tieCount, CID1, CID2);
     }
@@ -164,7 +161,8 @@ int main(int argc, char *argv[]) {
     //print overall winner
     printf("Tournament Results\n");
     printf("------------------------------------------------\n\n");
-    printf("Child 1 had %d wins, Child 2 had %d wins\n", winCount1, winCount2);
+    printf("%d round(s) played\n", roundCount);
+    printf("Child 1 had %d wins, Child 2 had %d wins, Ties: %d\n", winCount1, winCount2, tieCount);
     printf("%s\n", WarGames(winCount1, winCount2));
 
     //Kill Children processes

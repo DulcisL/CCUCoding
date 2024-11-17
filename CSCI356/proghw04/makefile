@@ -14,4 +14,4 @@ $(TARGET): $(OBJS)
 
 # Clean rule to remove generated files
 clean:
-	rm -f $(TARGET) $(OBJS) *.logs *tmp *.s
+	rm -f $(TARGET) $(OBJS) *.logs *tmp

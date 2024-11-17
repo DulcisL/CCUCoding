@@ -14,7 +14,9 @@ How to run:
     Once compiled run using:
         './war (#rounds)'
 
-Known errors or bugs / needed features:
-    Formatting is messed up when printing
-    Loop off by 1
-    Fails on runtime (indefinite runtime, gets stuck on socket creation)
+Known errors or bugs:
+    No context given if errors occur
+    No error handling if program runs out of resources
+    No error handling if insufficient permissions when listening or binding
+    No error handling or checking for message being passed or recieved correctly / fragmented
+    Possible zombie processes children are not reaped
