@@ -8,15 +8,18 @@ Dr. Fuchs
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/wait.h>
 
 // Function prototypes
 char* WarGames(int card1, int card2);
 int CardSelection();
 int SuitSelection();
 char* ToString(int cardValue, int suitValue);
-void ChildProcess(int childToParent[], int parentToChild[]);
+void ChildProcess(char* socket_path);
+void PlayRound(int sockfd, int* roundCount, int* winCount1, int* winCount2, int* tieCount, pid_t CID1, pid_t CID2);
 
 /*
 main
@@ -36,19 +39,59 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error: The number of rounds must be a positive integer.\n");
         exit(EXIT_FAILURE);
     }
+    printf("-----Welcome to the War Tournament-----\n");
     // Initialize
     pid_t CID1, CID2;
     int roundCount = 0, winCount1 = 0, winCount2 = 0, tieCount = 0;
     char result[25];
+    struct sockaddr_un serv_addr;
+    int sockfd, c1, c2;
+    char* socket_path = "WarTournament";
+    printf("Tournament has been initialized\n");
 
-    // Set up Pipes
-    int parentToChild1[2], childToParent1[2], parentToChild2[2], childToParent2[2];
+    //Create Socket
+    sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
+    printf("socket created");
 
-    //Check if pipe was successful
-    if (pipe(parentToChild1) == -1 || pipe(childToParent1) == -1 || pipe(parentToChild2) == -1 || pipe(childToParent2) == -1) {
-        perror("pipe");
-        return 1;
+    //Check if Socket was successful
+    if (sockfd < 0){
+        perror("Socket error");
+        exit(EXIT_FAILURE);
     }
+
+    // Set up socket
+    serv_addr.sun_family = AF_UNIX;
+    strcpy(serv_addr.sun_path, socket_path);
+    printf("socket path created");
+    //Clear socket
+    unlink(socket_path);
+    printf("socket path cleared");
+
+    //Bind to server socket
+    if(bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0){
+        perror("Bind error occurred");
+        exit(EXIT_FAILURE);
+    }
+    printf("socket bound");
+
+    //Check for listenning
+    if(listen(sockfd, 1) < 0){
+        perror("Listen error");
+        exit(EXIT_FAILURE);
+    }
+    //Accept connection
+    c1 = accept(sockfd, NULL, NULL);
+    if(c1 < 0){
+        perror("Accept error");
+        exit(EXIT_FAILURE);
+    }
+    printf("Connection to contestant 1 is good\n");
+    c2 = accept(sockfd, NULL, NULL);
+    if(c2 < 0){
+        perror("Accept error");
+        exit(EXIT_FAILURE);
+    }
+    printf("Connection to contestant 2 is good\n");
 
     // Set up child processes
     CID1 = fork();
@@ -58,83 +101,41 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     if (CID1 > 0) {
-        //Set up child to parent messaging over network
-    } else {
-        //Set up parent to child messaging over network
+
+    }
+    else {
 
         //Call childprocess
-        ChildProcess(childToParent1, parentToChild1);
-        //Kill child process
-        kill(CID1);
+        ChildProcess(socket_path);
+        
         //Exit gracefully
         exit(0);
     }
 
-    //repeat above for child 2
-    
-
-    while (roundCount < totalRounds && totalRounds != 0) {
-        //set default values
-        int card1 = 0, card2 = 0, suit1 = 0, suit2 = 0;
-        char temp[25], temp2[25];
-    
-        //Reset the result
-        result[0] = '\0';
-        // Write to child to send card
-        char* message = "Get Card";
-        //Message childrent to get a card
-
-        // Read from child to get card
-        //Get message from children for card
-
-        //Convert to integer
-        card1 = atoi(temp);
-        card2 = atoi(temp2);
-
-        // Play game
-        strcpy(result, WarGames(card1, card2));
-
-        if (strcmp(result, "It is a tie") == 0) {
-            //Reset the strings to null
-            result[0] = '\0';
-            char temp[25], temp2[25];
-
-            //Ask for suit
-            char* message = "Suit Up";
-            //pass message to children for suit
-
-            //read from children suit
-            
-            //Convert to int
-            suit1 = atoi(temp);
-            suit2 = atoi(temp2);
-            //Call game logic
-            strcpy(result, WarGames(suit1, suit2));
-            
-        }
-        //print preround results
-        printf("Round %d Stats -> Child 1: %d win(s) Child 2: %d win(s) Ties: %d \n", roundCount + 1, winCount1, winCount2, tieCount);
-        
-        //check and store results
-        if (strcmp(result, "It is a tie\n") == 0){
-            tieCount +=1;
-        }
-        if (strcmp(result, "Child 1 wins\n") == 0){
-            winCount1 += 1;
-        }
-        if (strcmp(result, "Child 2 wins\n") == 0){
-            winCount2 += 1;
-        }
-        roundCount +=1;
-
-        //Print results
-        printf("------------------------------------------------\n\n");
-        printf("Child 1 (%d) submits %s \n", CID1, ToString(card1, suit1));
-        printf("Child 2 (%d) submits %s \n", CID2, ToString(card2, suit2));
-        printf("------------------------------------------------\n\n");
-        printf("%s \n", result);
-        printf("------------------------------------------------\n\n");
+    //Repeat above for child 2
+    CID2 = fork();
+    if (CID2 == -1) {
+        perror("Fork Failed");
+        exit(EXIT_FAILURE);
     }
+    if (CID2 > 0) {
+
+    }
+    else {
+        ChildProcess(socket_path);
+        exit(0);
+    }
+    
+    while (roundCount < totalRounds && totalRounds != 0) {
+    PlayRound(c1, &roundCount, &winCount1, &winCount2, &tieCount, CID1, CID2);
+}
+
+// Handle sudden death if there's a tie
+while (winCount1 == winCount2) {
+    printf("Welcome to sudden death\n");
+    PlayRound(c1, &roundCount, &winCount1, &winCount2, &tieCount, CID1, CID2);
+}
+
     //print overall winner
     printf("Tournament Results\n");
     printf("------------------------------------------------\n\n");
@@ -144,6 +145,11 @@ int main(int argc, char *argv[]) {
     // Kill Children processes
     char* message = "EXIT";
     //Tell children to exit
+    write(sockfd, message, strlen(message) + 1);
+    wait(NULL);
+    close(sockfd);
+    unlink(socket_path);
+    exit(EXIT_SUCCESS);
 }
 
 /*
@@ -163,6 +169,79 @@ char* WarGames(int card1, int card2) {
         return "It is a tie";
     }
     return "An error occurred";
+}
+/*
+PlayRound
+Desc -> Holds the logic of playing a round and determining the outcome
+Param -> int sockfd - socket connection
+Param -> int roundcount - the current round number
+Param -> int wincount1, wincount2 - the current wincounts of players
+Param -> int tiecount - the count of ties
+Param -> pid_t CID1, CID2, the child process ID's
+Returns -> nothing
+*/
+void PlayRound(int sockfd, int* roundCount, int* winCount1, int* winCount2, int* tieCount, pid_t CID1, pid_t CID2) {
+    char result[25], temp[25], temp2[25];
+    int card1 = 0, card2 = 0, suit1 = 0, suit2 = 0;
+
+    // Reset the result
+    result[0] = '\0';
+
+    // Message children to get a card
+    char* message = "Get Card";
+    write(sockfd, message, strlen(message) + 1);
+    read(sockfd, temp, sizeof(temp));
+
+    write(sockfd, message, strlen(message) + 1);
+    read(sockfd, temp2, sizeof(temp2));
+
+    // Convert card values to integers
+    card1 = atoi(temp);
+    card2 = atoi(temp2);
+
+    // Play game logic
+    strcpy(result, WarGames(card1, card2));
+
+    // Handle ties
+    if (strcmp(result, "It is a tie") == 0) {
+        // Ask for suits
+        result[0] = '\0';
+        message = "Suit Up";
+
+        write(sockfd, message, strlen(message) + 1);
+        read(sockfd, temp, sizeof(temp));
+
+        write(sockfd, message, strlen(message) + 1);
+        read(sockfd, temp2, sizeof(temp2));
+
+        suit1 = atoi(temp);
+        suit2 = atoi(temp2);
+
+        // Play game logic with suits
+        strcpy(result, WarGames(suit1, suit2));
+    }
+
+    // Print preround results
+    printf("Round %d Stats -> Child 1: %d win(s), Child 2: %d win(s), Ties: %d\n", *roundCount + 1, *winCount1, *winCount2, *tieCount);
+
+    // Update counts based on results
+    if (strcmp(result, "It is a tie") == 0) {
+        (*tieCount)++;
+    } else if (strcmp(result, "Child 1 wins") == 0) {
+        (*winCount1)++;
+    } else if (strcmp(result, "Child 2 wins") == 0) {
+        (*winCount2)++;
+    }
+
+    // Print results
+    printf("------------------------------------------------\n\n");
+    printf("Child 1 (%d) submits %s \n", CID1, ToString(card1, suit1));
+    printf("Child 2 (%d) submits %s \n", CID2, ToString(card2, suit2));
+    printf("------------------------------------------------\n\n");
+    printf("%s\n", result);
+    printf("------------------------------------------------\n\n");
+
+    (*roundCount)++;
 }
 
 /*
@@ -228,16 +307,48 @@ Desc -> The child process function
 Params -> childToParent, parentToChild - Pipes for communication
 Returns -> none
 */
-void ChildProcess(int childToParent[], int parentToChild[]) {
+void ChildProcess(char* socket_path) {
     //Initialize
     char message[25];
+    int connect_check;
+    struct sockaddr_un s_addr;
+    int sockfd, c;
+
     //seed using the child pid
     srand(getpid());
+
+    //Create Socket
+    sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
+
+    //Check if Socket was successful
+    if (sockfd < 0){
+        perror("Socket error child");
+    }
+
+    //Set up socket address
+    s_addr.sun_family = AF_UNIX;
+    strcpy(s_addr.sun_path, socket_path);
+
+    //Check connection to server
+    for (int i= 0; i < 5; i++){
+        connect_check = connect(sockfd, (struct sockaddr *) &s_addr, sizeof(s_addr));
+        if(connect_check < 0){
+            perror("Child connection unsuccessful");
+            usleep(1000);
+        }
+        else {
+            break;
+        }
+    }
+    if (connect_check == -1){
+        perror("Child unable to connect");
+        exit(EXIT_FAILURE);
+    }
 
     while (1) {
         int card = 0, suit = 0;
         //Read message
-        read(parentToChild[0], message, sizeof(message));
+        read(sockfd, message, sizeof(message));
 
         //Check Message
         if (strcmp(message, "Get Card") == 0) {
@@ -247,7 +358,7 @@ void ChildProcess(int childToParent[], int parentToChild[]) {
             //convert to string
             sprintf(cardStr, "%d", card);
             //return card
-            write(childToParent[1], cardStr, sizeof(cardStr));
+            write(sockfd, cardStr, strlen(cardStr) + 1);
             continue;
         }
         if (strcmp(message, "Suit Up") == 0) {
@@ -257,7 +368,7 @@ void ChildProcess(int childToParent[], int parentToChild[]) {
             //convert to string
             sprintf(suitStr, "%d", suit);
             //return suit
-            write(childToParent[1], suitStr, sizeof(suitStr));
+            write(sockfd, suitStr, strlen(suitStr) + 1);
             continue;
         }
         if (strcmp(message, "EXIT") == 0) {
@@ -265,4 +376,7 @@ void ChildProcess(int childToParent[], int parentToChild[]) {
             break;
         }
     }
+    close(sockfd);
+    unlink(socket_path);
+    exit(EXIT_SUCCESS);
 }

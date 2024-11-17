@@ -15,9 +15,7 @@ How to run:
         './build/War (#rounds)'
 
 Known errors or bugs / needed features:
-    Needs adapted from pipes to use pass over a network (localhost) rather than a pipe
-    Needs sudden death round if overall rounds result in a tie
-    Need to reap child methods when exiting
     Formatting is messed up when printing
     Loop off by 1
     Need to implement make for compiling
+    Fails on runtime (indefinite runtime, gets stuck on socket creation)
