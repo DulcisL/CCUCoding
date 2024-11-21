@@ -8,16 +8,15 @@ Description:
     There can be no tie at the end of the rounds and so a sudden death round may be needed
 
 How to run:
-    To run this project you will need to use Make version XX.XXX at a minimum.
+    This project was built using make 3.82
     To compile use:
-        'make --build build'
+        'make'
     Once compiled run using:
-        './build/War (#rounds)'
+        './war (#rounds)'
 
-Known errors or bugs / needed features:
-    Needs adapted from pipes to use pass over a network (localhost) rather than a pipe
-    Needs sudden death round if overall rounds result in a tie
-    Need to reap child methods when exiting
-    Formatting is messed up when printing
-    Loop off by 1
-    Need to implement make for compiling
+Known errors or bugs:
+    No context given if errors occur
+    No error handling if program runs out of resources
+    No error handling if insufficient permissions when listening or binding
+    No error handling or checking for message being passed or recieved correctly / fragmented
+    Possible zombie processes children are not reaped
