@@ -31,8 +31,8 @@ def getODE(eqn, initialCond, newCond, decimal = 2):
     ans = odesol.rhs
 
     #solve at new condition
-    mysol = round(ans.subs(t, newCond).evalf(), decimal)
-    return mysol
+    mysol = ans.subs(t, newCond).evalf()
+    return round(mysol, decimal)
 
 """
 Desc - This function is designed to solve the problem at Q1 of the lab
@@ -50,13 +50,13 @@ def Q1():
     #dQ/dt = 3*2 - (4*Q)/(500-t) = 6 - (4*Q)/(500-t)
 
     #At t=0 Q(0) = 500gal at 2% solution
-    initialCond = 500 * .2
-    #solve for t (-t + 500gal = 350gal) = 150
+    initialCond = 500 * .02
+    #solve for t (500-t = 350gal) = 150
     newCond = 150 
     #Set up equation
     Q = Function('Q')
     t = Symbol('t')
-    eqn = 6 - (4*Q(t))/(-t + 500)
+    eqn = 6 - (4 * Q(t)) / (500-t)
 
     #Get the solution
     print(f"{getODE(eqn, initialCond, newCond)} lbs of sugar")
@@ -75,18 +75,18 @@ def Q2():
     #dV/dt = 3gal/min - 2gal/min = t
     #dQ/dt = 3*1 - (2*Q)/(200+t) = 3 - (2*Q)/(200+t)
 
-    #At t=0 Q(0) = 200gal 2/ 100lbs
+    #At t=0 Q(0) = 200gal @ 100lbs
     initialCond = 100
     #solve for t (200 + t = 500gal) = 300
     newCond = 300 
     #Set up equation
     Q = Function('Q')
     t = Symbol('t')
-    eqn = 3 - (2*Q(t))/(200 + t)
+    eqn = 3 - ((2 * Q(t)) / (200 + t))
 
     #Get the solution
     print(f"{getODE(eqn, initialCond, newCond)} lbs of salt")
     return
-    
+
 Q1()
 Q2()

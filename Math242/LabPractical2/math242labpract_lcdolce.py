@@ -36,6 +36,33 @@ def RK4Method(h, X, Y, f):
     K4 =  f(X + h, Y + h*K3)
     #Return the value
     return Y + h/6 * (K1 + 2*K2 + 2*K3 + K4)
+
+"""
+desc - This function is designed to take in the ODE function and find the equation
+param - eqn, the original equation passed in
+param - initialCond, the initial value passed in
+param - newCond, the value you want to find Q at
+param - decimal, the number of decimal places to round to
+return - mysol, the solution at the new condition
+"""
+
+def getODE(eqn, initialCond, newCond, decimal = 2):
+    #Set up variables
+    Q = Function('Q')
+    t = Symbol('t')
+
+    #Get the ODE
+    der = Derivative(Q(t), t)
+    ode = Eq(der, eqn)
+
+    #Solve at initial condition
+    odesol = dsolve(ode, ics={Q(0): initialCond})
+    #Seperate the RHS of the eqn
+    ans = odesol.rhs
+
+    #solve at new condition
+    mysol = ans.subs(t, newCond).evalf()
+    return round(mysol, decimal)
     
 
 """Question 1a
@@ -66,23 +93,34 @@ param: int termWanted - the ith value the user expects
 return: int Fi - the number at sequence Fi
 """
 def quest1b(termWanted):
-    #initialize the loop
-    i = 2
-    #Set the initial two terms
-    term1 = 1
-    term2 = 1
+    #Initialize
+    n = termWanted
+    i = 0
     term = 0
-    while (i < termWanted):
-        #Get the next value
-        if (i % 2 == 0):
-            term1+=term2
-            term = term1
-        else:
-            term2 +=term1
-            term = term2
-        #increment the counter
-        i += 1
-    return term
+    previous = []
+    #Set up loop to break when i is greater than n
+    try: 
+        while i <= int(n):
+            #Get first term
+            if i == 0:
+                #Save to array
+                previous.append(0)
+                #Set the term
+                term = previous[i]
+            #Get second and third term
+            if i == 1 or i == 2:
+                previous.append(1)
+                term = previous[i]
+            #Get any other term
+            if i > 2:
+                previous.append(previous[i-1] + previous[i-2])
+                term = previous[i]
+            #increment i
+            i += 1
+        #Return term
+        return term
+    except Exception as e:
+        return e
 
 """Question 2
 desc: 2.13 (a) Approximate the solution of the following IVP using RK4 method by creating a function. Round
@@ -128,7 +166,7 @@ def quest2():
     YValues1[0] = YValues2[0] = exactYValues[0] = Yo
     
     #Part A
-    print(f"For 2a the result is {RK4Method(h1, Xo, Yo, Yp1)}\n")
+    print(f"For 2a the result using the RK4 method is {round(RK4Method(h1, Xo, Yo, Yp1),6)}\n")
 
     #Part B
     #Get the Y values at X
@@ -147,8 +185,6 @@ def quest2():
     plt.grid(True)
     plt.show()
 
-
-
 """ Question 3
 desc: A tank initially contains 400 gal of water with 2% sugar dissolved. A sugar-water solution containing 4
 lb of sugar per gal enters the tank at a rate of 3 gal per minute and simultaneously a drain is opened at
@@ -161,36 +197,89 @@ param: none
 return: none
 """
 def quest3():
-    pass
+    """
+    dV/dt = 3 - 4 = -1
+    equation: dQ/dt = 3*4 - 4*q/(400-t)
+    f(0) = 400 * .2
+    t = 400-360 = 40
+    f(40) = ?
+    """
+    #Set up the function
+    def f(X, Y):
+        return 12 - ((4 * Y) / (400 - X))
+    
+    #Initialize
+    a = 0
+    b = 40
+    hE = .1
+    hR = .2
+    QE = QR = initialCond = 400 *.2
+    newCond = 40
+    
+    #Estimate
+    #Set up loop
+    t = a
+    while t < b:
+        QE = EulersMethod(hE, t, QE, f)
+        t += hE
+    
+    #Reset for RK4 Method
+    t = a
+    while t < b:
+        QR = RK4Method(hR, t, QR, f)
+        t += hR
+
+    #Eulers Method
+    print(f"The Eulers estimation for the IVP Tank problem is {round(QE, 2)}")
+
+    #RK4 Method
+    print(f"The RK4 estimation for the IVP Tank problem is {round(QR, 2)}")
+
+
+    #Exact
+    #Set up equation
+    Q = Function('Q')
+    t = Symbol('t')
+    eqn = 12 - ((4 * Q(t)) / (400 - t))
+
+    #Get the solution
+    print(f"{getODE(eqn, initialCond, newCond)} lbs of sugar")
+    return
 
 #Call functions and get answers
-
-i = 50 #Get from console
-value = 85 #Get from console
-print("-----------------------------------------------")
+print("\n-----------------------------------------------\n")
 #Error check values for valid input
 while True:
-    grade = quest1a(value)
-    #If function returns a -1 it's not a valid input
-    if grade == -1:
-        print("Not a valid grade\n")
-        value = 65 #Get new value from console
+    try:
+        value = int(input("What grade do you want to know the letter value for? \n"))
+        grade = quest1a(value)
+        #If function returns a -1 it's not a valid input
+        if grade == -1:
+            print("Not a valid grade\n")
+            continue
+        #If all is good print the grade
+        else:
+            print(f"The letter grade is a(n) {grade}\n")
+            break
+    except Exception as e:
+        print(e)
         continue
-    #If all is good print the grade
-    else:
-        print(f"The letter grade is a(n) {grade}\n")
-        break
-    #Error check i for valid input
+
+#Error check i for valid input
 while True:
-    #Check if the number is above zero and the input is an integer
-    if i <=0 or i.is_integer() == False:
-        print("Not a valid number\n")
-        i = 7 #Get a new number from the console
+    try:
+        i = int(input("What term of the fibonacci sequence do you want? \n"))
+        #Check if the number is above zero
+        if i <=0:
+            print("Not a valid number\n")
+            continue
+        #Otherwise run the function for the number at Fi
+        else:
+            print(f"The number at F{i} is {round(quest1b(i),6)}\n")
+            break
+    except Exception as e:
+        print(e)
         continue
-    #Otherwise run the function for the number at Fi
-    else:
-        print(f"The number at F{i} is {round(quest1b(i),6)}\n")
-        break
 
 quest2()
 quest3()
