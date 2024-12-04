@@ -1,0 +1,15 @@
+Date        Hours   Focus
+11/06/2024  4       Map / story Development
+11/13/2024  1       Starter code setup
+11/19/2024  1       Worked on Node set up
+12/1/2024   3       Finished Node set up, created assets, created monsters, 
+                        changed random generation of items and monsters
+12/2/2024   3       Worked on map and game, attempted adding to github
+12/3/2024   8       Added Comments for Doxygen, worked on md file and README,
+                        worked on transferring code to the AdventureMap. 
+                        Continued working on generating nodes with assets and 
+                        monsters. Worked on adding asset to a players inventory
+12/4/2024   5       Completed takeAsset and inpectAsset functions. Created a 
+                        test class for Player class. Worked on UML Diagrams of
+                        map and classes. Added Doxygen to project and completed 
+                        git source control.
