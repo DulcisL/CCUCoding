@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>280</x>
+      <y>10</y>
+      <w>210</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>Asset
+--
+Attributes:
+- _name: string
+- _message: string
+- _value: int
+- _isOffensive: bool
++ hasBeenUsed: bool
+--
+Functions:
++ GetName()
++ GetMessage()
++ GetValue()
++ isOffensive()
+	
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>660</x>
+      <y>10</y>
+      <w>210</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Combatant&gt;&gt;
+--
+Attributes:
+~ name: string
+~ health: int
+~ fightCoefficient: int
+--
+Functions:
++ Fight()
++ GetName()
++ GetHealth()
++ GetFightCoefficient()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>770</x>
+      <y>240</y>
+      <w>210</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>Monster
+--
+Attributes:
+
+--
+Functions:
+* not implemented</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1020</x>
+      <y>10</y>
+      <w>210</w>
+      <h>340</h>
+    </coordinates>
+    <panel_attributes>Node
+--
+Attributes:
+- _id: int
+- _name: string
+- _connections: vector&lt;Node&gt;
+- _assets: vector&lt;Asset&gt;
+- _monsters:vector&lt;Monster&gt;
++ Description:string
+--
+Functions:
++ GetId()
++ SetID()
++ GetName()
++ AddConnection()
++ GetConnections()
++ GetAConnection()
++ AddAsset()
++ GetAssets()
++ AddMonster()
++ GetMonsters()
++ RemoveAsset()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>240</y>
+      <w>210</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>Player
+--
+Attributes:
+- _assets: vector&lt;Asset&gt;
+
+--
+Functions:
++ AddAsset()
++ GetAssets()
++ GetTotalAssetValue()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>210</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>Adventure Game Map
+--
+Attributes:
+- _locations: vector&lt;Node&gt;
+
+--
+Functions:
+- buildMapNodes()
++ GetLocations()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>610</x>
+      <y>180</y>
+      <w>70</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>860</x>
+      <y>180</y>
+      <w>30</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+</diagram>

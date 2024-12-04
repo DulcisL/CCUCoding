@@ -1,0 +1,16 @@
+/*! \mainpage C++ Chants Adventure Text Based game
+ *
+ * \section intro_sec Introduction
+ *
+ * This is a text based game 
+ *
+ * \section install_sec Installation
+ *
+ * To compile and run you will need g++, cmake, and googletest install.<br>
+ * From a terminal window in the root directory create a directory called build. Then at a terminal<br>
+ * window, type: cmake -S . -B build<br>
+ * Then to compile: cmake --build build<br>
+ * The blackjack binary should at: build/app/ChantsAdventure<br>
+ * The unit tests binary should at: build/tests/adventuretests<br>
+ *
+ */
