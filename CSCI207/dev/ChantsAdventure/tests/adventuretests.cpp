@@ -1,11 +1,9 @@
 /**
  * @file Player.cpp
- * @author Dave Blair (dblair@seafoamtechnologies.com)
- * @brief This is a Unit Test Fixture to the Card class
+ * @author Lakota Dolce
+ * @brief This is a Unit Test Fixture to the Player class
  * @version 0.1
- * @date 2024-09-25
- *
- * @copyright Copyright (c) 2024 Seafoam Technologies
+ * @date 2024-11-06
  *
  */
 #include <gtest/gtest.h>
