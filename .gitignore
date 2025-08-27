@@ -21,5 +21,10 @@ mod0/
 
 #Ignore markdowns
 *.[md]
+
+#Ignore .zip files
+*.[zip]
+*.[7zip]
+
 #Ignore temp files
 *~
