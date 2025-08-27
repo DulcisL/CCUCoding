@@ -26,5 +26,8 @@ mod0/
 *.[zip]
 *.[7zip]
 
+#Ignore Zone identifiers
+*.[Identifier]
+
 #Ignore temp files
 *~
