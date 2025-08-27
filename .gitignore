@@ -31,3 +31,4 @@ mod0/
 
 #Ignore temp files
 *~
+*.zip
