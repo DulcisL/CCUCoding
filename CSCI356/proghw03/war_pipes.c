@@ -4,186 +4,126 @@ ProgHW03 - war_pipes.c
 October 10, 2024
 Dr. Fuchs
 */
+
+//Included libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <sys/types.h>
-#include <unistd.h>
 
-// Function prototypes
-char* WarGames(int card1, int card2);
-int CardSelection();
-int SuitSelection();
-char* ToString(int cardValue, int suitValue);
-void ChildProcess(int childToParent[], int parentToChild[]);
+//Included files
+
+//Function prototypes
+char* WarGames;
+int CardSelection;
+int SuitSelction;
+char* ToString;
+void Pipes;
+char* PassMessage;
+
 
 /*
 main
 Desc -> main function of the program used to complete basic tasks and call other functions
-Params -> int totalRounds - the desired number of rounds in the tournament
-Returns -> int for success or failure
+Params -> none
+Returns -> int for success
 */
-int main(int argc, char *argv[]) {
-    //if no total rounds supplied abort
-    if (argc < 2){
-        fprintf(stderr, "No argument given %s\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-    int totalRounds = atoi(argv[1]);
-    if (totalRounds <= 0) {
-        fprintf(stderr, "Error: The number of rounds must be a positive integer.\n");
-        exit(EXIT_FAILURE);
-    }
-    // Initialize
-    pid_t CID1, CID2;
-    int roundCount = 0, winCount1 = 0, winCount2 = 0, tieCount = 0;
-    char result[25];
+int main (){
+    //Initialize
+    //Set up child processes
+    //Seperate child processes by 1 second
+    //Set up Pipes
+    //Play game
 
-    // Set up Pipes
-    int parentToChild1[2], childToParent1[2], parentToChild2[2], childToParent2[2];
-
-    //Check if pipe was successful
-    if (pipe(parentToChild1) == -1 || pipe(childToParent1) == -1 || pipe(parentToChild2) == -1 || pipe(childToParent2) == -1) {
-        perror("pipe");
-        return 1;
-    }
-
-    // Set up child processes
-    CID1 = fork();
-    //Check if fork was a success
-    if (CID1 == -1) {
-        perror("Fork Failed");
-        exit(EXIT_FAILURE);
-    }
-    if (CID1 > 0) {
-        close(parentToChild1[0]);  // Parent write only
-        close(childToParent1[1]);  // Child read only
-    } else {
-        close(parentToChild1[1]);  // Parent write only
-        close(childToParent1[0]);  // Child read only
-        //Call childprocess
-        ChildProcess(childToParent1, parentToChild1);
-        //Kill process
-        exit(0);
-    }
-
-    //repeat above for child 2
-    CID2 = fork();
-    if (CID2 == -1) {
-        perror("Fork Failed");
-        exit(EXIT_FAILURE);
-    }
-    if (CID2 > 0) {
-        close(parentToChild2[0]);
-        close(childToParent2[1]);
-    } else {
-        close(parentToChild2[1]);
-        close(childToParent2[0]);
-        ChildProcess(childToParent2, parentToChild2);
-        exit(0);
-    }
-
-    while (roundCount <= totalRounds && totalRounds != 0) {
-        //set default values
-        int card1 = 0, card2 = 0, suit1 = 0, suit2 = 0;
-        char temp[25], temp2[25];
-    
-        //Reset the result
-        result[0] = '\0';
-        // Write to child to send card
-        char* message = "Get Card";
-        write(parentToChild1[1], message, strlen(message) + 1);
-        write(parentToChild2[1], message, strlen(message) + 1);
-
-        // Read from child to get card
-        read(childToParent1[0], temp, sizeof(temp));
-        card1 = atoi(temp);
-        read(childToParent2[0], temp2, sizeof(temp2));
-        card2 = atoi(temp2);
-
-        // Play game
-        strcpy(result, WarGames(card1, card2));
-
-        if (strcmp(result, "It is a tie") == 0) {
-            //Reset the strings to null
-            result[0] = '\0';
-            char temp[25], temp2[25];
-
-            //Ask for suit
-            char* message = "Suit Up";
-            write(parentToChild1[1], message, strlen(message) + 1);
-            write(parentToChild2[1], message, strlen(message) + 1);
-            //Get suit
-            read(childToParent1[0], temp, sizeof(temp));
-            //Convert to int
-            suit1 = atoi(temp);
-            read(childToParent2[0], temp2, sizeof(temp2));
-            suit2 = atoi(temp2);
-            //Call game logic
-            strcpy(result, WarGames(suit1, suit2));
-            
-        }
-        //print preround results
-        printf("Round %d Stats -> Child 1: %d wins Child 2: %d wins Ties: %d \n", roundCount + 1, winCount1, winCount2, tieCount);
-        
-        //check and store results
-        if (strcmp(result, "It is a tie") == 0){
-            tieCount +=1;
-        }
-        if (strcmp(result, "Child 1 wins") == 0){
-            winCount1 += 1;
-        }
-        if (strcmp(result, "Child 2 wins") == 0){
-            winCount2 += 1;
-        }
-        roundCount +=1;
-
-        //Print results
-        printf("------------------------------------------------\n\n");
-        printf("Child 1 (%d) submits %s \n", CID1, ToString(card1, suit1));
-        printf("Child 2 (%d) submits %s \n", CID2, ToString(card2, suit2));
-        printf("------------------------------------------------\n\n");
-        printf("%s \n", result);
-        printf("------------------------------------------------\n\n");
-    }
-    //print overall winner
-    printf("Child 1 had %d wins, Child 2 had %d wins\n",winCount1, winCount2);
-    printf("The grand winner is %s \n", WarGames(winCount1, winCount2));
-
-    // Kill Children processes
-    char* message = "EXIT";
-    write(parentToChild1[1], message, strlen(message) + 1);
-    write(parentToChild2[1], message, strlen(message) + 1);
 }
 
 /*
 WarGames
 Desc -> Contains the code to play war
-Params -> card1 , card2: Holds the value of the card
+Params -> CID1, CID2: Hold the child IDs 
 Returns -> string result: result of who won
 */
-char* WarGames(int card1, int card2) {
-    if (card1 > card2) {
-        return "Child 1 wins";
+char* WarGames (int CID1, int CID2){
+    //Initialize
+    char result[15];
+    int card1 = PassMessage("New Card", CID1);
+    int card2 = PassMessage("New Card", CID2);
+    int suit1 = 0;
+    int suit2 = 0;
+    
+    while (1){
+        //print out the cards
+        printf("Child1 submits %s **** Child2 submits %s",ToString(card1, suit1), ToString(card2, suit2));
+
+        //Game logic
+        if (card1 > card2){
+            strcat(result, "Child1 wins\n");
+            break;
+        }
+        if (card2 > card1){
+            strcat(result, "Child2 wins\n");
+            break;
+        }
+        if (card1 == card2){
+            //ask for a suit
+            int suit1 = PassMessage("suit up", CID1);
+            int suit2 = PassMessage("suit up", CID2);
+
+            if (suit1 > suit2){
+                strcat(result, "Child1 wins\n");
+                break;
+            }
+            if (suit2 > suit1){
+                strcat(result, "Child2 wins\n");
+                break;
+            }
+            if (suit1 == suit2){
+                //Get new cards
+                card1 = PassMessage("New Card", CID1);
+                card2 = PassMessage("New Card", CID2);
+                continue;
+            }
+        }
+
     }
-    if (card1 < card2) {
-        return "Child 2 wins";
-    }
-    if (card1 == card2){
-        return "It is a tie";
-    }
-    return "An error occurred";
+    
+
+    return result;
 }
 
 /*
 CardSelection
-Desc -> Randomly selects a card between value 2 and 14
+Desc -> Randomly selects a card between value 1 and 14
 Params -> None
-Returns -> int cardValue: The value of the card 2-14
+Returns -> int cardValue: The value of the card 1-14
 */
-int CardSelection() {
-    return (rand() % 13) + 2;  // Generate a card between 2 and 14
+int CardSelection(){
+    //Initialize
+    int cardValue;
+    int timeNow;
+
+    //Make sure that it is not the same time as previously
+    timeNow = time(NULL);
+    while ((timeNow + 2) > time(NULL)){
+        continue;
+    }
+
+    //seed random generator with time pointer
+    srand(time(NULL));
+
+    //Get card value
+    while (1){
+        cardValue = rand() %14;
+        //Check value is within 2 and 14
+        if (cardValue >= 2 && cardValue <= 14){
+            break;
+        }
+        //else reroll number
+        continue;
+    }
+    
+    //return value
+    return cardValue;
 }
 
 /*
@@ -192,88 +132,94 @@ Desc -> Randomly selects a suit between value 1 and 4
 Params -> None
 Returns -> in suitValue: The value of the suit 1-4
 */
-int SuitSelection() {
-    return (rand() % 4) + 1;  // Generate a suit between 1 and 4
+int SuitSelection(){
+    //Initialize
+    int suitValue;
+    int timeNow;
+
+    //Make sure that it is not the same time as previously
+    timeNow = time(NULL);
+    while ((timeNow + 2) > time(NULL)){
+        continue;
+    }
+
+    //seed random generator with time pointer
+    srand(time(NULL));
+
+    //Get card value
+    while (1){
+        suitValue = rand() %4;
+        //Check value is within 1 and 4
+        if (suitValue >= 1 && suitValue <= 4){
+            break;
+        }
+        //else reroll number
+        continue;
+    }
+    
+    //return value
+    return suitValue;
 }
 
 /*
 ToString
 Desc -> Prints Out the card in a readable format
 Params -> cardValue, suitValue: Holds the values for the card and suit
-Returns -> char* cardRead: Contains the desc of the card
+Returns -> char* stringedCard: Contains the desc of the card
 */
-char* ToString(int cardValue, int suitValue) {
-    //initialize
-    static char cardRead[30];
-    //error check
-    if (cardValue != 0){
-        if (cardValue > 10) {
-        switch (cardValue) {
-            //Royals
-            case 11: strcpy(cardRead, "Jack"); break;
-            case 12: strcpy(cardRead, "Queen"); break;
-            case 13: strcpy(cardRead, "King"); break;
-            case 14: strcpy(cardRead, "Ace"); break;
-            }
+ToString(int cardValue, int suitValue){
+    //Initialize
+    char cardRead[30];
+    
+    //check if value is greater than 10 for royals
+    if (cardValue > 10){
+        switch (cardValue){
+            case 11: strcat(cardRead, "Jack");
+            case 12: strcat(cardRead, "Queen");
+            case 13: strcat(cardRead, "King");
+            case 14: strcat(cardRead, "Ace");
         }
-        else {
-            //Otherwise use face value
-            sprintf(cardRead, "%d", cardValue);
-        }
+
     }
-    if (suitValue != 0) {
-        //Spades beats hearts which beats diamonds which beats clubs
-        switch (suitValue) {
-            case 1: strcat(cardRead, " of Clubs"); break;
-            case 2: strcat(cardRead, " of Diamonds"); break;
-            case 3: strcat(cardRead, " of Hearts"); break;
-            case 4: strcat(cardRead, " of Spades"); break;
-        }
+    if (cardValue <= 10) {
+        //set to the face value
+        strcat(cardRead, cardValue);
     }
-    return cardRead;
+    //check if suitValue exists
+    if (suitValue == 0){
+        //if not return the card
+        return cardRead;
+    }
+    //If suit value then return card
+    if (suitValue !=0){
+        switch (suitValue){
+            //order of suits in terms of power (based on game bridge)
+            case 1: strcat(cardRead, "Clubs");
+            case 2: strcat(cardRead, "Diamonds");
+            case 3: strcat(cardRead, "Hearts");
+            case 4: strcat(cardRead, "Spades");
+        }
+        return cardRead;
+    }
 }
 
 /*
-ChildProcess
-Desc -> The child process function
-Params -> childToParent, parentToChild - Pipes for communication
-Returns -> none
+Pipe
+Desc -> The basic pipe structure for message passing
+Params ->
+Returns ->
 */
-void ChildProcess(int childToParent[], int parentToChild[]) {
-    //Initialize
-    char message[25];
-    //seed using the child pid
-    srand(getpid());
+void Pipe(){
 
-    while (1) {
-        int card = 0, suit = 0;
-        //Read message
-        read(parentToChild[0], message, sizeof(message));
+}
 
-        //Check Message
-        if (strcmp(message, "Get Card") == 0) {
-            //get card
-            card = CardSelection();
-            char cardStr[10];
-            //convert to string
-            sprintf(cardStr, "%d", card);
-            //return card
-            write(childToParent[1], cardStr, sizeof(cardStr));
-            continue;
-        }
-        if (strcmp(message, "Suit Up") == 0) {
-            //Get suit
-            suit = SuitSelection();
-            char suitStr[10];
-            //convert to string
-            sprintf(suitStr, "%d", suit);
-            //return suit
-            write(childToParent[1], suitStr, sizeof(suitStr));
-            continue;
-        }
-        if (strcmp(message, "EXIT") == 0) {
-            //break loop to let process finish and kill it
-            break;
-        }
-    }
+/*
+PassMessage
+Desc -> Takes a message and sends to appropriate person
+Param -> char* message: Holds the message to be passed
+Param -> int CID: the child ID to be messaged
+Returns -> char* response: the response of the child
+*/
+char* PassMessage(char* message, int CID){
+
 }

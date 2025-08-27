@@ -1,0 +1,161 @@
+% --- Image01 Bands 1-12 ---
+image01B1 = imread("Project4Images\Image01\Image01B1.tiff");
+image01B2 = imread("Project4Images\Image01\Image01B2.tiff");
+image01B3 = imread("Project4Images\Image01\Image01B3.tiff");
+image01B4 = imread("Project4Images\Image01\Image01B4.tiff");
+image01B5 = imread("Project4Images\Image01\Image01B5.tiff");
+image01B6 = imread("Project4Images\Image01\Image01B6.tiff");
+image01B7 = imread("Project4Images\Image01\Image01B7.tiff");
+image01B8 = imread("Project4Images\Image01\Image01B8.tiff");
+image01B9 = imread("Project4Images\Image01\Image01B9.tiff");
+image01B10 = imread("Project4Images\Image01\Image01B10.tiff");
+image01B11 = imread("Project4Images\Image01\Image01B11.tiff");
+image01B12 = imread("Project4Images\Image01\Image01B12.tiff");
+
+% --- Image02 Bands 1-12 ---
+image02B1 = imread("Project4Images\Image02\Image02B1.tiff");
+image02B2 = imread("Project4Images\Image02\Image02B2.tiff");
+image02B3 = imread("Project4Images\Image02\Image02B3.tiff");
+image02B4 = imread("Project4Images\Image02\Image02B4.tiff");
+image02B5 = imread("Project4Images\Image02\Image02B5.tiff");
+image02B6 = imread("Project4Images\Image02\Image02B6.tiff");
+image02B7 = imread("Project4Images\Image02\Image02B7.tiff");
+image02B8 = imread("Project4Images\Image02\Image02B8.tiff");
+image02B9 = imread("Project4Images\Image02\Image02B9.tiff");
+image02B10 = imread("Project4Images\Image02\Image02B10.tiff");
+image02B11 = imread("Project4Images\Image02\Image02B11.tiff");
+image02B12 = imread("Project4Images\Image02\Image02B12.tiff");
+
+% --- Image03 Bands 1-12 ---
+
+image03B1 = imread("Project4Images\Image03\Image03B1.tiff");
+image03B2 = imread("Project4Images\Image03\Image03B2.tiff");
+image03B3 = imread("Project4Images\Image03\Image03B3.tiff");
+image03B4 = imread("Project4Images\Image03\Image03B4.tiff");
+image03B5 = imread("Project4Images\Image03\Image03B5.tiff");
+image03B6 = imread("Project4Images\Image03\Image03B6.tiff");
+image03B7 = imread("Project4Images\Image03\Image03B7.tiff");
+image03B8 = imread("Project4Images\Image03\Image03B8.tiff");
+image03B9 = imread("Project4Images\Image03\Image03B9.tiff");
+image03B10 = imread("Project4Images\Image03\Image03B10.tiff");
+image03B11 = imread("Project4Images\Image03\Image03B11.tiff");
+image03B12 = imread("Project4Images\Image03\Image03B12.tiff");
+
+% --- Image04 Bands 1-12 ---
+
+image04B1 = imread("Project4Images\Image04\Image04B1.tiff");
+image04B2 = imread("Project4Images\Image04\Image04B2.tiff");
+image04B3 = imread("Project4Images\Image04\Image04B3.tiff");
+image04B4 = imread("Project4Images\Image04\Image04B4.tiff");
+image04B5 = imread("Project4Images\Image04\Image04B5.tiff");
+image04B6 = imread("Project4Images\Image04\Image04B6.tiff");
+image04B7 = imread("Project4Images\Image04\Image04B7.tiff");
+image04B8 = imread("Project4Images\Image04\Image04B8.tiff");
+image04B9 = imread("Project4Images\Image04\Image04B9.tiff");
+image04B10 = imread("Project4Images\Image04\Image04B10.tiff");
+image04B11 = imread("Project4Images\Image04\Image04B11.tiff");
+image04B12 = imread("Project4Images\Image04\Image04B12.tiff");
+
+% --- Image05 Bands 1-12 ---
+
+image05B1 = imread("Project4Images\Image05\Image05B1.tiff");
+image05B2 = imread("Project4Images\Image05\Image05B2.tiff");
+image05B3 = imread("Project4Images\Image05\Image05B3.tiff");
+image05B4 = imread("Project4Images\Image05\Image05B4.tiff");
+image05B5 = imread("Project4Images\Image05\Image05B5.tiff");
+image05B6 = imread("Project4Images\Image05\Image05B6.tiff");
+image05B7 = imread("Project4Images\Image05\Image05B7.tiff");
+image05B8 = imread("Project4Images\Image05\Image05B8.tiff");
+image05B9 = imread("Project4Images\Image05\Image05B9.tiff");
+image05B10 = imread("Project4Images\Image05\Image05B10.tiff");
+image05B11 = imread("Project4Images\Image05\Image05B11.tiff");
+image05B12 = imread("Project4Images\Image05\Image05B12.tiff");
+
+% --- Image06 Bands 1-12 ---
+
+image06B1 = imread("Project4Images\Image06\Image06B1.tiff");
+image06B2 = imread("Project4Images\Image06\Image06B2.tiff");
+image06B3 = imread("Project4Images\Image06\Image06B3.tiff");
+image06B4 = imread("Project4Images\Image06\Image06B4.tiff");
+image06B5 = imread("Project4Images\Image06\Image06B5.tiff");
+image06B6 = imread("Project4Images\Image06\Image06B6.tiff");
+image06B7 = imread("Project4Images\Image06\Image06B7.tiff");
+image06B8 = imread("Project4Images\Image06\Image06B8.tiff");
+image06B9 = imread("Project4Images\Image06\Image06B9.tiff");
+image06B10 = imread("Project4Images\Image06\Image06B10.tiff");
+image06B11 = imread("Project4Images\Image06\Image06B11.tiff");
+image06B12 = imread("Project4Images\Image06\Image06B12.tiff");
+
+% --- Image07 Bands 1-12 ---
+
+image07B1 = imread("Project4Images\Image07\Image07B1.tiff");
+image07B2 = imread("Project4Images\Image07\Image07B2.tiff");
+image07B3 = imread("Project4Images\Image07\Image07B3.tiff");
+image07B4 = imread("Project4Images\Image07\Image07B4.tiff");
+image07B5 = imread("Project4Images\Image07\Image07B5.tiff");
+image07B6 = imread("Project4Images\Image07\Image07B6.tiff");
+image07B7 = imread("Project4Images\Image07\Image07B7.tiff");
+image07B8 = imread("Project4Images\Image07\Image07B8.tiff");
+image07B9 = imread("Project4Images\Image07\Image07B9.tiff");
+image07B10 = imread("Project4Images\Image07\Image07B10.tiff");
+image07B11 = imread("Project4Images\Image07\Image07B11.tiff");
+image07B12 = imread("Project4Images\Image07\Image07B12.tiff");
+
+% --- Image08 Bands 1-12 ---
+
+image08B1 = imread("Project4Images\Image08\Image08B1.tiff");
+image08B2 = imread("Project4Images\Image08\Image08B2.tiff");
+image08B3 = imread("Project4Images\Image08\Image08B3.tiff");
+image08B4 = imread("Project4Images\Image08\Image08B4.tiff");
+image08B5 = imread("Project4Images\Image08\Image08B5.tiff");
+image08B6 = imread("Project4Images\Image08\Image08B6.tiff");
+image08B7 = imread("Project4Images\Image08\Image08B7.tiff");
+image08B8 = imread("Project4Images\Image08\Image08B8.tiff");
+image08B9 = imread("Project4Images\Image08\Image08B9.tiff");
+image08B10 = imread("Project4Images\Image08\Image08B10.tiff");
+image08B11 = imread("Project4Images\Image08\Image08B11.tiff");
+image08B12 = imread("Project4Images\Image08\Image08B12.tiff");
+
+
+%---------------------------------------------------------------
+images = {
+    image01B1, image01B2, image01B3, image01B4, image01B5, image01B6, ...
+    image01B7, image01B8, image01B9, image01B10, image01B11, image01B12, ...
+    image02B1, image02B2, image02B3, image02B4, image02B5, image02B6, ...
+    image02B7, image02B8, image02B9, image02B10, image02B11, image02B12, ...
+    image03B1, image03B2, image03B3, image03B4, image03B5, image03B6, ...
+    image03B7, image03B8, image03B9, image03B10, image03B11, image03B12, ...
+    image04B1, image04B2, image04B3, image04B4, image04B5, image04B6, ...
+    image04B7, image04B8, image04B9, image04B10, image04B11, image04B12, ...
+    image05B1, image05B2, image05B3, image05B4, image05B5, image05B6, ...
+    image05B7, image05B8, image05B9, image05B10, image05B11, image05B12, ...
+    image06B1, image06B2, image06B3, image06B4, image06B5, image06B6, ...
+    image06B7, image06B8, image06B9, image06B10, image06B11, image06B12, ...
+    image07B1, image07B2, image07B3, image07B4, image07B5, image07B6, ...
+    image07B7, image07B8, image07B9, image07B10, image07B11, image07B12, ...
+    image08B1, image08B2, image08B3, image08B4, image08B5, image08B6, ...
+    image08B7, image08B8, image08B9, image08B10, image08B11, image08B12
+};
+
+% images = {
+%     image01B1, image01B2, image02B1, image02B2, image03B1, image03B2,image04B1, image04B2, image05B1, image05B2, image06B1, image06B2, image07B1, image07B2,image08B1, image08B2,};
+
+numImages = numel(images);
+for i = 1:numImages
+    imgData = images{i};  % Get from cell array
+
+    f = imgData(:,:,1);   % Image layer
+    m = imgData(:,:,2);   % Mask layer
+
+    [BW, C] = Project4_38(f, m);
+
+    subplot(3, 1, 1);
+    imshow(f);
+
+    subplot(3, 1, 2);
+    imshow(BW);
+
+    subplot(3, 1, 3);
+    imshow(C);
+    pause(1);
+end

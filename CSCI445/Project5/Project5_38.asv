@@ -1,0 +1,506 @@
+% Project5_38
+
+% *Note* Q1 and Q4 seemed to have the best results. Possibly use Q1 to
+% alter contrast of images to be similar then apply Q4 of PCA and kmeans /
+% superpixels to get the best result. Use imclose / imopen / fill functions
+% to reduce noise.
+
+% Bring images into workplace
+% --- Image01 Bands 1-12 ---
+                 
+image01B1  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image01B2  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image01B3  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image01B4  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image01B5  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image01B6  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image01B7  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image01B8  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image01B9  = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image01B10 = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image01B11 = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image01B12 = imread("2025-01-02-00_00_2025-01-02-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+% --- Image02 Bands 1-12 ---
+image02B1  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image02B2  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image02B3  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image02B4  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image02B5  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image02B6  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image02B7  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image02B8  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image02B9  = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image02B10 = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image02B11 = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image02B12 = imread("2025-01-04-00_00_2025-01-04-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+% --- Image03 Bands 1-12 ---
+image03B1  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image03B2  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image03B3  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image03B4  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image03B5  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image03B6  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image03B7  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image03B8  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image03B9  = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image03B10 = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image03B11 = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image03B12 = imread("2025-01-09-00_00_2025-01-09-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+% --- Image04 Bands 1-12 ---
+image04B1  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image04B2  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image04B3  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image04B4  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image04B5  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image04B6  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image04B7  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image04B8  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image04B9  = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image04B10 = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image04B11 = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image04B12 = imread("2025-01-12-00_00_2025-01-12-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+% --- Image05 Bands 1-12 ---
+image05B1  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image05B2  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image05B3  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image05B4  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image05B5  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image05B6  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image05B7  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image05B8  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image05B9  = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image05B10 = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image05B11 = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image05B12 = imread("2025-01-14-00_00_2025-01-14-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+
+% --- Image06 Bands 1-12 ---
+image06B1  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image06B2  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image06B3  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image06B4  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image06B5  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image06B6  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image06B7  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image06B8  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image06B9  = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image06B10 = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image06B11 = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image06B12 = imread("2025-01-17-00_00_2025-01-17-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+
+% --- Image07 Bands 1-12 ---
+image07B1  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image07B2  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image07B3  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image07B4  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image07B5  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image07B6  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image07B7  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image07B8  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image07B9  = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image07B10 = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image07B11 = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image07B12 = imread("2025-01-22-00_00_2025-01-22-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+
+% --- Image08 Bands 1-12 ---
+image08B1  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B01_(Raw).tiff");
+image08B2  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B02_(Raw).tiff");
+image08B3  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B03_(Raw).tiff");
+image08B4  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B04_(Raw).tiff");
+image08B5  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B05_(Raw).tiff");
+image08B6  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B06_(Raw).tiff");
+image08B7  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B07_(Raw).tiff");
+image08B8  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B08_(Raw).tiff");
+image08B9  = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B8a_(Raw).tiff");
+image08B10 = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B09_(Raw).tiff");
+image08B11 = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B11_(Raw).tiff");
+image08B12 = imread("2025-01-29-00_00_2025-01-29-23_59_Sentinel-2_L2A_B12_(Raw).tiff");
+
+
+
+% Separate the mask from the image
+mask1 = image01B1(:,:,2);
+mask2 = image02B1(:,:,2);
+
+%Create a "true mask" where images overlap
+mask = imbinarize(imcomplement(mask1 .* mask2));
+
+% ----------Image01------------------
+image01B1 = image01B1(:, :, 1);
+image01B2 = image01B2(:, :, 1);
+image01B3 = image01B3(:, :, 1);
+image01B4 = image01B4(:, :, 1);
+image01B5 = image01B5(:, :, 1);
+image01B6 = image01B6(:, :, 1);
+image01B7 = image01B7(:, :, 1);
+image01B8 = image01B8(:, :, 1);
+image01B9 = image01B9(:, :, 1);
+image01B10 = image01B10(:, :, 1);
+image01B11 = image01B11(:, :, 1);
+image01B12 = image01B12(:, :, 1);
+
+% ----------Image02------------------
+
+image02B1 = image02B1(:, :, 1);
+image02B2 = image02B2(:, :, 1);
+image02B3 = image02B3(:, :, 1);
+image02B4 = image02B4(:, :, 1);
+image02B5 = image02B5(:, :, 1);
+image02B6 = image02B6(:, :, 1);
+image02B7 = image02B7(:, :, 1);
+image02B8 = image02B8(:, :, 1);
+image02B9 = image02B9(:, :, 1);
+image02B10 = image02B10(:, :, 1);
+image02B11 = image02B11(:, :, 1);
+image02B12 = image02B12(:, :, 1);
+
+% ----------Image03------------------
+
+image03B1 = image03B1(:, :, 1);
+image03B2 = image03B2(:, :, 1);
+image03B3 = image03B3(:, :, 1);
+image03B4 = image03B4(:, :, 1);
+image03B5 = image03B5(:, :, 1);
+image03B6 = image03B6(:, :, 1);
+image03B7 = image03B7(:, :, 1);
+image03B8 = image03B8(:, :, 1);
+image03B9 = image03B9(:, :, 1);
+image03B10 = image03B10(:, :, 1);
+image03B11 = image03B11(:, :, 1);
+image03B12 = image03B12(:, :, 1);
+
+% ----------Image04------------------
+
+image04B1 = image04B1(:, :, 1);
+image04B2 = image04B2(:, :, 1);
+image04B3 = image04B3(:, :, 1);
+image04B4 = image04B4(:, :, 1);
+image04B5 = image04B5(:, :, 1);
+image04B6 = image04B6(:, :, 1);
+image04B7 = image04B7(:, :, 1);
+image04B8 = image04B8(:, :, 1);
+image04B9 = image04B9(:, :, 1);
+image04B10 = image04B10(:, :, 1);
+image04B11 = image04B11(:, :, 1);
+image04B12 = image04B12(:, :, 1);
+
+% ----------Image05------------------
+
+image05B1 = image05B1(:, :, 1);
+image05B2 = image05B2(:, :, 1);
+image05B3 = image05B3(:, :, 1);
+image05B4 = image05B4(:, :, 1);
+image05B5 = image05B5(:, :, 1);
+image05B6 = image05B6(:, :, 1);
+image05B7 = image05B7(:, :, 1);
+image05B8 = image05B8(:, :, 1);
+image05B9 = image05B9(:, :, 1);
+image05B10 = image05B10(:, :, 1);
+image05B11 = image05B11(:, :, 1);
+image05B12 = image05B12(:, :, 1);
+
+% ----------Image06------------------
+
+image06B1 = image06B1(:, :, 1);
+image06B2 = image06B2(:, :, 1);
+image06B3 = image06B3(:, :, 1);
+image06B4 = image06B4(:, :, 1);
+image06B5 = image06B5(:, :, 1);
+image06B6 = image06B6(:, :, 1);
+image06B7 = image06B7(:, :, 1);
+image06B8 = image06B8(:, :, 1);
+image06B9 = image06B9(:, :, 1);
+image06B10 = image06B10(:, :, 1);
+image06B11 = image06B11(:, :, 1);
+image06B12 = image06B12(:, :, 1);
+
+% ----------Image07------------------
+
+image07B1 = image07B1(:, :, 1);
+image07B2 = image07B2(:, :, 1);
+image07B3 = image07B3(:, :, 1);
+image07B4 = image07B4(:, :, 1);
+image07B5 = image07B5(:, :, 1);
+image07B6 = image07B6(:, :, 1);
+image07B7 = image07B7(:, :, 1);
+image07B8 = image07B8(:, :, 1);
+image07B9 = image07B9(:, :, 1);
+image07B10 = image07B10(:, :, 1);
+image07B11 = image07B11(:, :, 1);
+image07B12 = image07B12(:, :, 1);
+
+% ----------Image08------------------
+
+image08B1 = image08B1(:, :, 1);
+image08B2 = image08B2(:, :, 1);
+image08B3 = image08B3(:, :, 1);
+image08B4 = image08B4(:, :, 1);
+image08B5 = image08B5(:, :, 1);
+image08B6 = image08B6(:, :, 1);
+image08B7 = image08B7(:, :, 1);
+image08B8 = image08B8(:, :, 1);
+image08B9 = image08B9(:, :, 1);
+image08B10 = image08B10(:, :, 1);
+image08B11 = image08B11(:, :, 1);
+image08B12 = image08B12(:, :, 1);
+
+% Combine all 12 bands into a single 12 layer image
+image01 = cat(12,image01B1, image01B2, image01B3, image01B4, image01B5, ...
+    image01B6, image01B7, image01B8, image01B9, image01B10, image01B11, ...
+    image01B12);
+image02 = cat(12,image02B1, image02B2, image02B3, image02B4, image02B5, ...
+    image02B6, image02B7, image02B8, image02B9, image02B10, image02B11, ...
+    image02B12);
+image03 = cat(12,image03B1, image03B2, image03B3, image03B4, image03B5, ...
+    image03B6, image03B7, image03B8, image03B9, image03B10, image03B11, ...
+    image03B12);
+image04 = cat(12,image04B1, image04B2, image04B3, image04B4, image04B5, ...
+    image04B6, image04B7, image04B8, image04B9, image04B10, image04B11, ...
+    image04B12);
+image05 = cat(12,image05B1, image05B2, image05B3, image05B4, image05B5, ...
+    image05B6, image05B7, image05B8, image05B9, image05B10, image05B11, ...
+    image05B12);
+image06 = cat(12,image06B1, image06B2, image06B3, image06B4, image06B5, ...
+    image06B6, image06B7, image06B8, image06B9, image06B10, image06B11, ...
+    image06B12);
+image07 = cat(12,image07B1, image07B2, image07B3, image07B4, image07B5, ...
+    image07B6, image07B7, image07B8, image07B9, image07B10, image07B11, ...
+    image07B12);
+image08 = cat(12,image08B1, image08B2, image08B3, image08B4, image08B5, ...
+    image08B6, image08B7, image08B8, image08B9, image08B10, image08B11, ...
+    image08B12);
+
+% Normalize Images
+image01 = im2double(image01);
+image02 = im2double(image02);
+image03 = im2double(image03);
+image04 = im2double(image04);
+image05 = im2double(image05);
+image06 = im2double(image06);
+image07 = im2double(image07);
+image08 = im2double(image08);
+
+% Image 1 is the left side and image 2 is right side of whole image
+% Images should be combined so both sides of image are present
+
+% apply mask to even numbered images to prevent adding the same region 2x
+% to whole image
+
+
+% ----------Image02------------------
+for i=1:12
+    image02(:,:,i) = image02(:,:,i) .* mask;
+end
+
+% ----------Image04------------------
+for i=1:12
+    image04(:,:,i) = image04(:,:,i) .* mask;
+end
+
+% ----------Image06------------------
+for i=1:12
+    image06(:,:,i) = image06(:,:,i) .* mask;
+end
+
+% ----------Image08------------------
+for i=1:12
+    image08(:,:,i) = image08(:,:,i) .* mask;
+end
+
+
+% Initiate combinedImage
+combinedImage = image01;
+
+% Combine image01 & image02
+for i=1:12
+    combinedLayer = image01(:,:,i) + image02(:,:,i);
+    combinedImage(:,:,i) = combinedLayer;
+end
+combined01 = combinedImage;
+
+% Combine image03 & image04
+for i=1:12
+    combinedLayer = image03(:,:,i) + image04(:,:,i);
+    combinedImage(:,:,i) = combinedLayer;
+end
+combined02 = combinedImage;
+
+% Combine image05 & image06
+for i=1:12
+    combinedLayer = image05(:,:,i) + image06(:,:,i);
+    combinedImage(:,:,i) = combinedLayer;
+end
+combined03 = combinedImage;
+
+% Combine image07 & image08
+for i=1:12
+    combinedLayer = image07(:,:,i) + image08(:,:,i);
+    combinedImage(:,:,i) = combinedLayer;
+end
+combined04 = combinedImage;
+
+%-----------------------------------------------------------------------
+% Image Preprocessing
+
+% Create uniform contrast using band 08 as the histogram for equalization
+
+% ----------Combined01------------------
+for i=1:12
+
+    % Get histogram of band 8
+    hist = imhist(combined01(:,:,8));
+
+    % Match histogram
+    combined01(:,:,i) = histeq(combined01(:,:,i), hist);
+
+end
+
+% ----------Combined02------------------
+for i=1:12
+
+    % Get histogram of band 8
+    hist = imhist(combined02(:,:,8));
+
+    % Match histogram
+    combined02(:,:,i) = histeq(combined02(:,:,i), hist);
+
+end
+
+% ----------Combined03------------------
+for i=1:12
+
+    % Get histogram of band 8
+    hist = imhist(combined03(:,:,8));
+
+    % Match histogram
+    combined03(:,:,i) = histeq(combined03(:,:,i), hist);
+
+end
+
+% ----------Combined04------------------
+for i=1:12
+
+    % Get histogram of band 8
+    hist = imhist(combined04(:,:,8));
+
+    % Match histogram
+    combined04(:,:,i) = histeq(combined04(:,:,i), hist);
+
+end
+
+% Periodic noise introduced in histogram equalization
+%notchreject 
+
+
+% Filter out any noise such as waves or clouds
+
+% ----------Combined01------------------
+for i = 1:12
+    % Threshold out all bright particles and move to median
+    % Isolate the image
+    imagei = combined01(:,:,i);
+
+    % Get the mean intensity value
+    meanInten = mean(imagei(:));
+
+    % Set the threshold
+    thresh = meanInten + .1;
+
+    % Identify pixels over mean intensity
+    f = imagei > thresh;
+
+    % Change to mean intensity
+    imagei(f) = meanInten;
+
+    % Apply changes to the original
+    combined01(:,:,i) = imagei;
+
+end
+
+% ----------Combined01------------------
+for i = 1:12
+    % Threshold out all bright particles and move to median
+    % Isolate the image
+    imagei = combined02(:,:,i);
+
+    % Get the mean intensity value
+    meanInten = mean(imagei(:));
+
+    % Set the threshold
+    thresh = meanInten + .1;
+
+    % Identify pixels over mean intensity
+    f = imagei > thresh;
+
+    % Change to mean intensity
+    imagei(f) = meanInten;
+
+    % Apply changes to the original
+    combined02(:,:,i) = imagei;
+
+end
+
+% ----------Combined03------------------
+for i = 1:12
+    % Threshold out all bright particles and move to median
+    % Isolate the image
+    imagei = combined03(:,:,i);
+
+    % Get the mean intensity value
+    meanInten = mean(imagei(:));
+
+    % Set the threshold
+    thresh = meanInten + .1;
+
+    % Identify pixels over mean intensity
+    f = imagei > thresh;
+
+    % Change to mean intensity
+    imagei(f) = meanInten;
+
+    % Apply changes to the original
+    combined03(:,:,i) = imagei;
+
+end
+
+% ----------Combined04------------------
+for i = 1:12
+    % Threshold out all bright particles and move to median
+    % Isolate the image
+    imagei = combined04(:,:,i);
+
+    % Get the mean intensity value
+    meanInten = mean(imagei(:));
+
+    % Set the threshold
+    thresh = meanInten + .1;
+
+    % Identify pixels over mean intensity
+    f = imagei > thresh;
+
+    % Change to mean intensity
+    imagei(f) = meanInten;
+
+    % Apply changes to the original
+    combined04(:,:,i) = imagei;
+
+end
+
+
+%-----------------------------------------------------------------------
+% Process the image to get the desired result
+
+
+%-----------------------------------------------------------------------
+% Image Postprocessing 
+
+% Further reduce any noise in the image
+
+% Show final result as BW image with land being white
+imshow(combined01(:,:,1));

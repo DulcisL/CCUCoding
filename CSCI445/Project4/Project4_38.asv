@@ -1,0 +1,87 @@
+function [BW, C] = Project4_38(f, m)
+%Project4 Function
+%   This function is designed to take in an image and mask and return a
+%   Black & White logical image highlighting land as Foreground(white) and
+%   the water in Black, and a Color image with the land shoreline
+%   outlined in green. Only using material covered in quarter 4.
+% input -> f - The image
+% input -> mask - The mask of f for invalid areas
+% output <- BW - A black and white logical image
+% output <- C - A RGB color image
+
+%Normalize the images
+f = im2double(f);
+mask = imbinarize(m);
+
+[m,n,c] = size(f);
+
+%**NOTE** ----ISSUES----
+%   Image intensity is too low recognizes water as the principal component
+%   bands 1 and 2 specifically have a hard time due to lack of contrast and
+%   very low intensity values
+%       -Texture analysis - too inaccurate and smoothness of images in
+%       lower bands led to bad results
+%   Images with reflective waves and clouds / noisy
+%   images
+%       -Thresholding helped a little but not enough to get rid problems
+
+%Threshold image to get rid of bright outliers (Clouds, reflective waves)
+w = f .* (f < .45);
+
+%Smooth the image using a loop that applies kmeans and superpixels
+%gradually to keep as much detail and accuracy
+land = w;
+NS = floor(m*n * .25);
+
+while NS > 15000
+    [~, ~, land] = Exercise4a(land, 2, NS);
+    land = imbinarize(land);
+    
+    NS = floor(NS / 4);
+end
+
+%Use principal components to identify land from the water
+X = reshape(land, [], 1);
+P = principalComponents(X, 1);
+pc1 = reshape(P.Y(:,1), m, n);
+pc1 = mat2gray(pc1);
+
+%apply the mask
+BW = imbinarize(pc1) .* mask;
+
+%Clean up noise
+[~,~,BW2] = Exercise4a(BW, 2, 1500);
+
+%Binarize the image for chain code
+BW2 = imbinarize(BW2);
+
+%Chain code to outline shoreline
+%pad to prevent going out of bounds
+paddedBW = padarray(BW2, [1 1], 0);
+
+% 8-connected neighbor shifts
+up = paddedBW(1:end-2, 2:end-1);
+down = paddedBW(3:end,   2:end-1);
+left = paddedBW(2:end-1, 1:end-2);
+right = paddedBW(2:end-1, 3:end);
+
+upLeft = paddedBW(1:end-2, 1:end-2);
+upRight = paddedBW(1:end-2, 3:end);
+downLeft = paddedBW(3:end,   1:end-2);
+downRight= paddedBW(3:end,   3:end);
+
+center = BW2;
+
+% outline shoreline
+neighborWater = ~up | ~down | ~left | ~right | ~upLeft | ~upRight | ~downLeft | ~downRight;
+edgeMap = center & neighborWater;
+edgeMap = edgeMap .* mask;
+
+% Create RGB image for overlay
+C = cat(3, f, f, f);
+
+% Overlay shoreline in green
+C(:,:,2) = C(:,:,2) + edgeMap;
+C = im2double(C);
+
+end
