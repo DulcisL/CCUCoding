@@ -57,6 +57,7 @@ window.onload = function init() {
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
+    //(renderStyle, index, #elements)
     gl.drawArrays(gl.LINE_STRIP, 0, 4);
     gl.drawArrays(gl.LINE_STRIP, 4, 4);
 }
