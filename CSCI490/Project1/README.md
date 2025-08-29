@@ -21,4 +21,4 @@
 >   `sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`
 
 >### Notes
-> * If running the environment in a container extra steps may be required and will be tailored to your own system and container.
+> * If running the environment in a container extra steps may be required and will be tailored to your own system.

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web App</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root { --pad: 24px; --max: 800px; }
+    html, body { height: 100%; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      margin: 0 auto;
+      padding: var(--pad);
+      max-width: var(--max);
+      line-height: 1.5;
+    }
+    code, pre { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 6px; }
+    pre { padding: 1rem; overflow: auto; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>It works 🎉</h1>
+  <p>This static page is served from <code>/public/index.html</code> via an Express server running in Docker.</p>
+  <p class="muted">Health check from <code>/api/health</code>:</p>
+  <pre id="health">Loading...</pre>
+
+  <script>
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('health').textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById('health').textContent = 'Failed: ' + err;
+      });
+  </script>
+</body>
+</html>
