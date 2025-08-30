@@ -1,9 +1,10 @@
 <!doctype html>
+<! This document is the html front end for the prototype of the user case described in the ../src/main.js file >
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Web App</title>
+  <title>Campus Parking Status</title>
   <link rel="icon" href="data:,">
   <style>
     :root { --pad: 24px; --max: 800px; }
@@ -18,23 +19,70 @@
     code, pre { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 6px; }
     pre { padding: 1rem; overflow: auto; }
     .muted { color: #666; }
+
+    /* Style the canvas over the image */
+    #canvasWrapper {
+      position: relative;
+      width: 500px;
+      height: 500px;
+    }
+
+    #imageCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2; /* Canvas will be on top of the image */
+    }
+
+    #campusImage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1; /* Image is below the canvas */
+    }
   </style>
 </head>
 <body>
-  <h1>It works 🎉</h1>
-  <p>This static page is served from <code>/public/index.html</code> via an Express server running in Docker.</p>
-  <p class="muted">Health check from <code>/api/health</code>:</p>
-  <pre id="health">Loading...</pre>
+    <h2>Campus Map Parking Status</h2>
 
-  <script>
-    fetch('/api/health')
-      .then(r => r.json())
-      .then(data => {
-        document.getElementById('health').textContent = JSON.stringify(data, null, 2);
-      })
-      .catch(err => {
-        document.getElementById('health').textContent = 'Failed: ' + err;
-      });
-  </script>
+    <!-- Wrapper for image and canvas -->
+    <div id="canvasWrapper">
+        <!-- Image that will be overlaid with canvas -->
+        <img src="../img/campus.jpg" alt="Campus Map" id="campusImage" width="500">
+
+        <!-- Canvas for drawing over the image -->
+        <canvas id="imageCanvas" width="500" height="500"></canvas>
+    </div>
+
+    <script src="../src/main.js"></script>
+    <script>
+      window.onload = function() {
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Load the image
+        const img = new Image();
+        img.src = '/img/campus.jpg';  // The path to your image
+
+        img.onload = function() {
+            // Draw the image on the canvas first
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Define the box parameters (x, y, width, height)
+            const boxes = [
+                { x: 100, y: 100, width: 150, height: 100, color: 'rgba(255, 0, 0, 0.5)' },  // Red semi-transparent box
+                { x: 200, y: 200, width: 150, height: 100, color: 'rgba(0, 255, 0, 0.5)' },  // Green semi-transparent box
+                { x: 300, y: 50, width: 150, height: 100, color: 'rgba(0, 0, 255, 0.5)' }   // Blue semi-transparent box
+            ];
+
+            // Loop through the box parameters and draw them
+            boxes.forEach(box => {
+                ctx.fillStyle = box.color;  // Set the fill color (with opacity)
+                ctx.fillRect(box.x, box.y, box.width, box.height);  // Draw the rectangle
+            });
+        }
+      };
+    </script>
 </body>
 </html>
+

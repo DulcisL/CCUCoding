@@ -22,11 +22,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve static files
+// Serve static files from 'public' folder
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
 
-// SPA fallback / default to index.html
+// Serve images directly from the 'img' folder (located at the root)
+app.use('/img', express.static(path.join(__dirname, '..', 'img')));
+
+// SPA fallback / default to index.html for any route not found
 app.get('*', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
 });
