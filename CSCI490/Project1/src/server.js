@@ -28,6 +28,9 @@ app.use(express.static(publicDir));
 
 // Serve images directly from the 'img' folder (located at the root)
 app.use('/img', express.static(path.join(__dirname, '..', 'img')));
+// Serve /src for client-side scripts
+app.use('/src', express.static(path.join(__dirname, '..', 'src')));
+
 
 // SPA fallback / default to index.html for any route not found
 app.get('*', (req, res) => {
