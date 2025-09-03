@@ -14,17 +14,16 @@ const imageUrl = "/img/campus.jpg";
 
 // Array of rectangle overlays; each has x, y, width, height, color [R,G,B, Opacity]
 const lotBoxes = [
- 
+
   { x: 439, y: 480, w: 210, h: 130, color: [1, 0, 0, 0.4] },    // Red (KK)
   { x: 570, y: 305, w: 100, h: 90, color: [0, 0.25, 0, 0.4] },  // Dark Green (GG)
   { x: 174, y: 512, w: 150, h: 90, color: [1, 1, 0, 0.3] },     // Yellow (OO)
 ];
 
- 
+
 // Vertex/Fragment shaders (image pass)
 // - Draws the image as a textured quad
-// - Inputs/outputs use camelCase identifiers
-    
+
 // Vertex shader for the textured image
 const vsTex = `
 attribute vec2 aPosition;    // vertex position in pixels
@@ -55,9 +54,7 @@ void main() {
 }
 `;
 
- 
 // Vertex/Fragment shaders (rectangle pass)
-// - Draws solid color quads with alpha blending 
 
 // Vertex shader for colored rectangles
 const vsRect = `
@@ -82,8 +79,7 @@ void main() {
 
 
 // Compile shaders
-// - type: gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
-    
+
 function createShader(gl, type, source) {
   // Create shader object
   const shader = gl.createShader(type);
@@ -102,7 +98,7 @@ function createShader(gl, type, source) {
 
 
 // Link a program from vertex/fragment shaders
-    
+
 function createProgram(gl, vertexSrc, fragmentSrc) {
   // Compile vertex shader
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSrc);
@@ -123,9 +119,9 @@ function createProgram(gl, vertexSrc, fragmentSrc) {
   // Return linked program
   return program;
 }
-    
+
 // Upload an HTMLImageElement as a WebGL texture
-    
+
 function loadTexture(gl, imageElement) {
   // Create texture object
   const texture = gl.createTexture();
@@ -138,16 +134,16 @@ function loadTexture(gl, imageElement) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   // Upload pixels from the image
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageElement);
-  // Return the WebGL texture handle
+  // Return the WebGL
   return texture;
 }
-    
-// Main IIFE: bootstraps WebGL, draws image and boxes
-    
+
+// Draw image and boxes
+
 (async function main() {
   // Get the target canvas
   const canvas = document.getElementById("glcanvas");
-  // Acquire WebGL1 context
+  // Acquire WebGL context
   const gl = canvas.getContext("webgl");
 
   // Abort if WebGL not available
@@ -182,10 +178,8 @@ function loadTexture(gl, imageElement) {
   // Create program to draw the rectangles
   const programRect = createProgram(gl, vsRect, fsRect);
 
-    
-  // Build geometry buffers for the full image
-  // (two triangles covering the entire canvas)
-    
+
+  // Build geometry buffers for the full image (two triangles covering the entire canvas)
 
   // Create position buffer for the image quad
   const positionBufferImage = gl.createBuffer();
@@ -197,8 +191,8 @@ function loadTexture(gl, imageElement) {
 
   // Two-triangle rectangle (6 verts) covering the whole image
   const imagePositions = new Float32Array([
-    xStartImg, yStartImg,  xEndImg,  yStartImg,  xStartImg, yEndImg,
-    xStartImg, yEndImg,    xEndImg,  yStartImg,  xEndImg,   yEndImg,
+    xStartImg, yStartImg, xEndImg, yStartImg, xStartImg, yEndImg,
+    xStartImg, yEndImg, xEndImg, yStartImg, xEndImg, yEndImg,
   ]);
   // Upload vertex positions
   gl.bufferData(gl.ARRAY_BUFFER, imagePositions, gl.STATIC_DRAW);
@@ -209,16 +203,16 @@ function loadTexture(gl, imageElement) {
 
   // Standard UVs covering the texture
   const texCoords = new Float32Array([
-    0, 0,   1, 0,   0, 1,
-    0, 1,   1, 0,   1, 1,
+    0, 0, 1, 0, 0, 1,
+    0, 1, 1, 0, 1, 1,
   ]);
   // Upload UVs
   gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
 
-  // Upload the image to a WebGL texture
+  // Upload the image
   const imageTexture = loadTexture(gl, imageElement);
 
-    
+
   // Draw pass 1: Image
 
   // Clear canvas (transparent)
@@ -230,7 +224,7 @@ function loadTexture(gl, imageElement) {
 
   // Look up attribute/uniform locations for the image program
   const aPositionTex = gl.getAttribLocation(programTexture, "aPosition");
-  const aTexCoord    = gl.getAttribLocation(programTexture, "aTexCoord");
+  const aTexCoord = gl.getAttribLocation(programTexture, "aTexCoord");
   const uResolutionTex = gl.getUniformLocation(programTexture, "uResolution");
   const uImage = gl.getUniformLocation(programTexture, "uImage");
 
@@ -242,12 +236,12 @@ function loadTexture(gl, imageElement) {
   gl.enableVertexAttribArray(aPositionTex);
   gl.vertexAttribPointer(aPositionTex, 2, gl.FLOAT, false, 0, 0);
 
-  // Enable   and point to texcoord buffer
+  // Enable and point to texcoord buffer
   gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
   gl.enableVertexAttribArray(aTexCoord);
   gl.vertexAttribPointer(aTexCoord, 2, gl.FLOAT, false, 0, 0);
 
-  // Bind texture unit 0 and assign sampler uniform
+  // Bind texture unit and assign sampler uniform
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, imageTexture);
   gl.uniform1i(uImage, 0);
@@ -255,9 +249,8 @@ function loadTexture(gl, imageElement) {
   // Draw the two triangles (6 vertices)
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-    
+
   // Draw pass 2: Rectangles (with alpha blend)
-    
 
   // Enable alpha blending for translucent boxes
   gl.enable(gl.BLEND);
@@ -267,9 +260,9 @@ function loadTexture(gl, imageElement) {
   gl.useProgram(programRect);
 
   // Look up attribute/uniform locations for rectangle program
-  const aPositionRect    = gl.getAttribLocation(programRect, "aPosition");
-  const uResolutionRect  = gl.getUniformLocation(programRect, "uResolution");
-  const uColor           = gl.getUniformLocation(programRect, "uColor");
+  const aPositionRect = gl.getAttribLocation(programRect, "aPosition");
+  const uResolutionRect = gl.getUniformLocation(programRect, "uResolution");
+  const uColor = gl.getUniformLocation(programRect, "uColor");
 
   // Set canvas resolution uniform for rect program
   gl.uniform2f(uResolutionRect, canvas.width, canvas.height);
@@ -283,13 +276,13 @@ function loadTexture(gl, imageElement) {
   // For each rectangle spec in lotBoxes, upload and draw
   lotBoxes.forEach(({ x, y, w, h, color }) => {
     // Compute corners in pixel space
-    const x0 = x,     y0 = y;
+    const x0 = x, y0 = y;
     const x1 = x + w, y1 = y + h;
 
     // Two-triangle rectangle (6 verts) for this box
     const rectVerts = new Float32Array([
-      x0, y0,  x1, y0,  x0, y1,
-      x0, y1,  x1, y0,  x1, y1,
+      x0, y0, x1, y0, x0, y1,
+      x0, y1, x1, y0, x1, y1,
     ]);
 
     // Upload rectangle vertices (dynamic since it changes per box)

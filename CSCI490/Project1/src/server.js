@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Simple API route
+//API route
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -22,11 +22,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve static files from 'public' folder
+// Serve static files
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
 
-// Serve images directly from the 'img' folder (located at the root)
+// Serve images directly from the img folder
 app.use('/img', express.static(path.join(__dirname, '..', 'img')));
 // Serve /src for client-side scripts
 app.use('/src', express.static(path.join(__dirname, '..', 'src')));
