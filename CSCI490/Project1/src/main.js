@@ -4,20 +4,22 @@
         lot to easily judge the parking across campus. An example would be a map with green, yellow, or red
         overlayed over the parking lots on campus."
         
-        Image courtesy of https://x.com/CCUHousing/status/1039140856673054725
+        Image courtesy of maps.google.com
 
         How: This uses webGL to render the boxes over the image of campus.
 */
 
 // URL to the image
-const imageUrl = "/img/campus.jpg";
+const imageUrl = "/img/campus.png";
 
 // Array of rectangle overlays; each has x, y, width, height, color [R,G,B, Opacity]
 const lotBoxes = [
 
-  { x: 439, y: 480, w: 210, h: 130, color: [1, 0, 0, 0.4] },    // Red (KK)
-  { x: 570, y: 305, w: 100, h: 90, color: [0, 0.25, 0, 0.4] },  // Dark Green (GG)
-  { x: 174, y: 512, w: 150, h: 90, color: [1, 1, 0, 0.3] },     // Yellow (OO)
+  { x: 684, y: 870, w: 310, h: 170, color: [1, 0, 0, 0.4] },     // Red (KK)
+  { x: 867, y: 430, w: 280, h: 250, color: [0, 0.25, 0, 0.4] },  // Dark Green (GG)
+  { x: 211, y: 930, w: 220, h: 130, color: [1, 1, 0, 0.3] },     // Yellow (OO)
+  { x: 160, y: 360, w: 100, h: 100, color: [1, 0, 0, 0.3] },     // Red ()
+  { x: 1450, y: 400, w: 125, h: 100, color: [1, 0, 0, 0.3] },     // Red ()
 ];
 
 
