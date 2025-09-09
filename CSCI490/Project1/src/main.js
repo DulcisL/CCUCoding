@@ -18,13 +18,13 @@ const lotBoxes = [
   { x: 684, y: 870, w: 310, h: 170, color: [1, 0, 0, 0.4] },     // Red (KK)
   { x: 867, y: 430, w: 280, h: 250, color: [0, 0.25, 0, 0.4] },  // Dark Green (GG)
   { x: 211, y: 930, w: 220, h: 130, color: [1, 1, 0, 0.3] },     // Yellow (OO)
-  { x: 160, y: 360, w: 100, h: 100, color: [1, 0, 0, 0.3] },     // Red ()
-  { x: 1450, y: 400, w: 125, h: 100, color: [1, 0, 0, 0.3] },     // Red ()
+  { x: 160, y: 360, w: 100, h: 100, color: [1, 0, 0, 0.3] },     // Red (AA)
+  { x: 1450, y: 400, w: 125, h: 100, color: [1, 0, 0, 0.3] },     // Red (BBB)
 ];
 
 
 // Vertex/Fragment shaders (image pass)
-// - Draws the image as a textured quad
+// Draws the image as a textured quad
 
 // Vertex shader for the textured image
 const vsTex = `
@@ -213,7 +213,6 @@ function loadTexture(gl, imageElement) {
 
   // Upload the image
   const imageTexture = loadTexture(gl, imageElement);
-
 
   // Draw pass 1: Image
 

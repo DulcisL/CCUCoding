@@ -18,7 +18,7 @@ void main()
     gl_Position.z = 0.0;
     gl_Position.w = 1.0;
 
-    //vColor = vec4((1.0+gl_Position)/2.0, 1.0); // < --Problem Child
+    vColor = (1.0+gl_Position)/2.0;
 
 }
 </script>
@@ -42,7 +42,7 @@ void main()
 </head>
 
 <body>
-    <button id="Direction">Direction</button>
+    <button id="Pause">Pause</button>
 
     <select id="Controls" size="3">
         <option value="0">Direction</option>

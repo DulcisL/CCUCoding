@@ -8,6 +8,7 @@ var numVertices = 4;
 var colors = [];
 
 var direction = true;
+var pause = false;
 var speed = 0.01;
 
 window.onload = function init() {
@@ -35,19 +36,22 @@ window.onload = function init() {
         vec3(1.0, 1.0, 1.0)  //White
     ];
 
+    colors = [baseColors[0], baseColors[1], baseColors[2], baseColors[6]];
+
     //  Configure WebGL
 
-
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.8, 0.8, 0.8, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.10);
     gl.enable(gl.DEPTH_TEST);
 
     //  Load shaders and initialize attribute buffers
+
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
     // Load the data into the GPU
     // Associate out shader variables with our data buffer
+
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
@@ -59,8 +63,8 @@ window.onload = function init() {
     thetaLoc = gl.getUniformLocation(program, "uTheta");
 
     // Initialize event handlers
-    document.getElementById("Direction").onclick = function () {
-        direction = !direction;
+    document.getElementById("Pause").onclick = function () {
+        pause = !pause
     };
 
     document.getElementById("Controls").onclick = function (event) {
@@ -83,10 +87,18 @@ window.onload = function init() {
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    if (direction)
-        theta += speed;
-    else
-        theta -= speed;
+    if (pause){
+        theta = theta;
+    }
+    if (!pause){
+        if (direction){
+            theta += speed;
+        }
+            
+        if (!direction) {
+            theta -= speed;
+        }
+    }
 
     gl.uniform1f(thetaLoc, theta);
 

@@ -1,6 +1,6 @@
 # Documentation
 
->## Setting up the environement
+## Setting up the environement
 >
 >1) First thing is to know which OS system that you will be using. For this I will be using Ubuntu Linux. 
 >2) Next is to set up your IDE, any text editor will work, however I prefer Visual Studio Code (VS Code as I will refer to it)
@@ -20,5 +20,12 @@
 >    *  Finally, you will need install it:
 >   `sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin`
 
->### Notes
+## Notes
+
 > * If running the environment in a container extra steps may be required and will be tailored to your own system.
+>
+> * On Windows 11 PowerShell blocks the script (npm.ps1) the first time node.js. To fix that open PowerShell as administrator and then type:
+>
+>    Set-ExecutionPolicy RemoteSigned - Scope CurrentUser
+>
+>     Then Enter Y, when asked. The problem should disapper after that.

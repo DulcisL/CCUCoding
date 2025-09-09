@@ -12,7 +12,7 @@ var theta = 0.0;
 var thetaLoc;
 
 var colors = [];
-var positions = [];
+var vertices = [];
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -31,7 +31,7 @@ window.onload = function init() {
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    var vertices = [
+    vertices = [
         vec2(0, 1),
         vec2(-1, 0),
         vec2(1, 0),
@@ -48,10 +48,13 @@ window.onload = function init() {
         vec3(0.0, 0.0, 0.0), //Black
         vec3(1.0, 1.0, 1.0) //White
     ];
-    colors = [baseColors[3], baseColors[5], baseColors[6], baseColors[4], baseColors[7]];
-    positions = vertices;
-    //hourglass(vertices[0], vertices[1], vertices[2], vertices[3], vertices[4]); // Unnessary can assign directly
 
+    colors = [baseColors[7], baseColors[4], baseColors[5], baseColors[3], baseColors[6]];
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.0, 0.0, 0.0, 0.10);
+    
+    gl.enable(gl.DEPTH_TEST);
 
     // Load the data into the GPU
 
@@ -80,37 +83,9 @@ window.onload = function init() {
     render();
 };
 
-function hourglass(a, b, c, d, e) {
-
-    // add colors and vertices for one triangle
-
-    var baseColors = [
-        vec3(1.0, 0.0, 0.0), //Red
-        vec3(0.0, 1.0, 0.0), //Green
-        vec3(0.0, 0.0, 1.0), //Blue
-        vec3(1.0, 0.0, 1.0), //Magenta
-        vec3(1.0, 1.0, 0.0), //Yellow
-        vec3(1.0, 0.0, 1.0), //Cyan
-        vec3(0.0, 0.0, 0.0), //Black
-        vec3(1.0, 1.0, 1.0) //White
-    ];
-
-    colors.push(baseColors[3]);
-    positions.push(a);
-    colors.push(baseColors[5]);
-    positions.push(b);
-    colors.push(baseColors[6]);
-    positions.push(c);
-    colors.push(baseColors[4]);
-    positions.push(d);
-    colors.push(baseColors[7]);
-    positions.push(e);
-}
-
-
 function render() {
 
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     //Changes speed and direction 
     theta -= 0.01;
     gl.uniform1f(thetaLoc, theta);
