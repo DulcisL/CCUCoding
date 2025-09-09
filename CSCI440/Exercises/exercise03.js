@@ -38,8 +38,19 @@ window.onload = function init() {
         vec2(0, -1),
         vec2(0, 1)
     ];
-
-    hourglass(vertices[0], vertices[1], vertices[2], vertices[3], vertices[4]);
+    var baseColors = [
+        vec3(1.0, 0.0, 0.0), //Red
+        vec3(0.0, 1.0, 0.0), //Green
+        vec3(0.0, 0.0, 1.0), //Blue
+        vec3(1.0, 0.0, 1.0), //Magenta
+        vec3(1.0, 1.0, 0.0), //Yellow
+        vec3(1.0, 0.0, 1.0), //Cyan
+        vec3(0.0, 0.0, 0.0), //Black
+        vec3(1.0, 1.0, 1.0) //White
+    ];
+    colors = [baseColors[3], baseColors[5], baseColors[6], baseColors[4], baseColors[7]];
+    positions = vertices;
+    //hourglass(vertices[0], vertices[1], vertices[2], vertices[3], vertices[4]); // Unnessary can assign directly
 
 
     // Load the data into the GPU
@@ -77,20 +88,22 @@ function hourglass(a, b, c, d, e) {
         vec3(1.0, 0.0, 0.0), //Red
         vec3(0.0, 1.0, 0.0), //Green
         vec3(0.0, 0.0, 1.0), //Blue
+        vec3(1.0, 0.0, 1.0), //Magenta
+        vec3(1.0, 1.0, 0.0), //Yellow
+        vec3(1.0, 0.0, 1.0), //Cyan
         vec3(0.0, 0.0, 0.0), //Black
         vec3(1.0, 1.0, 1.0) //White
-
     ];
 
-    colors.push(baseColors[0]);
-    positions.push(a);
-    colors.push(baseColors[1]);
-    positions.push(b);
-    colors.push(baseColors[2]);
-    positions.push(c);
     colors.push(baseColors[3]);
+    positions.push(a);
+    colors.push(baseColors[5]);
+    positions.push(b);
+    colors.push(baseColors[6]);
+    positions.push(c);
+    colors.push(baseColors[4]);
     positions.push(d);
-    colors.push(baseColors[0]);
+    colors.push(baseColors[7]);
     positions.push(e);
 }
 
@@ -103,7 +116,7 @@ function render() {
     gl.uniform1f(thetaLoc, theta);
 
     //Change how drawn
-    gl.drawArrays(gl.LINE_STRIP, 0, positions.length);
+    gl.drawArrays(gl.LINE_STRIP, 0, vertices.length);
 
     requestAnimationFrame(render);
 }
