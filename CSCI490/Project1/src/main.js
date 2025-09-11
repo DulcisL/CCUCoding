@@ -15,12 +15,35 @@ const imageUrl = "/img/campus.png";
 // Array of rectangle overlays; each has x, y, width, height, color [R,G,B, Opacity]
 const lotBoxes = [
 
-  { x: 684, y: 870, w: 310, h: 170, color: [1, 0, 0, 0.4] },     // Red (KK)
-  { x: 867, y: 430, w: 280, h: 250, color: [0, 0.25, 0, 0.4] },  // Dark Green (GG)
-  { x: 211, y: 930, w: 220, h: 130, color: [1, 1, 0, 0.3] },     // Yellow (OO)
-  { x: 160, y: 360, w: 100, h: 100, color: [1, 0, 0, 0.3] },     // Red (AA)
-  { x: 1450, y: 400, w: 125, h: 100, color: [1, 0, 0, 0.3] },     // Red (BBB)
+  { x: 684, y: 870, w: 310, h: 170, color: [1.0, 0.0, 0.0] },     // Red (KK)
+  { x: 867, y: 430, w: 280, h: 250, color: [100, 0.5, 0.0] },  // Dark Green (GG)
+  { x: 211, y: 930, w: 220, h: 130, color: [1.0, 1.0, 0.0] },     // Yellow (OO)
+  { x: 160, y: 360, w: 100, h: 100, color: [1.0, 0.0, 0.0] },     // Red (AA)
+  { x: 1450, y: 400, w: 125, h: 100, color: [1.0, 0.0, 0.0] },     // Red (BBB)
 ];
+
+// Initialize event handlers
+/*
+document.getElementById("time").ondrag= function () {
+  //Get slider value
+  let value = document.getElementById("time").value;
+  
+  //Update time step based on factor of slider 
+  //Convert value to usable time step
+  value = value;
+  timeStep += value;
+
+  //Update the lotBoxes colors based on timeStep
+  for lotBox in lotBoxes {
+    lotBox.color = getStatus(time);
+  }
+
+  //Redraw the scene with new colors
+  main();
+  
+};
+*/
+
 
 
 // Vertex/Fragment shaders (image pass)
@@ -79,6 +102,42 @@ void main() {
 }
 `;
 
+
+//Set up a get status function to update the lotBoxes colors based on timeStep
+/*getStatus(time)
+desc: This function will update the lotBoxes colors based on the time step
+        It will simulate the parking lot status changing over time.
+param time (type)- the time step to get the status for
+return: color (vec3(R, G, B)) - the color of the parking lot based on the time step
+
+*/
+function getStatus(time) {
+  //Take time and request the status of the parking lots
+  //for now just return a random color for testing (values must be between 0 and 1)
+
+  var status = Math.floor(Math.random() * 3); //Random number between 0 and 2
+  //Set color based on status (0 = Red, 1 = Yellow, 2 = Dark Green)
+  switch (status) {
+    case 0: //Red
+      var r = 1.0;
+      var g = 0.0;
+      var b = 0.0;
+      break;
+    case 1: //Yellow
+      var r = 1.0;
+      var g = 1.0;
+      var b = 0.0;
+      break;
+    default: //Dark Green
+      var r = 0.0;
+      var g = 0.5;
+      var b = 0.0;
+      break;
+  }
+
+  //return the color vector
+  return [r, g, b];
+}
 
 // Compile shaders
 

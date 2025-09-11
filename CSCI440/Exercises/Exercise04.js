@@ -86,10 +86,11 @@ window.onload = function init() {
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
-
+    /* This is not necessary only need the below if statement
     if (pause){
-        theta = theta;
+        //do nothing (stop the changing of theta)
     }
+    */
     if (!pause){
         if (direction){
             theta += speed;

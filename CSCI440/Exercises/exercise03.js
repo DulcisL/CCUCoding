@@ -44,15 +44,15 @@ window.onload = function init() {
         vec3(0.0, 0.0, 1.0), //Blue
         vec3(1.0, 0.0, 1.0), //Magenta
         vec3(1.0, 1.0, 0.0), //Yellow
-        vec3(1.0, 0.0, 1.0), //Cyan
+        vec3(0.0, 1.0, 1.0), //Cyan
         vec3(0.0, 0.0, 0.0), //Black
         vec3(1.0, 1.0, 1.0) //White
     ];
 
-    colors = [baseColors[7], baseColors[4], baseColors[5], baseColors[3], baseColors[6]];
+    colors = [baseColors[3], baseColors[5], baseColors[6], baseColors[4], baseColors[3]];
 
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.0, 0.0, 0.0, 0.10);
+    gl.clearColor(0.8, 0.8, 0.8, 1.0);
     
     gl.enable(gl.DEPTH_TEST);
 
