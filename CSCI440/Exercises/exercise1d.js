@@ -31,9 +31,9 @@ window.onload = function init() {
         vec3(0.0, 0.0, 1.0), //Blue
         vec3(1.0, 0.0, 1.0), //Magenta
         vec3(1.0, 1.0, 0.0), //Yellow
-        vec3(1.0, 0.0, 1.0), //Cyan
+        vec3(0.0, 1.0, 1.0), //Cyan
         vec3(0.0, 0.0, 0.0), //Black
-        vec3(1.0, 1.0, 1.0)  //White
+        vec3(1.0, 1.0, 1.0) //White
     ];
 
     colors = [baseColors[0], baseColors[1], baseColors[2], baseColors[6]];
@@ -41,7 +41,9 @@ window.onload = function init() {
     //  Configure WebGL
 
     gl.viewport(0, 0, canvas.width, canvas.height);
+    //set background color
     gl.clearColor(0.0, 0.0, 0.0, 0.10);
+    //enable hidden-surface removal
     gl.enable(gl.DEPTH_TEST);
 
     //  Load shaders and initialize attribute buffers
@@ -54,6 +56,7 @@ window.onload = function init() {
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    //use vertices array to fill buffer for color
     gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
 
     var positionLoc = gl.getAttribLocation(program, "aPosition");
@@ -91,11 +94,11 @@ function render() {
         //do nothing (stop the changing of theta)
     }
     */
-    if (!pause){
-        if (direction){
+    if (!pause) {
+        if (direction) {
             theta += speed;
         }
-            
+
         if (!direction) {
             theta -= speed;
         }

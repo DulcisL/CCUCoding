@@ -10,14 +10,15 @@ out vec4 vColor;
 
 void main()
 {
+    // 2D rotation
     float s = sin(uTheta);
     float c = cos(uTheta);
-
     gl_Position.x = -s*aPosition.y + c*aPosition.x;
     gl_Position.y =  s*aPosition.x + c*aPosition.y;
     gl_Position.z = 0.0;
     gl_Position.w = 1.0;
 
+    // color based on 4 corners of square
     vColor = (1.0+gl_Position)/2.0;
 
 }
@@ -38,7 +39,7 @@ void main()
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MVnew.js"></script>
-<script type="text/javascript" src="Exercise04.js"></script>
+<script type="text/javascript" src="exercise1d.js"></script>
 </head>
 
 <body>

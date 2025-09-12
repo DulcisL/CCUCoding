@@ -25,6 +25,7 @@ window.onload = function init() {
     //  Configure WebGL
     //
     gl.viewport(0, 0, canvas.width, canvas.height);
+    //set background color
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     //  Load shaders and initialize attribute buffers
@@ -53,11 +54,12 @@ window.onload = function init() {
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(0.8, 0.8, 0.8, 1.0);
-    
+
     gl.enable(gl.DEPTH_TEST);
 
     // Load the data into the GPU
 
+    //Set color buffer (Next 6 lines are required for color)
     var cBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
@@ -68,6 +70,7 @@ window.onload = function init() {
 
     var bufferId = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+    //Only need vertices to fill buffer instead of like gasket 4
     gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
 
     // Associate out shader variables with our data bufferData
