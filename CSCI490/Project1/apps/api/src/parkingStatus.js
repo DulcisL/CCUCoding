@@ -59,6 +59,10 @@ void main() {
 }
 `;
 
+
+/*-------------------------------------------------------------------------------Functions-------------------------------------------------------------------------------------------- */
+
+
 //Set up a get status function to update the lotBoxes colors based on timeStep
 /*getStatus(time)
 desc: This function will update the lotBoxes colors based on the time step
@@ -94,6 +98,10 @@ function getStatus(time) {
   //return the color vector
   return [r, g, b];
 }
+
+
+/*----------------------------------------------------------------------Req. Functions--------------------------------------------------------------------------------------------- */
+
 
 // Compile shaders (fixed compile status check)
 function createShader(gl, type, source) {
