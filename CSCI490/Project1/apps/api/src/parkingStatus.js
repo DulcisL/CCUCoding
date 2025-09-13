@@ -59,14 +59,40 @@ void main() {
 }
 `;
 
-// Random status generator (kept for your future slider logic)
+//Set up a get status function to update the lotBoxes colors based on timeStep
+/*getStatus(time)
+desc: This function will update the lotBoxes colors based on the time step
+        It will simulate the parking lot status changing over time.
+param time (type)- the time step to get the status for
+return: color (vec3(R, G, B)) - the color of the parking lot based on the time step
+
+*/
 function getStatus(time) {
-  const status = Math.floor(Math.random() * 3); // 0..2
+  //Take time and request the status of the parking lots
+  //for now just return a random color for testing (values must be between 0 and 1)
+
+  var status = Math.floor(Math.random() * 3); //Random number between 0 and 2
+  //Set color based on status (0 = Red, 1 = Yellow, 2 = Dark Green)
   switch (status) {
-    case 0: return [1.0, 0.0, 0.0];
-    case 1: return [1.0, 1.0, 0.0];
-    default: return [0.0, 0.5, 0.0];
+    case 0: //Red
+      var r = 1.0;
+      var g = 0.0;
+      var b = 0.0;
+      break;
+    case 1: //Yellow
+      var r = 1.0;
+      var g = 1.0;
+      var b = 0.0;
+      break;
+    default: //Dark Green
+      var r = 0.0;
+      var g = 0.5;
+      var b = 0.0;
+      break;
   }
+
+  //return the color vector
+  return [r, g, b];
 }
 
 // Compile shaders (fixed compile status check)
