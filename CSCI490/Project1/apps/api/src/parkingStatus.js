@@ -5,14 +5,14 @@
 
 // URL to the image (served by Express at /data)
 const imageUrl = "/data/campus.png";
-
+var time = 0; //Placeholdeer - change this to get time from html input
 // Array of rectangle overlays; each has x, y, width, height, color [R,G,B,A]
 const lotBoxes = [
-  { x: 684, y: 870, w: 310, h: 170, color: [1.0, 0.0, 0.0, 0.35] }, // Red (KK)
-  { x: 867, y: 430, w: 280, h: 250, color: [0.0, 0.5, 0.0, 0.35] }, // Dark Green (GG)
-  { x: 211, y: 930, w: 220, h: 130, color: [1.0, 1.0, 0.0, 0.35] }, // Yellow (OO)
-  { x: 160, y: 360, w: 100, h: 100, color: [1.0, 0.0, 0.0, 0.35] }, // Red (AA)
-  { x: 1450, y: 400, w: 125, h: 100, color: [1.0, 0.0, 0.0, 0.35] }, // Red (BBB)
+  { x: 684, y: 870, w: 310, h: 170, color: getStatus(time) }, // Red (KK)
+  { x: 867, y: 430, w: 280, h: 250, color: getStatus(time) }, // Dark Green (GG)
+  { x: 211, y: 930, w: 220, h: 130, color: getStatus(time) }, // Yellow (OO)
+  { x: 160, y: 360, w: 100, h: 100, color: getStatus(time) }, // Red (AA)
+  { x: 1450, y: 400, w: 125, h: 100, color: getStatus(time) }, // Red (BBB)
 ];
 
 // Vertex/Fragment shaders (image pass)
@@ -60,15 +60,15 @@ void main() {
 `;
 
 
-/*-------------------------------------------------------------------------------Functions-------------------------------------------------------------------------------------------- */
+/*------------------------------------------------------------------------------- Functions-------------------------------------------------------------------------------------------- */
 
 
 //Set up a get status function to update the lotBoxes colors based on timeStep
 /*getStatus(time)
 desc: This function will update the lotBoxes colors based on the time step
         It will simulate the parking lot status changing over time.
-param time (type)- the time step to get the status for
-return: color (vec3(R, G, B)) - the color of the parking lot based on the time step
+param time (type)- the time to get the status for
+return: color (array [R, G, B, A]) - the color of the parking lot based on the time step
 
 */
 function getStatus(time) {
@@ -76,7 +76,7 @@ function getStatus(time) {
   //for now just return a random color for testing (values must be between 0 and 1)
 
   var status = Math.floor(Math.random() * 3); //Random number between 0 and 2
-  //Set color based on status (0 = Red, 1 = Yellow, 2 = Dark Green)
+  //Set color based on status (0 = Red, 1 = Yellow, Default: Dark Green)
   switch (status) {
     case 0: //Red
       var r = 1.0;
@@ -94,9 +94,10 @@ function getStatus(time) {
       var b = 0.0;
       break;
   }
+  var a = 0.38; //Alpha value (transparency)
 
   //return the color vector
-  return [r, g, b];
+  return [r, g, b, a];
 }
 
 

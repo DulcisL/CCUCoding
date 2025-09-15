@@ -39,7 +39,6 @@ window.onload = function init() {
         vec3(1.0, -0.25, 0.0),
         vec3(0.0, -1.0, 0.0),
 
-
     ];
 
     var baseColors = [
@@ -83,12 +82,15 @@ window.onload = function init() {
         flip = !flip;
         if (flip) {
             //Flip colors
-            colors = [baseColors[5], baseColors[4], baseColors[3], baseColors[0], baseColors[1], baseColors[2]];
+            colors = [baseColors[3], baseColors[4], baseColors[5], baseColors[2], baseColors[1], baseColors[0]];
         }
         if (!flip) {
             //top triangle R, G, B Bottom triangle Cy, Ye, Mg
             colors = [baseColors[0], baseColors[1], baseColors[2], baseColors[5], baseColors[4], baseColors[3]];
         }
+        //Update the color buffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
     };
 
     document.getElementById("Controls").onclick = function (event) {

@@ -1,0 +1,6 @@
+# ADDED: Inline commentary throughout to explain each step.
+{
+    "files.associations": {
+        "errno.h": "c"
+    }
+}
