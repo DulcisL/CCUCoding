@@ -10,10 +10,10 @@
 
 // URL to the image (served by Express at /data)
 const imageUrl = "/data/campus.png";
-var time = 0; //Placeholder - change this to get time from html input
+let time = 0; //Placeholder - change this to get time from html input
 // Array of rectangle overlays; each has x, y, width, height, color [R,G,B,A]  
 // - Need to update to better fit parking lots areas
-const lotBoxes = [
+let lotBoxes = [
   { id: 'KK', x: 684, y: 870, w: 310, h: 170, color: setColor(getStatus("KK", time)) }, // Red (KK)
   { id: 'GG', x: 867, y: 430, w: 280, h: 250, color: setColor(getStatus("GG", time)) }, // Dark Green (GG)
   { id: 'OO', x: 211, y: 930, w: 220, h: 130, color: setColor(getStatus("OO", time)) }, // Yellow (OO)

@@ -104,14 +104,12 @@ function colorCube() {
 }
 
 function quad(a, b, c, d) {
-
-
     // We need to parition the quad into a line loop in order for
     // WebGL to be able to render it.
 
     //vertex color assigned by the index of the vertex
 
-    var indices = [a, b, c, d, a];
+    var indices = [a, b, c, d, a, d, c, b];
 
     for (var i = 0; i < indices.length; ++i) {
         positions.push(vertices[indices[i]]);
@@ -128,6 +126,6 @@ function render() {
     theta[axis] += 2.0;
     gl.uniform3fv(thetaLoc, theta);
 
-    gl.drawArrays(gl.LINES, 0, numPositions);
+    gl.drawArrays(gl.LINES, 0, positions.length);
     requestAnimationFrame(render);
 }
