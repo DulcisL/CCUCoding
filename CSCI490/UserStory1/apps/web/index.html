@@ -28,37 +28,12 @@
   <h2>Campus Map Parking Status</h2>
   <canvas id="glcanvas"></canvas>
 
-  <script src="/src/parkingStatus.js"></script>
+  <script src="/src/parkingStatus.js" defer></script>
 
   <label for="time">Time:</label>
   <input type="range" id="time" name="time" min="0" max="23.75" value="12" step=".25" style="width: 800px;">
   <span id="timeValue">12:00</span>
   <p>Image courtesy of maps.google.com</p>
 </body>
-
-<script>
-  //Script to format the time slider value as hh:mm
-  const timeSlider = document.getElementById("time");
-  const timeValue = document.getElementById("timeValue");
-
-  function formatTime(value) {
-    // Example: interpret slider as hours and minutes
-    let hours = Math.floor(value);
-    if (hours > 12) {
-      hours = hours % 12;
-    }
-    let minutes = (value * 60) % 60;
-    return `${hours}:${minutes.toString().padStart(2, '0')}`;
-  }
-
-  // Initialize display
-  timeValue.textContent = formatTime(timeSlider.value);
-
-  // Update when slider moves
-  timeSlider.addEventListener("input", function () {
-    timeValue.textContent = formatTime(this.value);
-  });
-</script>
-
 
 </html>
