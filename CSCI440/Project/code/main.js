@@ -2,6 +2,15 @@
     a series of transformations to turn into a origami bird / plane. After the transformations the shape will
     then be animated to look like it is flying through a series of scenes.
 */
+import * as utilities from './inc/utilities.js'
+//utilities
+
+// Bring in the three.js to the project
+// Need to install using npm install three 
+//import * as THREE from 'three';
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+
 var canvas;
 var gl;
 var colors = [];
@@ -27,30 +36,34 @@ window.onload = function init() {
     //Vertices
 
     var vertices = [
+        //x, y, z (y is axis vertically)
         //paper square
-        vec3(-0.25, -0.25, 0.0), //back left
-        vec3(-0.25, 0.25, 0.0),  //back right
-        vec3(0.25, 0.25, 0.0),  //front right
-        vec3(0.25, -0.25, 0.0), //front left
+        //top
+        vec3(-0.25, 0.51, -0.25), //front left
+        vec3(-0.25, 0.51, 0.25),  //back left
+        vec3(0.25, 0.51, 0.25),  //back right
+        vec3(0.25, 0.51, 0.25), //front right
+        //bottom
+        vec3(-0.25, 0.50, -0.25), //front left
+        vec3(-0.25, 0.50, 0.25),  //back left
+        vec3(0.25, 0.50, 0.25),  //back right
+        vec3(0.25, 0.50, 0.25), //front right
 
-        //Desktop square
-        vec3(-0.65, -0.5, 0.5), //back left
-        vec3(-0.75, 0.5, 0.5),   //back right
-        vec3(0.55, 0.5, 0.5),    //front right
-        vec3(0.75, -0.5, 0.5),   //front left
-
-        //desk legs
-        vec3(-0.6, -0.5, 0.5), //back left
-        vec3(-0.55, -0.5, -0.5), //back right
-        vec3(-0.45, -0.5, -0.5), //front right
-        vec3(-0.4, -0.5, 0.5), //front left
+        //Desktop rectangle
+        //top
+        vec3(-0.65, 0.1, 0.5),  //front left
+        vec3(-0.65, 0.1, 0.5),   //back left
+        vec3(0.65, 0.1, 0.5),    //back right
+        vec3(0.65, 0.1, 0.5),   //front right
+        //bottom
+        vec3(-0.65, 0.0, 0.5),  //front left
+        vec3(-0.65, 0.0, 0.5),   //back left
+        vec3(0.65, 0.0, 0.5),    //back right
+        vec3(0.65, 0.0, 0.5),   //front right
     ];
 
 
     //  Configure WebGL
-
-
-
     //  Load shaders and initialize attribute buffers
 
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
@@ -86,8 +99,8 @@ window.onload = function init() {
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     //draw desk
-    gl.drawArrays(gl.TRIANGLE_FAN, 4, 4);
+    gl.drawArrays(gl.TRIANGLES, 8, 8);
 
     //draw paper
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.drawArrays(gl.TRIANGLES, 0, 8);
 }

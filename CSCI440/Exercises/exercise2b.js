@@ -139,13 +139,13 @@ function quad(a, b, c, d) {
     if (solid) {
         for (var i = 0; i < indices.length; ++i) {
             positions.push(vertices[indices[i]]);
-            // for solid colored faces use
+            // for solid colored faces use (only pushes 6 colors)
             colors.push(vertexColors[a]);
         }
     }
     if (!solid) {
         for (var i = 0; i < indices.length; ++i) {
-            // for interpolated vertex colors use
+            // for interpolated vertex colors use (pushes a color per vertex)
             positions.push(vertices[indices[i]]);
             colors.push(vertexColors[indices[i]]);
         }
