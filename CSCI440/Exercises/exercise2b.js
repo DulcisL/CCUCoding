@@ -106,8 +106,11 @@ window.onload = function init() {
     };
     document.getElementById("color").onclick = function () {
         solid = !solid;
+        //Reset color array
         colors = [];
+        //call for new colors
         colorCube();
+        //Update colors
         gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
     };
