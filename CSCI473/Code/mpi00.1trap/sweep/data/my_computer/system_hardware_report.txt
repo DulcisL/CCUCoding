@@ -1,0 +1,250 @@
+
+================================================================================
+## OS & User
+================================================================================
+Generated: 2025-09-15T17:01:30-04:00
+Host:      pop-os
+User:      chief
+
+--- Kernel/Arch ---
+Linux pop-os 6.16.3-76061603-generic #202508231538~1757385336~22.04~8f363f2 SMP PREEMPT_DYNAMIC Tue S x86_64 x86_64 x86_64 GNU/Linux
+
+--- Distro ---
+NAME="Pop!_OS"
+VERSION="22.04 LTS"
+ID=pop
+ID_LIKE="ubuntu debian"
+PRETTY_NAME="Pop!_OS 22.04 LTS"
+VERSION_ID="22.04"
+HOME_URL="https://pop.system76.com"
+SUPPORT_URL="https://support.system76.com"
+BUG_REPORT_URL="https://github.com/pop-os/pop/issues"
+PRIVACY_POLICY_URL="https://system76.com/privacy"
+VERSION_CODENAME=jammy
+UBUNTU_CODENAME=jammy
+LOGO=distributor-logo-pop-os
+
+================================================================================
+## Virtualization / WSL
+================================================================================
+WSL not detected.
+
+--- systemd-detect-virt ---
+none
+
+================================================================================
+## CPU / Cores / Types / Speed / Caches
+================================================================================
+
+--- lscpu ---
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  28
+On-line CPU(s) list:                     0-27
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) i7-14700K
+CPU family:                              6
+Model:                                   183
+Thread(s) per core:                      2
+Core(s) per socket:                      20
+Socket(s):                               1
+Stepping:                                1
+CPU max MHz:                             5600.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                6835.20
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb intel_pt sha_ni xsaveopt xsavec xgetbv1 xsaves split_lock_detect user_shstk avx_vnni dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req hfi vnmi umip pku ospke waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize pconfig arch_lbr ibt flush_l1d arch_capabilities
+Virtualization:                          VT-x
+L1d cache:                               768 KiB (20 instances)
+L1i cache:                               1 MiB (20 instances)
+L2 cache:                                28 MiB (11 instances)
+L3 cache:                                33 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-27
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Mitigation; Clear Register File
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Not affected
+
+--- lscpu (cache summary) ---
+NAME ONE-SIZE ALL-SIZE WAYS TYPE        LEVEL  SETS PHY-LINE COHERENCY-SIZE
+L1d       48K     768K   12 Data            1    64        1             64
+L1i       32K       1M    8 Instruction     1    64        1             64
+L2         2M      28M   16 Unified         2  2048        1             64
+L3        33M      33M   11 Unified         3 49152        1             64
+
+--- /proc/cpuinfo: model + sample MHz ---
+model name	: Intel(R) Core(TM) i7-14700K
+cpu MHz		: 1098.837
+cpu MHz		: 1101.437
+cpu MHz		: 1044.076
+cpu MHz		: 842.394
+cpu MHz		: 798.951
+cpu MHz		: 800.000
+cpu MHz		: 800.000
+cpu MHz		: 800.000
+
+--- Core types (if exposed; 1=Performance, 2=Efficiency) ---
+Core types not exposed on this kernel/CPU.
+
+--- Cache hierarchy (cpu0 via sysfs) ---
+L1 Data: size=48K, ways=, sets=
+L1 Instruction: size=32K, ways=, sets=
+L2 Unified: size=2048K, ways=, sets=
+L3 Unified: size=33792K, ways=, sets=
+Tip: install numactl for NUMA details.   sudo apt update && sudo apt install -y numactl
+
+================================================================================
+## Memory (RAM)
+================================================================================
+
+--- free -h ---
+               total        used        free      shared  buff/cache   available
+Mem:            62Gi       8.4Gi        43Gi       437Mi        10Gi        49Gi
+Swap:           19Gi          0B        19Gi
+
+--- /proc/meminfo (key lines) ---
+MemTotal:       65542592 kB
+MemAvailable:   51934616 kB
+SwapTotal:      20970996 kB
+SwapFree:       20970996 kB
+Run with sudo for DIMM details: sudo dmidecode -t memory
+
+================================================================================
+## Storage
+================================================================================
+
+--- lsblk (model, size, SSD/HDD, bus, fs, mount) ---
+NAME          MODEL               TYPE    SIZE ROTA TRAN   FSTYPE   MOUNTPOINT
+loop0                             loop  329.6M    0        squashfs /snap/code/206
+loop1                             loop  329.4M    0        squashfs /snap/code/205
+loop2                             loop   63.8M    0        squashfs /snap/core20/2599
+loop3                             loop   50.8M    0        squashfs /snap/snapd/25202
+zram0                             disk     16G    0                 [SWAP]
+nvme0n1       KINGSTON SFYRS1000G disk  931.5G    0 nvme            
+├─nvme0n1p1                       part   1022M    0 nvme   vfat     /boot/efi
+├─nvme0n1p2                       part      4G    0 nvme   vfat     /recovery
+├─nvme0n1p3                       part  922.5G    0 nvme   ext4     /
+└─nvme0n1p4                       part      4G    0 nvme   swap     
+  └─cryptswap                     crypt     4G    0        swap     [SWAP]
+
+--- lsblk -D (discard/TRIM) ---
+NAME          DISC-ALN DISC-GRAN DISC-MAX DISC-ZERO
+loop0                0        4K       4G         0
+loop1                0        4K       4G         0
+loop2                0        4K       4G         0
+loop3                0        4K       4G         0
+zram0                0        4K       2T         0
+nvme0n1              0      512B       2T         0
+├─nvme0n1p1          0      512B       2T         0
+├─nvme0n1p2          0      512B       2T         0
+├─nvme0n1p3          0      512B       2T         0
+└─nvme0n1p4          0      512B       2T         0
+  └─cryptswap        0        0B       0B         0
+
+--- lsblk -t (topology) ---
+NAME          ALIGNMENT MIN-IO OPT-IO PHY-SEC LOG-SEC ROTA SCHED RQ-SIZE  RA WSAME
+loop0                 0    512      0     512     512    0 none      128 128    0B
+loop1                 0    512      0     512     512    0 none      128 128    0B
+loop2                 0    512      0     512     512    0 none      128 128    0B
+loop3                 0    512      0     512     512    0 none      128 128    0B
+zram0                 0   4096   4096    4096    4096    0               128    0B
+nvme0n1               0    512      0     512     512    0 kyber     256 128    0B
+├─nvme0n1p1           0    512      0     512     512    0 kyber     256 128    0B
+├─nvme0n1p2           0    512      0     512     512    0 kyber     256 128    0B
+├─nvme0n1p3           0    512      0     512     512    0 kyber     256 128    0B
+└─nvme0n1p4           0    512      0     512     512    0 kyber     256 128    0B
+  └─cryptswap         0    512      0     512     512    0               128    0B
+
+--- df -hT (mounted filesystems) ---
+Filesystem     Type      Size  Used Avail Use% Mounted on
+tmpfs          tmpfs     6.3G  2.3M  6.3G   1% /run
+efivarfs       efivarfs  256K  134K  118K  53% /sys/firmware/efi/efivars
+/dev/nvme0n1p3 ext4      907G  320G  542G  38% /
+tmpfs          tmpfs      32G  158M   32G   1% /dev/shm
+tmpfs          tmpfs     5.0M     0  5.0M   0% /run/lock
+/dev/nvme0n1p1 vfat     1020M  316M  705M  31% /boot/efi
+/dev/nvme0n1p2 vfat      4.0G  3.0G 1022M  76% /recovery
+tmpfs          tmpfs     6.3G  136M  6.2G   3% /run/user/1000
+Tip: install nvme-cli for NVMe firmware info.   sudo apt update && sudo apt install -y nvme-cli
+
+--- smartctl -i (SATA/SAS/NVMe devices) ---
+# /dev/nvme0n1
+smartctl 7.2 2020-12-30 r5155 [x86_64-linux-6.16.3-76061603-generic] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+Smartctl open device: /dev/nvme0n1 failed: Permission denied
+
+--- /sys/block/*/queue/rotational (0=SSD, 1=HDD) ---
+/sys/block/dm-0/queue/rotational: 0
+/sys/block/loop0/queue/rotational: 0
+/sys/block/loop1/queue/rotational: 0
+/sys/block/loop2/queue/rotational: 0
+/sys/block/loop3/queue/rotational: 0
+/sys/block/loop4/queue/rotational: 0
+/sys/block/loop5/queue/rotational: 0
+/sys/block/loop6/queue/rotational: 0
+/sys/block/loop7/queue/rotational: 0
+/sys/block/nvme0n1/queue/rotational: 0
+/sys/block/zram0/queue/rotational: 0
+
+================================================================================
+## Benchmarks (quick)
+================================================================================
+These are quick sanity checks and depend on load/environment.
+
+CPU compute test skipped. Install one of:
+ - stress-ng:   sudo apt update && sudo apt install -y stress-ng
+ - sysbench:    sudo apt update && sudo apt install -y sysbench
+Memory throughput test skipped. Install one of:
+ - sysbench:   sudo apt update && sudo apt install -y sysbench
+ - mbw:        sudo apt update && sudo apt install -y mbw
+Memory latency test skipped. Install lmbench (lat_mem_rd):
+  sudo apt update && sudo apt install -y lmbench
+
+================================================================================
+## GPU
+================================================================================
+
+--- lspci (VGA/3D/Display) ---
+00:02.0 Display controller: Intel Corporation Device a780 (rev 04)
+03:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Device 744c (rev cc)
+
+================================================================================
+## Missing Tools & How to Install
+================================================================================
+- lmbench:
+  sudo apt update && sudo apt install -y lmbench
+- mbw:
+  sudo apt update && sudo apt install -y mbw
+- numactl:
+  sudo apt update && sudo apt install -y numactl
+- nvme-cli:
+  sudo apt update && sudo apt install -y nvme-cli
+- stress-ng:
+  sudo apt update && sudo apt install -y stress-ng
+- sysbench:
+  sudo apt update && sudo apt install -y sysbench
+
+================================================================================
+## Notes & Limitations
+================================================================================
+- On WSL/VMs, many hardware details are virtualized (cache/DIMM/storage firmware).
+- For detailed DIMM info, run with sudo and have dmidecode installed: sudo dmidecode -t memory
+- For deeper CPU/cache/NUMA topology, install hwloc (lstopo).
+- The 'FLOPS' proxy is a quick compute workload; use LINPACK/HPL for rigorous FLOPS.
