@@ -76,6 +76,10 @@ const imageUrl = "/data/campus.png";
 
   /*------------------------------------------------------------------------------- Functions-------------------------------------------------------------------------------------------- */
 
+
+  // ****leafleat - interactive js map ****
+
+
   /* setUpLotBoxes()
   desc: This function will set up the lotBoxes array with the parking lot locations and initial colors
   param: none
@@ -105,6 +109,10 @@ const imageUrl = "/data/campus.png";
   return: status (int) - the status of the parking lot (0 = Red, 1 = Yellow, Default: Dark Green)
   */
   function getStatus(id, time) {
+
+    // ** will only use current time ** 
+
+
     //Take time and request the status of the parking lots
     //for now just return a random status for testing)
     var status = Math.floor(Math.random() * 3); //Random number between 0 and 2
