@@ -242,7 +242,6 @@ int main(int argc, char **argv)
 {
     
     FlopsDual fm; flops_dual_init(&fm);
-    flops_iter_begin(&fm);
 if (argc != 4)
     {
         usage(argv[0]);
@@ -251,7 +250,10 @@ if (argc != 4)
 
     const double t_start = now_sec();
 
-    const char *pathA = argv[1];
+    
+    /* overall begins: end-to-end */
+    flops_iter_begin(&fm);
+const char *pathA = argv[1];
     const char *pathB = argv[2];
     const char *pathC = argv[3];
 
@@ -329,6 +331,7 @@ if (argc != 4)
     const size_t m = A.rows;
     const size_t n = A.cols; /* == B.rows */
 
+    /* compute-only section begins */
     flops_section_begin(&fm);
     for (size_t i = 0; i < m; ++i)
     {
@@ -348,7 +351,6 @@ if (argc != 4)
     const double t_after_compute = now_sec();
     const double compute_s = t_after_compute - t_compute_start;
 
-    flops_iter_end(&fm, 2.0 * (double)m * (double)n);
     /* ----- write timing ----- */
     const double t_write_start = now_sec();
 
@@ -363,13 +365,15 @@ if (argc != 4)
     const double t_after_write = now_sec();
     const double write_s = t_after_write - t_write_start;
 
+    /* overall ends (end-to-end): use compute ops as total ops */
+    flops_iter_end(&fm, 2.0 * (double)m * (double)n);
     /* Totals */
     const double total_s = now_sec() - t_start;
-    /* Append CSV (rank0 only in MPI; here, sequential) */
+    /* Minimal FLOPS CSV */
     {
         struct stat st; if (stat("results", &st) != 0) { (void)mkdir("results", 0755); }
-        const char* csv_path = getenv("FLOPS_LOG_PATH"); if (!csv_path) csv_path = "results/flops_seq.csv";
-        flops_log_iteration_csv(&fm, 0, "seq_matvec", csv_path);
+        const char* csv_path = getenv("FLOPS_LOG_PATH"); if (!csv_path) csv_path = "results/flops_seq_min.csv";
+        flops_log_minimal_csv(&fm, 0, "seq_matvec", csv_path);
         flops_dual_fini(&fm);
     }
 

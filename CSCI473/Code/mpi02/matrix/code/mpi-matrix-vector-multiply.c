@@ -218,7 +218,9 @@ int provided = 0;
     MPI_Barrier(MPI_COMM_WORLD);
     t_total_start = MPI_Wtime();
 
-    /* ---------------- Rank 0: Read & distribute ---------------- */
+        /* overall begins: end-to-end */
+    flops_iter_begin(&fm);
+/* ---------------- Rank 0: Read & distribute ---------------- */
     MPI_Barrier(MPI_COMM_WORLD);
     if (rank == 0) t_read_start = MPI_Wtime();
 
@@ -378,7 +380,7 @@ int provided = 0;
     MPI_Barrier(MPI_COMM_WORLD);
     t_compute_start = MPI_Wtime();
 
-    flops_iter_begin(&fm);
+    /* compute-only section begins */
     flops_section_begin(&fm);
     for (int i = 0; i < local_rows; ++i) {
         const double *Ai = A_local.row[i];
@@ -389,7 +391,6 @@ int provided = 0;
     {
         double ops_local = 2.0 * (double)local_rows * (double)n;
         flops_section_end(&fm, ops_local);
-        flops_iter_end(&fm, ops_local);
     }
         C_local.row[i][0] = sum;
     }
@@ -506,6 +507,8 @@ int provided = 0;
     MPI_Barrier(MPI_COMM_WORLD);
     t_total_end = MPI_Wtime();
 
+    /* overall ends: end-to-end (use compute ops only) */
+    flops_iter_end(&fm, 2.0 * (double)local_rows * (double)n);
     if (rank == 0) {
         double read_s    = t_read_end   - t_read_start;
         double compute_s = compute_max;
@@ -531,14 +534,14 @@ int provided = 0;
 
     
 
-    /* Append CSV row (rank 0 writes) */
+    /* Minimal FLOPS CSV (rank 0 writes) */
     {
         if (rank == 0) {
             struct stat st; if (stat("mpi_results", &st) != 0) { (void)mkdir("mpi_results", 0755); }
-            const char* csv_path = getenv("FLOPS_LOG_PATH"); if (!csv_path) csv_path = "mpi_results/flops_mpi.csv";
-            flops_log_iteration_csv(&fm, 0, "mpi_matvec", csv_path, MPI_COMM_WORLD);
+            const char* csv_path = getenv("FLOPS_LOG_PATH"); if (!csv_path) csv_path = "mpi_results/flops_mpi_min.csv";
+            flops_log_minimal_csv(&fm, 0, "mpi_matvec", csv_path, MPI_COMM_WORLD);
         } else {
-            flops_log_iteration_csv(&fm, 0, "mpi_matvec", "/dev/null", MPI_COMM_WORLD);
+            flops_log_minimal_csv(&fm, 0, "mpi_matvec", "/dev/null", MPI_COMM_WORLD);
         }
     }
 /* ---------------- Cleanup ---------------- */
