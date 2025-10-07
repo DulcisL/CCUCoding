@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; }
+  #gl-canvas { width: 100vw; height: 100vh; display: block; }
+</style>
+
+<!-- Vertex Shader -->
+<script id="vertex-shader" type="x-shader/x-vertex">
+#version 300 es
+precision highp float;
+
+in vec4 aPosition;
+in vec3 aColor;
+
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProj;
+
+out vec3 vColor;
+
+void main() {
+    vColor = aColor;
+    gl_Position = uProj * uView * uModel * aPosition;
+}
+</script>
+
+<!-- Fragment Shader -->
+<script id="fragment-shader" type="x-shader/x-fragment">
+#version 300 es
+precision highp float;
+
+in vec3 vColor;
+out vec4 fragColor;
+
+void main() {
+    fragColor = vec4(vColor, 1.0);
+}
+</script>
+</head>
+<body>
+<canvas id="gl-canvas" width="900" height="640"></canvas>
+
+<!-- Course Common utilities -->
+<script src="../../Common/MVnew.js"></script>
+<script src="../../Common/initShaders.js"></script>
+
+<!-- Our app -->
+<script type="module" src="./project_03.js"></script>
+</body>
+</html>
