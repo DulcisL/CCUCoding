@@ -1,7 +1,5 @@
-/* Room expansion for your origami scene.
-   Keeps the original paper + desk, and adds a full room:
-   floor, walls, window, door, baseboards, rug, lamp, trash can,
-   chair, monitor, keyboard, mouse, bookshelf with books.
+/* This is the main js file for Project 03. This file sets up the room and starting placement of the paper
+for the scene. 
 */
 
 "use strict";
@@ -45,54 +43,54 @@ const paperVertices = [
   // top
   vec4(-0.25, 0.111, -2.55, 1.0),
   vec4(-0.25, 0.111, -2.25, 1.0),
-  vec4( 0.25, 0.111, -2.25, 1.0),
-  vec4( 0.25, 0.111, -2.55, 1.0),
+  vec4(0.25, 0.111, -2.25, 1.0),
+  vec4(0.25, 0.111, -2.55, 1.0),
   // bottom
   vec4(-0.25, 0.101, -2.55, 1.0),
   vec4(-0.25, 0.101, -2.25, 1.0),
-  vec4( 0.25, 0.101,  -2.25, 1.0),
-  vec4( 0.25, 0.101, -2.55, 1.0),
+  vec4(0.25, 0.101, -2.25, 1.0),
+  vec4(0.25, 0.101, -2.55, 1.0),
 ];
-
+//doesn't sit flat with wall needs work may do closer to the chatgpt objects
 const deskVertices = [
   // Desktop rectangle
   // top
   vec4(-0.65, 0.1, -2.99, 1.0),
-  vec4(-0.65, 0.1,  -1.99, 1.0),
-  vec4( 0.65, 0.1,  -1.99, 1.0),
-  vec4( 0.65, 0.1, -2.99, 1.0),
+  vec4(-0.65, 0.1, -1.99, 1.0),
+  vec4(0.65, 0.1, -1.99, 1.0),
+  vec4(0.65, 0.1, -2.99, 1.0),
   // bottom
   vec4(-0.65, 0.0, -2.99, 1.0),
   vec4(-0.65, 0.0, -1.99, 1.0),
-  vec4( 0.65, 0.0, -1.99, 1.0),
-  vec4( 0.65, 0.0, -2.99, 1.0),
+  vec4(0.65, 0.0, -1.99, 1.0),
+  vec4(0.65, 0.0, -2.99, 1.0),
 ];
 
 // Unit box with top at y=0 and bottom at y=-1 (like your leg)
 const legUnit = [
   // top ring (y = 0)
-  vec4(-0.5,  0.0, -0.5, 1.0),
-  vec4( 0.5,  0.0, -0.5, 1.0),
-  vec4( 0.5,  0.0,  0.5, 1.0),
-  vec4(-0.5,  0.0,  0.5, 1.0),
+  vec4(-0.5, 0.0, -0.5, 1.0),
+  vec4(0.5, 0.0, -0.5, 1.0),
+  vec4(0.5, 0.0, 0.5, 1.0),
+  vec4(-0.5, 0.0, 0.5, 1.0),
   // bottom ring (y = -1)
   vec4(-0.5, -1.0, -0.5, 1.0),
-  vec4( 0.5, -1.0, -0.5, 1.0),
-  vec4( 0.5, -1.0,  0.5, 1.0),
-  vec4(-0.5, -1.0,  0.5, 1.0),
+  vec4(0.5, -1.0, -0.5, 1.0),
+  vec4(0.5, -1.0, 0.5, 1.0),
+  vec4(-0.5, -1.0, 0.5, 1.0),
 ];
 
 // Symmetric unit cube centered at origin (easier for general boxes)
 const cubeCentered = [
-  vec4(-0.5,  0.5, -0.5, 1.0),
-  vec4( 0.5,  0.5, -0.5, 1.0),
-  vec4( 0.5,  0.5,  0.5, 1.0),
-  vec4(-0.5,  0.5,  0.5, 1.0),
+  vec4(-0.5, 0.5, -0.5, 1.0),
+  vec4(0.5, 0.5, -0.5, 1.0),
+  vec4(0.5, 0.5, 0.5, 1.0),
+  vec4(-0.5, 0.5, 0.5, 1.0),
 
   vec4(-0.5, -0.5, -0.5, 1.0),
-  vec4( 0.5, -0.5, -0.5, 1.0),
-  vec4( 0.5, -0.5,  0.5, 1.0),
-  vec4(-0.5, -0.5,  0.5, 1.0),
+  vec4(0.5, -0.5, -0.5, 1.0),
+  vec4(0.5, -0.5, 0.5, 1.0),
+  vec4(-0.5, -0.5, 0.5, 1.0),
 ];
 
 window.onload = function init() {
@@ -118,13 +116,14 @@ window.onload = function init() {
 
   // Uniforms
   var uModel = gl.getUniformLocation(program, "uModel");
-  var uView  = gl.getUniformLocation(program, "uView");
-  var uProj  = gl.getUniformLocation(program, "uProj");
+  var uView = gl.getUniformLocation(program, "uView");
+  var uProj = gl.getUniformLocation(program, "uProj");
 
   // State
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(0.6, 0.75, 0.95, 1.0); // soft sky-ish bg; walls will cover most
   //gl.enable(gl.DEPTH_TEST);
+  //renders better without depth test
   gl.disable(gl.CULL_FACE);
 
 
@@ -151,24 +150,24 @@ window.onload = function init() {
     return { vao, count: posArray.length };
   }
 
-  const VAOroom  = makeVAO(positionsRoom, colorsRoom);
-  const VAOdesk  = makeVAO(positionsDesk, colorsDesk);
+  const VAOroom = makeVAO(positionsRoom, colorsRoom);
+  const VAOdesk = makeVAO(positionsDesk, colorsDesk);
   const VAOpaper = makeVAO(positionsPaper, colorsPaper);
 
   // Camera matrices using MV.js
   function computeMatrices() {
     // Pull back and up a bit to see more of the room
     const eye = vec3(1.0, 1.0, 1.6);
-    const at  = vec3(0.0, 0.25, 0.0);
-    const up  = vec3(0.0, 2.6, 0.0);
+    const at = vec3(0.0, 0.25, 0.0);
+    const up = vec3(0.0, 2.6, 0.0);
 
     const view = lookAt(eye, at, up);
     const proj = perspective(45.0, canvas.width / canvas.height, 0.01, 30.0);
     const model = mat4(); // identity
 
     gl.uniformMatrix4fv(uModel, false, flatten(model));
-    gl.uniformMatrix4fv(uView,  false, flatten(view));
-    gl.uniformMatrix4fv(uProj,  false, flatten(proj));
+    gl.uniformMatrix4fv(uView, false, flatten(view));
+    gl.uniformMatrix4fv(uProj, false, flatten(proj));
   }
 
   function render() {
@@ -190,8 +189,6 @@ window.onload = function init() {
   }
   render();
 };
-
-// ---------- Helpers (unchanged + added) ----------
 
 // helper: (v0,v1,v2,v3) -> two triangles
 function pushQuad(posArr, colArr, v0, v1, v2, v3, color) {
@@ -265,9 +262,9 @@ function buildDeskAndLegs() {
   const S_leg = scale(0.05, 0.5, 0.05);
   const legCenters = [
     vec3(-0.575, 0.0, -2.99), // front-left
-    vec3( 0.575, 0.0, -2.99), // front-right
-    vec3(-0.575, 0.0,  -1.99), // back-left
-    vec3( 0.575, 0.0,  -1.99), // back-right
+    vec3(0.575, 0.0, -2.99), // front-right
+    vec3(-0.575, 0.0, -1.99), // back-left
+    vec3(0.575, 0.0, -1.99), // back-right
   ];
 
   legCenters.forEach((c) => {
@@ -287,84 +284,84 @@ function buildRoom() {
   const wallH = 1.8;
 
   // Floor (wood)
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, floorY, 0.0), roomHalfX*2.0, 0.002, roomHalfZ*2.0, COLOR_PALLET[11]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, floorY, 0.0), roomHalfX * 2.0, 0.002, roomHalfZ * 2.0, COLOR_PALLET[11]);
 
-  // Baseboards (thin strips around edges)
+  // Baseboards (thin strips around edges) needs work doesn't render in the room
   const baseH = 0.05, baseT = 0.02;
   // Along +Z wall
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, baseH/2.0,  roomHalfZ-0.01), roomHalfX*2.0, baseH, baseT, COLOR_PALLET[9]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, baseH / 2.0, roomHalfZ - 0.01), roomHalfX * 2.0, baseH, baseT, COLOR_PALLET[9]);
   // Along -Z wall
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, baseH/2.0, -roomHalfZ+0.01), roomHalfX*2.0, baseH, baseT, COLOR_PALLET[9]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, baseH / 2.0, -roomHalfZ + 0.01), roomHalfX * 2.0, baseH, baseT, COLOR_PALLET[9]);
   // Along +X wall
-  pushBoxCentered(positionsRoom, colorsRoom, vec3( roomHalfX-0.01, baseH/2.0, 0.0), baseT, baseH, roomHalfZ*2.0, COLOR_PALLET[9]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(roomHalfX - 0.01, baseH / 2.0, 0.0), baseT, baseH, roomHalfZ * 2.0, COLOR_PALLET[9]);
   // Along -X wall
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-roomHalfX+0.01, baseH/2.0, 0.0), baseT, baseH, roomHalfZ*2.0, COLOR_PALLET[9]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-roomHalfX + 0.01, baseH / 2.0, 0.0), baseT, baseH, roomHalfZ * 2.0, COLOR_PALLET[9]);
 
   // Walls (painted)
   // Back wall (+Z)
-  pushPanel(positionsRoom, colorsRoom, vec3(0.0, wallH/2.0,  roomHalfZ), roomHalfX*2.0, wallH, "z", COLOR_PALLET[9]);
+  pushPanel(positionsRoom, colorsRoom, vec3(0.0, wallH / 2.0, roomHalfZ), roomHalfX * 2.0, wallH, "z", COLOR_PALLET[9]);
   // Front wall (-Z)
-  pushPanel(positionsRoom, colorsRoom, vec3(0.0, wallH/2.0, -roomHalfZ), roomHalfX*2.0, wallH, "z", COLOR_PALLET[9]);
+  pushPanel(positionsRoom, colorsRoom, vec3(0.0, wallH / 2.0, -roomHalfZ), roomHalfX * 2.0, wallH, "z", COLOR_PALLET[9]);
   // Right wall (+X)
-  pushPanel(positionsRoom, colorsRoom, vec3( roomHalfX, wallH/2.0, 0.0), roomHalfZ*2.0, wallH, "x", COLOR_PALLET[9]);
+  pushPanel(positionsRoom, colorsRoom, vec3(roomHalfX, wallH / 2.0, 0.0), roomHalfZ * 2.0, wallH, "x", COLOR_PALLET[9]);
   // Left wall (-X)
-  pushPanel(positionsRoom, colorsRoom, vec3(-roomHalfX, wallH/2.0, 0.0), roomHalfZ*2.0, wallH, "x", COLOR_PALLET[9]);
+  pushPanel(positionsRoom, colorsRoom, vec3(-roomHalfX, wallH / 2.0, 0.0), roomHalfZ * 2.0, wallH, "x", COLOR_PALLET[9]);
 
-  // Simple ceiling trim (thin frame)
+  // Simple ceiling trim (thin frame) // needs work doesn't render in the room
   const trimY = wallH - 0.02;
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, trimY,  roomHalfZ-0.02), roomHalfX*2.0, 0.015, 0.03, COLOR_PALLET[13]);
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, trimY, -roomHalfZ+0.02), roomHalfX*2.0, 0.015, 0.03, COLOR_PALLET[13]);
-  pushBoxCentered(positionsRoom, colorsRoom, vec3( roomHalfX-0.02, trimY, 0.0), 0.03, 0.015, roomHalfZ*2.0, COLOR_PALLET[13]);
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-roomHalfX+0.02, trimY, 0.0), 0.03, 0.015, roomHalfZ*2.0, COLOR_PALLET[13]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, trimY, roomHalfZ - 0.02), roomHalfX * 2.0, 0.015, 0.03, COLOR_PALLET[13]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, trimY, -roomHalfZ + 0.02), roomHalfX * 2.0, 0.015, 0.03, COLOR_PALLET[13]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(roomHalfX - 0.02, trimY, 0.0), 0.03, 0.015, roomHalfZ * 2.0, COLOR_PALLET[13]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-roomHalfX + 0.02, trimY, 0.0), 0.03, 0.015, roomHalfZ * 2.0, COLOR_PALLET[13]);
 
   // Window on back wall (+Z)
   // Frame
   const winW = 1.2, winH = 0.7, winY = 1.1, winZ = roomHalfZ - 0.005;
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, winY, winZ), winW+0.05, winH+0.05, 0.03, COLOR_PALLET[13]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(0.0, winY, winZ), winW + 0.05, winH + 0.05, 0.03, COLOR_PALLET[13]);
   // Glass panel (slightly pushed inward)
-  pushPanel(positionsRoom, colorsRoom, vec3(0.0, winY, winZ-0.015), winW, winH, "z", COLOR_PALLET[5]); // cyan-ish
+  pushPanel(positionsRoom, colorsRoom, vec3(0.0, winY, winZ - 0.015), winW, winH, "z", COLOR_PALLET[5]); // cyan-ish
   // "Outside" (blue panel further back to imply sky)
-  pushPanel(positionsRoom, colorsRoom, vec3(0.0, winY, winZ-0.06), winW*1.2, winH*1.2, "z", COLOR_PALLET[2]);
+  pushPanel(positionsRoom, colorsRoom, vec3(0.0, winY, winZ - 0.06), winW * 1.2, winH * 1.2, "z", COLOR_PALLET[2]);
 
   // Door on right wall (+X)
-  const doorW = 0.8, doorH = 1.6, doorX = roomHalfX, doorY = doorH/2.0, doorZ = -1.2;
+  const doorW = 0.8, doorH = 1.6, doorX = roomHalfX, doorY = doorH / 2.0, doorZ = -1.2;
   // Door slab (slightly inset)
-  pushPanel(positionsRoom, colorsRoom, vec3(doorX-0.004, doorY, doorZ), doorH, doorW, "x", COLOR_PALLET[13]);
+  pushPanel(positionsRoom, colorsRoom, vec3(doorX - 0.004, doorY, doorZ), doorH, doorW, "x", COLOR_PALLET[13]);
   // Door panel
-  pushPanel(positionsRoom, colorsRoom, vec3(doorX-0.02, doorY, doorZ), doorH*0.98, doorW*0.98, "x", COLOR_PALLET[8]);
+  pushPanel(positionsRoom, colorsRoom, vec3(doorX - 0.02, doorY, doorZ), doorH * 0.98, doorW * 0.98, "x", COLOR_PALLET[8]);
   // Knob
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(doorX-0.04, 0.95, doorZ+doorW*0.3), 0.03, 0.03, 0.03, COLOR_PALLET[6]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(doorX - 0.04, 0.95, doorZ + doorW * 0.3), 0.03, 0.03, 0.03, COLOR_PALLET[6]);
 
   // Rug near desk
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.2, 0.001, 0.25), 1.2, 0.002, 0.8, COLOR_PALLET[3]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.0, 0.001, -2.25), 2.0, 0.002, 0.8, COLOR_PALLET[2]);
 
   // Trash can (simple tall box) near desk leg
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.8, 0.18, -0.35), 0.18, 0.36, 0.18, COLOR_PALLET[7]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.8, 0.18, -2.35), 0.18, 0.36, 0.18, COLOR_PALLET[7]);
   // “Open” lip
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.8, 0.37, -0.35), 0.20, 0.02, 0.20, COLOR_PALLET[10]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.8, 0.37, -2.35), 0.20, 0.02, 0.20, COLOR_PALLET[10]);
 
   // Standing lamp (base, pole, shade)
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(1.1, 0.02, 0.9), 0.22, 0.02, 0.22, COLOR_PALLET[10]); // base
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(1.1, 0.7, 0.9), 0.04, 1.36, 0.04, COLOR_PALLET[10]); // pole
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(1.1, 1.35, 0.9), 0.35, 0.18, 0.35, COLOR_PALLET[13]); // shade
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(1.1, 0.02, -2.7), 0.22, 0.02, 0.22, COLOR_PALLET[10]); // base
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(1.1, 0.7, -2.7), 0.04, 1.36, 0.04, COLOR_PALLET[10]); // pole
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(1.1, 1.35, -2.7), 0.35, 0.18, 0.35, COLOR_PALLET[13]); // shade
 
   // Chair near desk (seat at y ~ 0.07, desk top is y=0.1)
   // Seat
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.25, 0.08, 0.15), 0.35, 0.05, 0.35, COLOR_PALLET[12]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.25, 0.08, -2.25), 0.35, 0.05, 0.35, COLOR_PALLET[6]);
   // Backrest
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.25, 0.28, -0.02), 0.35, 0.4, 0.06, COLOR_PALLET[12]);
+  pushBoxCentered(positionsRoom, colorsRoom, vec3(-0.25, 0.28, -2.20), 0.35, 0.4, 0.06, COLOR_PALLET[6]);
   // Legs (reuse thin boxes)
   const cl = [
-    vec3(-0.38, 0.04, 0.28),
-    vec3(-0.12, 0.04, 0.28),
-    vec3(-0.38, 0.04, 0.02),
-    vec3(-0.12, 0.04, 0.02),
+    vec3(-0.38, 0.04, -2.25),
+    vec3(-0.12, 0.04, -2.25),
+    vec3(-0.38, 0.04, -2.20),
+    vec3(-0.12, 0.04, -2.20),
   ];
   cl.forEach(c => pushBoxCentered(positionsRoom, colorsRoom, c, 0.04, 0.08, 0.04, COLOR_PALLET[7]));
 
   // Bookshelf against left wall (-X)
   const shelfX = -roomHalfX + 0.12;
-  pushBoxCentered(positionsRoom, colorsRoom, vec3(shelfX, 0.7, -0.9), 0.24, 1.2, 0.5, COLOR_PALLET[12]); // carcass
+  //pushBoxCentered(positionsRoom, colorsRoom, vec3(-3.0, 0.7, -0.9), 0.24, 1.2, 0.5, COLOR_PALLET[12]); //main frame
   // Shelves
   [0.2, 0.5, 0.8, 1.1].forEach(h =>
     pushBoxCentered(positionsRoom, colorsRoom, vec3(shelfX, h, -0.9), 0.22, 0.03, 0.48, COLOR_PALLET[11])
@@ -373,9 +370,9 @@ function buildRoom() {
   const bookYs = [0.22, 0.52, 0.82, 1.12];
   bookYs.forEach((h, i) => {
     for (let k = 0; k < 4; k++) {
-      const z = -0.9 - 0.18 + k*0.12;
-      const col = [COLOR_PALLET[14], COLOR_PALLET[15], COLOR_PALLET[16]][(i+k)%3];
-      pushBoxCentered(positionsRoom, colorsRoom, vec3(shelfX, h+0.08, z), 0.06, 0.16, 0.08, col);
+      const z = -0.9 - 0.18 + k * 0.12;
+      const col = [COLOR_PALLET[14], COLOR_PALLET[15], COLOR_PALLET[16]][(i + k) % 3];
+      pushBoxCentered(positionsRoom, colorsRoom, vec3(shelfX, h + 0.08, z), 0.06, 0.16, 0.08, col);
     }
   });
 }
