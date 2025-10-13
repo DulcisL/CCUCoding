@@ -1,0 +1,10 @@
+At 100 m there is -11.2 inches of drop 
+At 200 m there is -27.4 inches of drop 
+At 300 m there is -44.5 inches of drop 
+At 400 m there is -62.0 inches of drop 
+At 500 m there is -79.8 inches of drop 
+At 600 m there is -97.8 inches of drop 
+At 700 m there is -115.9 inches of drop 
+At 800 m there is -134.2 inches of drop 
+At 900 m there is -152.5 inches of drop 
+At 1000 m there is -171.0 inches of drop 
