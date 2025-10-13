@@ -1,3 +1,11 @@
+/*
+Exercise 3b
+- Change shape to a rectangle
+- Use interpolated colors: TL - Green, TR - Red BL - Blue BR - Yellow
+- Add buttons for:
+    - camera move x,y,z like 3a 
+    - add light up and light down buttons
+*/
 "use strict";
 
 var shadow = function () {
@@ -6,6 +14,7 @@ var shadow = function () {
     var gl;
 
     var positionsArray = [];
+    var colorsArray = [];
 
     var near = -4;
     var far = 4;
@@ -64,18 +73,28 @@ var shadow = function () {
         red = vec4(1.0, 0.0, 0.0, 1.0);
         black = vec4(0.0, 0.0, 0.0, 1.0);
 
-        // square
+        // rectangle
 
-        positionsArray.push(vec4(-0.5, 0.5, -0.5, 1.0));
-        positionsArray.push(vec4(-0.5, 0.5, 0.5, 1.0));
-        positionsArray.push(vec4(0.5, 0.5, 0.5, 1.0));
-        positionsArray.push(vec4(0.5, 0.5, -0.5, 1.0));
+        positionsArray.push(vec4(-0.8, 0.5, -0.4, 1.0));
+        positionsArray.push(vec4(-0.8, 0.5, 0.4, 1.0));
+        positionsArray.push(vec4(0.5, 0.5, 0.4, 1.0));
+        positionsArray.push(vec4(0.5, 0.5, -0.4, 1.0));
+
+        //Push colors
+        colorsArray.push(vec3(0.0, 1.0, 0.0));
+        colorsArray.push(vec3(1.0, 0.0, 0.0));
+        colorsArray.push(vec3(0.0, 0.0, 1.0));
+        colorsArray.push(vec3(1.0, 1.0, 0.0));
+        colorsArray.push(vec3(1.0, 1.0, 1.0));
+
+
 
         //
         //  Load shaders and initialize attribute buffers
         //
         var program = initShaders(gl, "vertex-shader", "fragment-shader");
         gl.useProgram(program);
+
 
         var vBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -85,13 +104,22 @@ var shadow = function () {
         gl.vertexAttribPointer(positionLoc, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(positionLoc);
 
-        colorLoc = gl.getUniformLocation(program, "uColor");
+        colorLoc = gl.getAttribLocation(program, "aColor");
 
         modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
         projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
 
         projectionMatrix = ortho(left, right, bottom, top, near, far);
         gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
+
+        document.getElementById("Button1").onclick = function () { eye[0] += 0.25; };
+        document.getElementById("Button2").onclick = function () { eye[0] -= 0.25; };
+        document.getElementById("Button3").onclick = function () { eye[1] += 0.25; };
+        document.getElementById("Button4").onclick = function () { eye[1] -= 0.25; };
+        document.getElementById("Button5").onclick = function () { eye[2] += 0.25; };
+        document.getElementById("Button6").onclick = function () { eye[2] -= 0.25; };
+        document.getElementById("Button7").onclick = function () { light[0] += 0.25 };
+        document.getElementById("Button8").onclick = function () { light[0] += 0.25 };
 
         render();
 
@@ -138,5 +166,6 @@ var shadow = function () {
     }
 
 }
+
 
 shadow();

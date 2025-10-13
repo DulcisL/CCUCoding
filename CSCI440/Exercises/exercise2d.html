@@ -1,29 +1,14 @@
 <!DOCTYPE html>
 <html>
-
-<p> </p>
-<button id="Button1">Camera +X</button>
-<button id="Button2">-X</button>
-<button id="Button3">+Y</button>
-<button id="Button4">-Y</button>
-<button id="Button5">+Z</button>
-<button id="Button6">-Z</button>
-<button id="Button0">Projection</button>
-<p> </p>
 <script id="vertex-shader" type="x-shader/x-vertex">
 #version 300 es
 
-in  vec4 aPosition;
-in  vec4 aColor;
-out vec4 vColor;
-
+in vec4 aPosition;
 uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
 
 void main()
 {
-    gl_Position = uProjectionMatrix*uModelViewMatrix*aPosition;
-    vColor = aColor;
+    gl_Position = uModelViewMatrix*aPosition;
 }
 </script>
 
@@ -32,19 +17,19 @@ void main()
 
 precision mediump float;
 
-in vec4 vColor;
+uniform vec4 uColor;
 out vec4 fColor;
 
 void
 main()
 {
-    fColor = vColor;
+    fColor = uColor;
 }
 </script>
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MVnew.js"></script>
-<script type="text/javascript" src="exercise3a.js"></script>
+<script type="text/javascript" src="exercise2d.js"></script>
 
 <body>
     <canvas id="gl-canvas" width="512" height="512">
