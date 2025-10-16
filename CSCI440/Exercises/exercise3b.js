@@ -14,8 +14,6 @@ var shadow = function () {
     var gl;
 
     var positionsArray = [];
-    var colorsArray = [];
-
     var near = -4;
     var far = 4;
 
@@ -36,11 +34,19 @@ var shadow = function () {
 
     var m;
 
-    var red;
-    var black;
-
-
     window.onload = function init() {
+
+        var vertexColors = [
+            vec4(0.0, 0.0, 0.0, 1.0),  // black
+            vec4(1.0, 0.0, 0.0, 1.0),  // red
+            vec4(1.0, 1.0, 0.0, 1.0),  // yellow
+            vec4(0.0, 1.0, 0.0, 1.0),  // green
+            vec4(0.0, 0.0, 1.0, 1.0),  // blue
+            vec4(1.0, 0.0, 1.0, 1.0),  // magenta
+            vec4(0.0, 1.0, 1.0, 1.0),  // cyan
+            vec4(1.0, 1.0, 1.0, 1.0)   // white
+        ];
+
         canvas = document.getElementById("gl-canvas");
 
         gl = canvas.getContext('webgl2');
@@ -68,26 +74,13 @@ var shadow = function () {
         up = vec3(0.0, 1.0, 0.0);
         eye = vec3(1.0, 1.0, 1.0);
 
-        // color square red and shadow black
-
-        red = vec4(1.0, 0.0, 0.0, 1.0);
-        black = vec4(0.0, 0.0, 0.0, 1.0);
-
         // rectangle
 
         positionsArray.push(vec4(-0.8, 0.5, -0.4, 1.0));
         positionsArray.push(vec4(-0.8, 0.5, 0.4, 1.0));
         positionsArray.push(vec4(0.5, 0.5, 0.4, 1.0));
         positionsArray.push(vec4(0.5, 0.5, -0.4, 1.0));
-
-        //Push colors
-        colorsArray.push(vec3(0.0, 1.0, 0.0));
-        colorsArray.push(vec3(1.0, 0.0, 0.0));
-        colorsArray.push(vec3(0.0, 0.0, 1.0));
-        colorsArray.push(vec3(1.0, 1.0, 0.0));
-        colorsArray.push(vec3(1.0, 1.0, 1.0));
-
-
+        var colors = [vertexColors[3], vertexColors[1], vertexColors[4], vertexColors[2]];
 
         //
         //  Load shaders and initialize attribute buffers
@@ -95,6 +88,9 @@ var shadow = function () {
         var program = initShaders(gl, "vertex-shader", "fragment-shader");
         gl.useProgram(program);
 
+        //Get variables from html
+        colorLoc = gl.getAttribLocation(program, "aColor");
+        gl.enableVertexAttribArray(colorLoc);
 
         var vBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -103,8 +99,6 @@ var shadow = function () {
         var positionLoc = gl.getAttribLocation(program, "aPosition");
         gl.vertexAttribPointer(positionLoc, 4, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(positionLoc);
-
-        colorLoc = gl.getAttribLocation(program, "aColor");
 
         modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
         projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
@@ -118,15 +112,25 @@ var shadow = function () {
         document.getElementById("Button4").onclick = function () { eye[1] -= 0.25; };
         document.getElementById("Button5").onclick = function () { eye[2] += 0.25; };
         document.getElementById("Button6").onclick = function () { eye[2] -= 0.25; };
-        document.getElementById("Button7").onclick = function () { light[0] += 0.25 };
-        document.getElementById("Button8").onclick = function () { light[0] += 0.25 };
+        document.getElementById("Button7").onclick = function () { light[1] += 0.25 };
+        document.getElementById("Button8").onclick = function () { light[1] -= 0.25 };
 
         render();
 
     }
 
-
     var render = function () {
+
+        var vertexColors = [
+            vec4(0.0, 0.0, 0.0, 1.0),  // black
+            vec4(1.0, 0.0, 0.0, 1.0),  // red
+            vec4(1.0, 1.0, 0.0, 1.0),  // yellow
+            vec4(0.0, 1.0, 0.0, 1.0),  // green
+            vec4(0.0, 0.0, 1.0, 1.0),  // blue
+            vec4(1.0, 0.0, 1.0, 1.0),  // magenta
+            vec4(0.0, 1.0, 1.0, 1.0),  // cyan
+            vec4(1.0, 1.0, 1.0, 1.0)   // white
+        ];
 
         theta += 0.1;
         if (theta > 2 * Math.PI) theta -= 2 * Math.PI;
@@ -137,10 +141,15 @@ var shadow = function () {
 
         modelViewMatrix = lookAt(eye, at, up);
 
-        // send color and matrix for square then render
-
+        //set color
+        var colors = [vertexColors[3], vertexColors[1], vertexColors[4], vertexColors[2]];
+        //set buffer
+        var cBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+        //send color and matrix to render
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        gl.uniform4fv(colorLoc, red);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
         // rotate light source
@@ -156,10 +165,15 @@ var shadow = function () {
         modelViewMatrix = mult(modelViewMatrix, translate(-light[0], -light[1],
             -light[2]));
 
-        // send color and matrix for shadow
-
+        //Set color
+        colors = [vertexColors[0], vertexColors[0], vertexColors[0], vertexColors[0]];
+        //reset color buffer
+        cBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+        //send color and matrix for shadow
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+        gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-        gl.uniform4fv(colorLoc, black);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
         requestAnimationFrame(render);

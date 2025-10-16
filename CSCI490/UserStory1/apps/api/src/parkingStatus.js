@@ -45,7 +45,7 @@ Returns: lots(array) - will return the array of the lots with the needed informa
 */
 function getLots() {
   //Initialize
-  let lots = [];
+  let lots = {};
   //get data
   //Store as object with keyword pairs name:data
 
@@ -65,7 +65,12 @@ function main() {
   //get lots
   lots = getLots();
 
-  //set color of polygon
+  //set color of lot polygon
+  for (lot in lots) {
+    lot.setColor();
+  }
+
+  //push to leaflet
 
 
 }
