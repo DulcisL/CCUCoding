@@ -273,8 +273,6 @@ var shadedCube = function () {
       modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis], vec3(0, 1, 0)));
       modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis], vec3(0, 0, 1)));
 
-      //console.log(modelView);
-
       gl.uniformMatrix4fv(gl.getUniformLocation(program,
          "uModelViewMatrix"), false, flatten(modelViewMatrix));
 

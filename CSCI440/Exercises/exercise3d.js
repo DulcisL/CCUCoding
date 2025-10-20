@@ -54,6 +54,7 @@ var shadedSphere3 = function () {
 
     var modelViewMatrix, projectionMatrix;
     var modelViewMatrixLoc, projectionMatrixLoc;
+    var lightPositionLoc
 
     var nMatrix, nMatrixLoc;
 
@@ -68,7 +69,6 @@ var shadedSphere3 = function () {
     var lightMove = false;
 
     const displacement = 0.05;
-
 
 
     function triangle(a, b, c) {
@@ -118,6 +118,34 @@ var shadedSphere3 = function () {
         divideTriangle(a, c, d, n);
     }
 
+    function moveLight() {
+        //move light
+        //check if light is supposed to be moving
+        if (lightMove) {
+            console.log(lightPosition);
+            //check if light is moving or left or right
+            if (direction) {
+                //check if the lights current position is passed max travel distance
+                if (lightPosition[lightAxis] < maxTravel) {
+                    //increment the value at that axis
+                    lightPosition[lightAxis] += displacement;
+                }
+                if (lightPosition[lightAxis] >= maxTravel) {
+                    direction = !direction;
+                }
+            }
+            if (!direction) {
+                if (lightPosition[lightAxis] > -maxTravel) {
+                    lightPosition[lightAxis] -= displacement;
+                }
+                if (lightPosition[lightAxis] <= -maxTravel) {
+                    direction = !direction;
+                }
+            }
+        }
+        return lightPosition;
+    }
+
     window.onload = function init() {
 
         canvas = document.getElementById("gl-canvas");
@@ -141,7 +169,6 @@ var shadedSphere3 = function () {
         var diffuseProduct = mult(lightDiffuse, materialDiffuse);
         var specularProduct = mult(lightSpecular, materialSpecular);
 
-
         tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 
         var nBuffer = gl.createBuffer();
@@ -164,6 +191,9 @@ var shadedSphere3 = function () {
         modelViewMatrixLoc = gl.getUniformLocation(program, "uModelViewMatrix");
         projectionMatrixLoc = gl.getUniformLocation(program, "uProjectionMatrix");
         nMatrixLoc = gl.getUniformLocation(program, "uNormalMatrix");
+
+        lightPositionLoc = gl.getUniformLocation(program, "uLightPosition");
+
 
         document.getElementById("Subdivisions").onclick = function (event) {
             switch (event.target.index) {
@@ -260,35 +290,22 @@ var shadedSphere3 = function () {
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        //move light
-        if (lightMove) {
-            console.log(lightPosition);
-            if (direction) {
-                if (lightPosition[lightAxis] < maxTravel) {
-                    lightPosition[lightAxis] += displacement;
-                }
-                if (lightPosition[lightAxis] >= maxTravel) {
-                    direction = !direction;
-                }
-            }
-            if (!direction) {
-                if (lightPosition[lightAxis] > -maxTravel) {
-                    lightPosition[lightAxis] -= displacement;
-                }
-                if (lightPosition[lightAxis] <= -maxTravel) {
-                    direction = !direction;
-                }
-            }
-        }
+        //Moved to function to move the logic around easier
+        moveLight();
 
         eye = vec3(radius * Math.sin(theta) * Math.cos(phi),
             radius * Math.sin(theta) * Math.sin(phi), radius * Math.cos(theta));
 
         modelViewMatrix = lookAt(eye, at, up);
+
         projectionMatrix = ortho(left, right, bottom, top, near, far);
 
         nMatrix = normalMatrix(modelViewMatrix, true);
 
+        //send back to shaders
+        //Send light position back to shaders
+        gl.uniform4fv(lightPositionLoc, flatten(lightPosition));
+        //***NOTE: No false on light unlike other sends***
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
         gl.uniformMatrix3fv(nMatrixLoc, false, flatten(nMatrix));
