@@ -173,6 +173,7 @@ var shadow = function () {
         //send color and matrix for shadow
         gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
         gl.vertexAttribPointer(colorLoc, 4, gl.FLOAT, false, 0, 0);
+
         gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 

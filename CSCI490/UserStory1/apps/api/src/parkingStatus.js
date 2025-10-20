@@ -23,7 +23,8 @@ class Lot {
     this.name = lotName;
     this.capacity = lotCapacity;
     this.fill = lotfill;
-    this.color = (0, 0, 255);
+    //set color automatically
+    this.color = this.setColor();
   }
 
   setColor() {
@@ -62,6 +63,7 @@ function main() {
 
   //Initialize
   let lots = {};
+
   //get lots
   lots = getLots();
 
