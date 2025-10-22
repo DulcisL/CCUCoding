@@ -30,11 +30,10 @@ class Lot {
   setColor() {
     // Assuming fill will be a number between 0 and 1
     //Red and green will be inversely proportional
-    var red = 255 * fill;
-    var green = 255 * (1 - fill);
+    var red = 255 * this.fill;
+    var green = 255 * (1 - this.fill);
     //set color of polygon for lot
-    newColor = (red, 0, green);
-    this.color = newColor;
+    this.color = (red, 0, green);
   }
 };
 
