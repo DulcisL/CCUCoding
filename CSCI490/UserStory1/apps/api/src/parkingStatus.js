@@ -75,3 +75,11 @@ function main() {
 
 
 }
+/* To Do
+ - Data base implementation
+ - Special events closes parking lots
+ - Sending back to the leaflet app
+ - Testing
+
+
+*/
