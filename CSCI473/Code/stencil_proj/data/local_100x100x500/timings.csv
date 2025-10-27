@@ -1,0 +1,2 @@
+rows,cols,iterations,input,final,stack,read_s,compute_s,write_s,overall_s
+100,100,500,initial.dat,final.dat,all.100x100x500.dat,4.386901855e-05,3.758096695e-02,1.876568794e-02,3.784012794e-02

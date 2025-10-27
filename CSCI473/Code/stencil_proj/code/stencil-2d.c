@@ -1,20 +1,65 @@
 // stencil-2d.c
 // Usage: ./stencil-2d <input.dat> <final.dat> <iterations>
-// Inputs/Outputs format: [int32 rows][int32 cols][rows*cols doubles]
-// Writes (in current working directory, e.g., ./data):
-//   - <final.dat>              final plate
-//   - all.<R>x<C>x<I>.dat      stack (I+1 frames: initial + after each iteration)
+// Format for all .dat files: [int32 rows][int32 cols][rows*cols doubles] (row-major)
+//
+// This version measures timings and appends a row to timings.csv in the CWD:
+//
+// CSV columns:
+// rows,cols,iterations,input,final,stack,read_s,compute_s,write_s,overall_s
+//
+// Notes:
+// - Run this from ./data so outputs + timings.csv live in Stencil_proj/data
+// - Compute uses 9-point average in order: NW, N, NE, E, SE, S, SW, W, C
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <errno.h>
+
 #include "utilities.h"
 #include "timer.h"
 
 static void usage(const char *prog)
 {
     fprintf(stderr, "Usage: %s <input.dat> <final.dat> <iterations>\n", prog);
+}
+
+static int file_exists(const char *path)
+{
+    FILE *f = fopen(path, "rb");
+    if (!f)
+        return 0;
+    fclose(f);
+    return 1;
+}
+
+static int append_timings_csv(const char *csv_path,
+                              int rows, int cols, int iters,
+                              const char *inpath, const char *finalpath, const char *stackname,
+                              double read_s, double compute_s, double write_s, double overall_s)
+{
+    int need_header = !file_exists(csv_path);
+
+    FILE *f = fopen(csv_path, "a");
+    if (!f)
+    {
+        fprintf(stderr, "Error: cannot open %s for append: %s\n", csv_path, strerror(errno));
+        return -1;
+    }
+
+    if (need_header)
+    {
+        fprintf(f, "rows,cols,iterations,input,final,stack,read_s,compute_s,write_s,overall_s\n");
+    }
+
+    // CSV-escape not needed for our simple names, but keep them plain.
+    fprintf(f, "%d,%d,%d,%s,%s,%s,%.9e,%.9e,%.9e,%.9e\n",
+            rows, cols, iters, inpath, finalpath, stackname,
+            read_s, compute_s, write_s, overall_s);
+
+    fclose(f);
+    return 0;
 }
 
 int main(int argc, char **argv)
@@ -34,6 +79,16 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    // Timing accumulators
+    double t_overall0, t_overall1;
+    double t_read0, t_read1, read_s = 0.0;
+    double t_compute0, t_compute1, compute_s = 0.0;
+    double t_write0, t_write1, write_s = 0.0;
+
+    GET_TIME(t_overall0);
+
+    // ---------------- READ ----------------
+    GET_TIME(t_read0);
     FILE *fin = fopen(inpath, "rb");
     if (!fin)
     {
@@ -71,10 +126,14 @@ int main(int argc, char **argv)
         return 1;
     }
     fclose(fin);
+    GET_TIME(t_read1);
+    read_s += (t_read1 - t_read0);
 
-    // Open stack file in current dir (run from ./data)
+    // ---------------- OPEN STACK (WRITE) ----------------
     char stack_name[128];
     snprintf(stack_name, sizeof(stack_name), "all.%dx%dx%d.dat", R, C, iterations);
+
+    GET_TIME(t_write0);
     FILE *stack = fopen(stack_name, "wb");
     if (!stack)
     {
@@ -91,8 +150,7 @@ int main(int argc, char **argv)
         free(B);
         return 1;
     }
-
-    // Write initial frame (BEFORE any iteration)
+    // Write initial frame BEFORE any iteration
     if (fwrite(A, sizeof(double), N, stack) != N)
     {
         fprintf(stderr, "Error writing initial frame\n");
@@ -101,28 +159,35 @@ int main(int argc, char **argv)
         free(B);
         return 1;
     }
+    GET_TIME(t_write1);
+    write_s += (t_write1 - t_write0);
 
-    double t0, t1;
-    GET_TIME(t0);
-
+    // ---------------- COMPUTE ----------------
+    GET_TIME(t_compute0);
     for (int t = 0; t < iterations; ++t)
     {
-        // Interior update with the requested order:
-        // (NW + N + NE + E + SE + S + SW + W + C) / 9.0
         for (int i = 1; i < R - 1; ++i)
         {
+            size_t iC = (size_t)i * C;
+            size_t ip1C = (size_t)(i + 1) * C;
+            size_t im1C = (size_t)(i - 1) * C;
+
             for (int j = 1; j < C - 1; ++j)
             {
-                // indices for readability
-                size_t iC = (size_t)i * C;
-                size_t ip1C = (size_t)(i + 1) * C;
-                size_t im1C = (size_t)(i - 1) * C;
+                double sum =
+                    A[im1C + (j - 1)] + // NW
+                    A[im1C + j] +       // N
+                    A[im1C + (j + 1)] + // NE
+                    A[iC + (j + 1)] +   // E
+                    A[ip1C + (j + 1)] + // SE
+                    A[ip1C + j] +       // S
+                    A[ip1C + (j - 1)] + // SW
+                    A[iC + (j - 1)] +   // W
+                    A[iC + j];          // C
 
-                double sum = (A[im1C + (j - 1)] + A[im1C + j] + A[im1C + (j + 1)] + A[iC + (j + 1)] + A[ip1C + (j + 1)] + A[ip1C + j] + A[ip1C + (j - 1)] + A[iC + (j - 1)] + A[iC + j]) / 9;
-                B[iC + j] = sum;
+                B[iC + j] = sum / 9.0;
             }
         }
-
         // boundaries unchanged
         for (int j = 0; j < C; ++j)
         {
@@ -140,7 +205,8 @@ int main(int argc, char **argv)
         A = B;
         B = tmp;
 
-        // write post-iteration frame
+        // write post-iteration frame (WRITE)
+        GET_TIME(t_write0);
         if (fwrite(A, sizeof(double), N, stack) != N)
         {
             fprintf(stderr, "Error writing frame %d\n", t + 1);
@@ -149,12 +215,18 @@ int main(int argc, char **argv)
             free(B);
             return 1;
         }
+        GET_TIME(t_write1);
+        write_s += (t_write1 - t_write0);
     }
+    GET_TIME(t_compute1);
+    compute_s += (t_compute1 - t_compute0);
 
-    GET_TIME(t1);
+    // Close stack
+    // (No need to time fclose separately; negligible)
     fclose(stack);
 
-    // Write final output
+    // ---------------- WRITE FINAL ----------------
+    GET_TIME(t_write0);
     FILE *fout = fopen(finalpath, "wb");
     if (!fout)
     {
@@ -172,9 +244,31 @@ int main(int argc, char **argv)
         return 1;
     }
     fclose(fout);
+    GET_TIME(t_write1);
+    write_s += (t_write1 - t_write0);
 
-    printf("Stencil kernel time: %e seconds\n", (t1 - t0));
+    GET_TIME(t_overall1);
+    double overall_s = (t_overall1 - t_overall0);
+
+    // ---------------- REPORT ----------------
+    printf("Read time   : %e s\n", read_s);
+    printf("Compute time: %e s\n", compute_s);
+    printf("Write time  : %e s\n", write_s);
+    printf("Overall time: %e s\n", overall_s);
     printf("Wrote %s and %s\n", finalpath, stack_name);
+
+    // ---------------- CSV APPEND ----------------
+    // Write timings.csv in current directory (./data if run there)
+    const char *csv_name = "timings.csv";
+    if (append_timings_csv(csv_name, R, C, iterations, inpath, finalpath, stack_name,
+                           read_s, compute_s, write_s, overall_s) != 0)
+    {
+        fprintf(stderr, "Warning: failed to append timings to %s\n", csv_name);
+    }
+    else
+    {
+        printf("Appended timings to %s\n", csv_name);
+    }
 
     free(A);
     free(B);
