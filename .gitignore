@@ -9,15 +9,30 @@ docs/
 doc/
 Books/
 Book/
+book/
+books/
+Doc/
+Docs/
+
+#Ignore repos
+wjones-git-repo/
 
 #Ignore bin files
 bin/
 
 #Ignore sample directories
 mod0/
+csci473/
 
 #Ignore pdfs
 *.[pdf]
+
+#Ignore presentations
+pres/
+Pres/
+Presentations/
+presentations/
+
 
 #Ignore markdowns
 *.[md]
