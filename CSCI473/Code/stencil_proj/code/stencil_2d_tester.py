@@ -14,7 +14,7 @@ Required:
 
 Optional:
   --serial SERIAL       Path to serial executable (default ./code/stencil-2d)
-  --pth PTH             Path to pthread executable (default ./code/pth_stencil)
+  --pth PTH             Path to pthread executable (default ./code/pth-stencil-2d)
   --tol TOL             Absolute tolerance for float comparisons (default 0.0 for exact)
   --endian {little,big} Endianness for .dat files (default little)
   --keep                Keep passing case folders
@@ -63,7 +63,7 @@ def parse_args():
 
     # Optional paths
     p.add_argument("--serial", default="./code/stencil-2d", help="Path to serial stencil-2d")
-    p.add_argument("--pth", default="./code/pth_stencil", help="Path to pthread pth_stencil")
+    p.add_argument("--pth", default="./code/pth-stencil-2d", help="Path to pthread pth-stencil-2d")
 
     # Behavior
     p.add_argument("--tol", type=float, default=0.0, help="Absolute tolerance (default 0.0 = exact)")

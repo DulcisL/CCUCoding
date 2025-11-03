@@ -129,38 +129,83 @@ int main(int argc, char **argv)
     GET_TIME(t_read1);
     read_s += (t_read1 - t_read0);
 
-    // ---------------- OPEN STACK (WRITE) ----------------
+    // ---------------- STACK SETUP ----------------
+    int stack_enabled = 1;
+    const char *disable_env = getenv("STENCIL_DISABLE_STACK");
+    if (disable_env && disable_env[0] != '\0' && strcmp(disable_env, "0") != 0)
+        stack_enabled = 0;
+
     char stack_name[128];
     snprintf(stack_name, sizeof(stack_name), "all.%dx%dx%d.dat", R, C, iterations);
 
-    GET_TIME(t_write0);
-    FILE *stack = fopen(stack_name, "wb");
-    if (!stack)
+    char stack_path[512];
+    stack_path[0] = '\0';
+    FILE *stack = NULL;
+
+    if (stack_enabled)
     {
-        perror("open stack");
-        free(A);
-        free(B);
-        return 1;
+        const char *sep = strrchr(finalpath, '/');
+#ifdef _WIN32
+        const char *bsep = strrchr(finalpath, '\\');
+        if (!sep || (bsep && bsep > sep))
+            sep = bsep;
+#endif
+        int stack_path_len = 0;
+        if (sep)
+        {
+            size_t dir_len = (size_t)(sep - finalpath);
+            char join_char = *sep;
+            if (dir_len == 0)
+            {
+                stack_path_len = snprintf(stack_path, sizeof(stack_path), "%c%s", join_char, stack_name);
+            }
+            else
+            {
+                stack_path_len = snprintf(stack_path, sizeof(stack_path), "%.*s%c%s",
+                                          (int)dir_len, finalpath, join_char, stack_name);
+            }
+        }
+        else
+        {
+            stack_path_len = snprintf(stack_path, sizeof(stack_path), "%s", stack_name);
+        }
+        if (stack_path_len < 0 || (size_t)stack_path_len >= sizeof(stack_path))
+        {
+            fprintf(stderr, "Error: stack path too long\n");
+            free(A);
+            free(B);
+            return 1;
+        }
+
+        GET_TIME(t_write0);
+        stack = fopen(stack_path, "wb");
+        if (!stack)
+        {
+            fprintf(stderr, "Error: cannot open %s: %s\n", stack_path, strerror(errno));
+            free(A);
+            free(B);
+            return 1;
+        }
+        if (write_header(stack, rows32, cols32) != 0)
+        {
+            fprintf(stderr, "write header failed\n");
+            fclose(stack);
+            free(A);
+            free(B);
+            return 1;
+        }
+        // Write initial frame BEFORE any iteration
+        if (fwrite(A, sizeof(double), N, stack) != N)
+        {
+            fprintf(stderr, "Error writing initial frame to %s\n", stack_path);
+            fclose(stack);
+            free(A);
+            free(B);
+            return 1;
+        }
+        GET_TIME(t_write1);
+        write_s += (t_write1 - t_write0);
     }
-    if (write_header(stack, rows32, cols32) != 0)
-    {
-        fprintf(stderr, "write header failed\n");
-        fclose(stack);
-        free(A);
-        free(B);
-        return 1;
-    }
-    // Write initial frame BEFORE any iteration
-    if (fwrite(A, sizeof(double), N, stack) != N)
-    {
-        fprintf(stderr, "Error writing initial frame\n");
-        fclose(stack);
-        free(A);
-        free(B);
-        return 1;
-    }
-    GET_TIME(t_write1);
-    write_s += (t_write1 - t_write0);
 
     // ---------------- COMPUTE ----------------
     GET_TIME(t_compute0);
@@ -205,25 +250,29 @@ int main(int argc, char **argv)
         A = B;
         B = tmp;
 
-        // write post-iteration frame (WRITE)
-        GET_TIME(t_write0);
-        if (fwrite(A, sizeof(double), N, stack) != N)
+        if (stack_enabled)
         {
-            fprintf(stderr, "Error writing frame %d\n", t + 1);
-            fclose(stack);
-            free(A);
-            free(B);
-            return 1;
+            // write post-iteration frame (WRITE)
+            GET_TIME(t_write0);
+            if (fwrite(A, sizeof(double), N, stack) != N)
+            {
+                fprintf(stderr, "Error writing frame %d to %s\n", t + 1, stack_path);
+                fclose(stack);
+                free(A);
+                free(B);
+                return 1;
+            }
+            GET_TIME(t_write1);
+            write_s += (t_write1 - t_write0);
         }
-        GET_TIME(t_write1);
-        write_s += (t_write1 - t_write0);
     }
     GET_TIME(t_compute1);
     compute_s += (t_compute1 - t_compute0);
 
     // Close stack
     // (No need to time fclose separately; negligible)
-    fclose(stack);
+    if (stack_enabled)
+        fclose(stack);
 
     // ---------------- WRITE FINAL ----------------
     GET_TIME(t_write0);
@@ -255,12 +304,16 @@ int main(int argc, char **argv)
     printf("Compute time: %e s\n", compute_s);
     printf("Write time  : %e s\n", write_s);
     printf("Overall time: %e s\n", overall_s);
-    printf("Wrote %s and %s\n", finalpath, stack_name);
+    const char *stack_csv_field = stack_enabled ? stack_path : "disabled";
+    if (stack_enabled)
+        printf("Wrote %s and %s\n", finalpath, stack_path);
+    else
+        printf("Wrote %s (stack output disabled)\n", finalpath);
 
     // ---------------- CSV APPEND ----------------
     // Write timings.csv in current directory (./data if run there)
     const char *csv_name = "timings.csv";
-    if (append_timings_csv(csv_name, R, C, iterations, inpath, finalpath, stack_name,
+    if (append_timings_csv(csv_name, R, C, iterations, inpath, finalpath, stack_csv_field,
                            read_s, compute_s, write_s, overall_s) != 0)
     {
         fprintf(stderr, "Warning: failed to append timings to %s\n", csv_name);

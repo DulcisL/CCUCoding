@@ -1,1 +1,28 @@
-python3 ./code/bench_stencil2d_pthreads.py --testing-dir ./data --make ./code/make-2d --N1 100 --N2 1000 --Nstep 100 --I1 5 --I2 10 --Istep 1 --T1 1 --T2 8 --Tstep 1 
+python3 bench_stencil2d_pthreads.py \
+  --make_exe ./make-2d \
+  --pth_exe ./pth-stencil-2d \
+  --N1 128 --N2 256 --num_Ns 3 \
+  --P_start 1 --P_step 1 --P_max 12 \
+  --I1 10 --I2 200 --Istep 20 \
+  --warmup 1 --trials 4 \
+  --timeout_sec 600 \
+  --eff_range "0.29 0.05" \
+  --results-dir ../data/
+  --label bench_run1
+
+python3 stencil_2d_tester.py \
+  --testing-dir ../data \
+  --make ./make-2d \
+  --serial ./stencil-2d\
+  --pth ./pth-stencil-2d \
+  --N1 128\
+  --N2 512 \
+  --Nstep 128\
+  --I1 10 \
+  --I2 50 \
+  --Istep 20 \
+  --T1 1 \
+  --T2 12 \
+  --Tstep 1 \
+  --tol 0.0\
+  --keep

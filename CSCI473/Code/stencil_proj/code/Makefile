@@ -1,45 +1,74 @@
-# =====================================================
-# Makefile — Stencil 2D (serial + pthread)
-# All code/executables live in ./code
-# All data files are read/written in ../data (handled in the programs)
-# =====================================================
+# ===============================================================
+# File: Makefile
+# Desc: Build system for Stencil_proj.
+#       Compiles all C executables (serial and pthread versions).
+#       All generated binaries are placed in ./code.
+#       Data files (inputs/outputs) are stored in ../data.
+#
+# Targets:
+#   all   - Build all executables
+#   clean - Remove all build artifacts and temporary files
+# ===============================================================
 
 CC      = gcc
-CFLAGS  = -std=c99 -Wall -Wextra -O2
-PTHREAD = -lpthread
+CFLAGS  = -O3 -Wall -Wextra -std=c11 -pthread
+LDFLAGS = -lm
+OUTDIR  = .
+DATADIR = ../data
 
+# ==========================
 # Executables
-TARGETS = make-2d stencil-2d print-2d pth-stencil-2d
+# ==========================
+EXE_SERIAL = stencil-2d
+EXE_PTH    = pth-stencil-2d
+EXE_MAKE2D = make-2d
+EXE_PRINT  = print-2d
+EXE_UTILS  = utilities
 
-# Headers (timer.h is header-only)
-HDRS    = utilities.h timer.h
+# ==========================
+# Object Files
+# ==========================
+OBJS_SERIAL = stencil-2d.o utilities.o
+OBJS_PTH    = pth-stencil-2d.o utilities.o
+OBJS_MAKE2D = make-2d.o
+OBJS_PRINT  = print-2d.o
+OBJS_UTILS  = utilities.o
 
-# Default build
-all: $(TARGETS)
+# ==========================
+# Build Rules
+# ==========================
+all: $(EXE_SERIAL) $(EXE_PTH) $(EXE_MAKE2D) $(EXE_PRINT)
 
-# -------------------------
-# Serial builds
-# -------------------------
-make-2d: make-2d.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ make-2d.c utilities.c
+# Serial version
+$(EXE_SERIAL): $(OBJS_SERIAL)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-stencil-2d: stencil-2d.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ stencil-2d.c utilities.c
+# Pthread version
+$(EXE_PTH): $(OBJS_PTH)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-print-2d: print-2d.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ print-2d.c utilities.c
+# Input generator
+$(EXE_MAKE2D): $(OBJS_MAKE2D)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# -------------------------
-# Pthreads build
-# -------------------------
-pth-stencil-2d: pth-stencil-2d.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ pth-stencil-2d.c utilities.c $(PTHREAD)
+# Print utility
+$(EXE_PRINT): $(OBJS_PRINT)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# -------------------------
-# Housekeeping
-# -------------------------
-.PHONY: all clean clean-data
+# Object file rule
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
+# ==========================
+# Clean Targets
+# ==========================
 clean:
-	@echo "Cleaning binaries and objects..."
-	rm -f $(TARGETS) *.o
+	@echo "Cleaning build artifacts..."
+	rm -f *.o
+	rm -f $(EXE_SERIAL) $(EXE_PTH) $(EXE_MAKE2D) $(EXE_PRINT)
+	@echo "Removing generated data files..."
+	rm -f $(DATADIR)/*.dat $(DATADIR)/*.raw $(DATADIR)/*.csv
+	rm -f $(DATADIR)/*.png
+	@echo "Clean complete."
+
+.PHONY: all clean
