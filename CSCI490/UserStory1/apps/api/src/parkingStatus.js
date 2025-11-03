@@ -7,6 +7,26 @@
   green, yellow, or red overlayed over the parking lots on campus.
 */
 
+//Get map and layers
+const map = L.map('map', {
+  preferCanvas: true // faster for many polygons
+}).setView([40.0, -75.0], 14); // set to your campus center
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap & friends'
+}).addTo(map);
+
+
+//Helper functions
+function clamp255(n) { return Math.max(0, Math.min(255, Math.round(n))); }
+
+function fillToColor(fill, isEvent) {
+  const red = clamp255(255 * fill);
+  const green = clamp255(255 * (1 - fill));
+  return isEvent ? 'rgb(255,0,0)' : `rgb(${red},0,${green})`;
+}
+
+
 /*Lot
   Desc: Class that will be used to stroe the needed information after being pulled from database
   Variables:
@@ -18,13 +38,15 @@
   
 */
 class Lot {
-  constructor(lotId, lotName, lotCapacity, lotfill) {
+  constructor(lotId, lotName, lotCapacity, lotGeom, lotfill) {
     this._id = lotId;
     this.name = lotName;
     this.capacity = lotCapacity;
     this.fill = lotfill;
+    this.geom = lotGeom
     //set color automatically
     this.color = this.setColor();
+    this.event = false;
   }
 
   setColor() {
@@ -33,7 +55,19 @@ class Lot {
     var red = 255 * this.fill;
     var green = 255 * (1 - this.fill);
     //set color of polygon for lot
-    this.color = (red, 0, green);
+    if (this.event == false){
+      this.color = (red, 0, green);
+    }
+    if (this.event == true){
+      this.color = (255, 0, 0);
+    }
+    return this.color
+  }
+  setEvent(bool){
+    if (bool){
+      this.event = bool;
+      this.setColor();
+    }
   }
 };
 
@@ -43,43 +77,106 @@ Desc: This will collect the information that is needed from the SQL database and
 Params: none
 Returns: lots(array) - will return the array of the lots with the needed information
 */
-function getLots() {
-  //Initialize
-  let lots = {};
-  //get data
-  //Store as object with keyword pairs name:data
-
-
-  return lots
+async function getLots() {
+  const resp = await fetch('/api/lots', { headers: { 'Accept': 'application/json' } });
+  if (!resp.ok) throw new Error(`API error ${resp.status}`);
+  const data = await resp.json();
+  return Array.isArray(data) ? data : [];
 }
 
-function main() {
-  /* To do
-  - Need to make data read from database (SQL)
-  - Need to make parking lot locations
-  - Need to get status and update color on the leaflet display
-  */
+function lotsToFeatureCollection(lots) {
+  return {
+    type: 'FeatureCollection',
+    features: lots.map(d => ({
+      type: 'Feature',
+      geometry: d.geom, // <- your DB-provided GeoJSON geometry
+      properties: {
+        lotId: String(d.id),
+        name: d.name ?? `Lot ${d.id}`,
+        capacity: d.capacity ?? null,
+        fill: Number(d.fill ?? 0),
+        event: Boolean(d.event)
+      }
+    }))
+  };
+}
 
-  //Initialize
-  let lots = {};
+function paintLayerFromProps(layer, props) {
+  const color = fillToColor(props.fill, props.event);
+  layer.setStyle({ fillColor: color, color: color, weight: 1, fillOpacity: 0.7, opacity: 1 });
 
-  //get lots
-  lots = getLots();
+  const pct = isFinite(props.fill) ? Math.round(props.fill * 100) : 0;
+  const cap = props.capacity ?? '?';
+  const badge = props.event ? ' • Event' : '';
+  layer.bindTooltip(`${props.name}${badge}\n${pct}% full (${cap} cap)`, { sticky: true });
+}
 
-  //set color of lot polygon
-  for (lot in lots) {
-    lot.setColor();
+// First-time build of the layer and the id->layer map
+function buildGeoJsonLayer(featureCollection) {
+  lotGeoJsonLayer = L.geoJSON(featureCollection, {
+    style: DEFAULT_STYLE,
+    onEachFeature: (feature, layer) => {
+      const id = feature.properties.lotId;
+      lotLayerById.set(id, layer);
+
+      // hover highlight (optional)
+      layer.on('mouseover', () => layer.setStyle({ weight: 2 }));
+      layer.on('mouseout', () => layer.setStyle({ weight: 1 }));
+
+      paintLayerFromProps(layer, feature.properties);
+    }
+  }).addTo(map);
+
+  map.fitBounds(lotGeoJsonLayer.getBounds(), { padding: [20, 20] });
+}
+
+// If a new lot appears, add it; if one disappears, gray it out.
+function refreshStyles(featureCollection) {
+  const seen = new Set();
+
+  for (const feature of featureCollection.features) {
+    const id = feature.properties.lotId;
+    let layer = lotLayerById.get(id);
+
+    if (layer) {
+      // update existing
+      paintLayerFromProps(layer, feature.properties);
+    } else {
+      // brand new lot—add it and track
+      layer = L.geoJSON(feature, { style: DEFAULT_STYLE }).addTo(map);
+      lotLayerById.set(id, layer.getLayers()[0] ?? layer);
+      paintLayerFromProps(lotLayerById.get(id), feature.properties);
+    }
+    seen.add(id);
   }
 
-  //push to leaflet
-
-
+  // Any polygon we didn’t see this cycle gets greyed out
+  for (const [id, layer] of lotLayerById.entries()) {
+    if (!seen.has(id)) layer.setStyle(DEFAULT_STYLE);
+  }
 }
-/* To Do
- - Data base implementation
- - Special events closes parking lots
- - Sending back to the leaflet app
- - Testing
 
 
-*/
+
+async function main() {
+  try {
+    const lots = await getLots();
+    const fc = lotsToFeatureCollection(lots);
+
+    if (!lotGeoJsonLayer) {
+      buildGeoJsonLayer(fc);     // first run
+    } else {
+      refreshStyles(fc);         // subsequent runs
+    }
+  } catch (e) {
+    console.error('Failed to load/paint lots:', e);
+  }
+}
+
+//Set to refresh ever N seconds
+function boot() {
+  main();
+  //Refreshes every 10 minutes
+   setInterval(main, 600000);
+}
+document.addEventListener('DOMContentLoaded', boot);

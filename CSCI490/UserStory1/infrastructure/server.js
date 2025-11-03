@@ -1,9 +1,13 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+
+// NEW: Postgres client
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -30,7 +34,6 @@ if (FRONTEND_PHP_ORIGIN) {
 }
 // --- end PHP frontend block ---
 
-
 // Resolve paths once and log them
 const webDir = path.join(__dirname, '..', 'apps', 'web');
 const dataDir = path.join(__dirname, '..', 'data');
@@ -52,6 +55,55 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString(), uptime: process.uptime() });
 });
 
+/* ===========================
+   NEW: Postgres connection
+   =========================== */
+const pool = new Pool({
+  // Prefer environment variables:
+  // PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT
+  // Or a single DATABASE_URL=postgres://user:pass@host:port/dbname
+  connectionString: process.env.DATABASE_URL || undefined,
+  ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: false } : false,
+});
+
+/* ===========================================================
+   NEW: API endpoints consumed by parkingStatus.js / Leaflet
+   - Assumes your DB defines:
+       get_parking_lots() -> json/jsonb (array of objects)
+       get_parking_lots_at(timestamptz) -> json/jsonb  (optional)
+   - Each object should include:
+       { id, name, capacity, fill, event, geom: GeoJSON }
+   =========================================================== */
+
+// Return the current lots as JSON array (already JSON from Postgres)
+app.get('/api/lots', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT get_parking_lots() AS data;');
+    // rows[0].data should be json/jsonb → send as-is
+    const payload = rows?.[0]?.data;
+    if (!payload) return res.json([]); // be kind to the client
+    res.json(payload);
+  } catch (err) {
+    console.error('[api/lots] DB error:', err);
+    res.status(500).json({ error: 'DB failure' });
+  }
+});
+
+// Optional time-sliced endpoint: /api/lots_at?at=2025-10-31T12:00:00Z
+app.get('/api/lots_at', async (req, res) => {
+  try {
+    const at = req.query.at;
+    if (!at) return res.status(400).json({ error: 'Missing ?at=ISO8601 timestamp' });
+    const { rows } = await pool.query('SELECT get_parking_lots_at($1) AS data;', [at]);
+    const payload = rows?.[0]?.data;
+    if (!payload) return res.json([]);
+    res.json(payload);
+  } catch (err) {
+    console.error('[api/lots_at] DB error:', err);
+    res.status(500).json({ error: 'DB failure' });
+  }
+});
+
 // Static
 app.use(express.static(webDir));
 app.use('/data', express.static(dataDir));
@@ -65,8 +117,6 @@ app.get(/^\/(?!api|data).*/, (req, res, next) => {
     if (err) next(err);
   });
 });
-
-
 
 // Error visibility
 app.use((err, req, res, next) => {
