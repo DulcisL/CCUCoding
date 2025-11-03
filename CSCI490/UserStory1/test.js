@@ -18,8 +18,9 @@ finalResult = "";
 //Call tests
 
 //Concatonate final result
-concat(finalResult, "Tests Complete \n Failed Tests: \n");
-concat(finalResult, failedTests);
+concat(finalResult, "Tests Complete \n Tests Conducted: \n");
+concat(finalResult, testCount);
+concat(finalResult, "Failed Tests: \n", failedTests);
 
 //print final result
 console.log(finalResult);
@@ -39,7 +40,7 @@ function testResults(testFunc){
         }
         if (result != expectedResult){
             console.log(testName, ": Failed")
-            concat(FailedTests, testName , "\n");
+            concat(failedTests, testName , "\n");
             return -1
         }
     }

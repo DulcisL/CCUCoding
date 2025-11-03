@@ -28,28 +28,41 @@ function fillToColor(fill, isEvent) {
 
 
 /*Lot
-  Desc: Class that will be used to stroe the needed information after being pulled from database
+  Desc: Class that will be used to store the needed information after being pulled from database
   Variables:
     _id(int) : the private lot ID 
     name (string) : the name of the parking lot
     capacity(int) : the capacity of the lot
-    fill(float) : the percent filled of lot
+    fill(float) : the percent filled of lot (between 0-1)
+    location(geojson) : stores the polygon location information
     color(array) : the color based on the current fill of the parking lot
+  
+  Helpers:
+    setColor() : sets the color based on the fill of the parking lot
   
 */
 class Lot {
+<<<<<<< HEAD
   constructor(lotId, lotName, lotCapacity, lotGeom, lotfill) {
+=======
+  constructor(lotId, lotName, lotCapacity, lotfill, lotLocation) {
+>>>>>>> 1597a5aa940e3c5dde53dc8ea972ba9146e3ffb4
     this._id = lotId;
     this.name = lotName;
     this.capacity = lotCapacity;
     this.fill = lotfill;
+<<<<<<< HEAD
     this.geom = lotGeom
     //set color automatically
+=======
+    this.location = lotLocation
+>>>>>>> 1597a5aa940e3c5dde53dc8ea972ba9146e3ffb4
     this.color = this.setColor();
     this.event = false;
   }
 
   setColor() {
+<<<<<<< HEAD
     // Assuming fill will be a number between 0 and 1
     //Red and green will be inversely proportional
     var red = 255 * this.fill;
@@ -68,6 +81,14 @@ class Lot {
       this.event = bool;
       this.setColor();
     }
+=======
+    //Red and green will be inversely proportional round to 2 decimals
+    var red = round((255 * this.fill), 2);
+    var green = round((255 * (1 - this.fill)), 2);
+
+    //Set color of polygon for lot
+    return rgb(red, 0, green);
+>>>>>>> 1597a5aa940e3c5dde53dc8ea972ba9146e3ffb4
   }
 };
 
@@ -77,6 +98,7 @@ Desc: This will collect the information that is needed from the SQL database and
 Params: none
 Returns: lots(array) - will return the array of the lots with the needed information
 */
+<<<<<<< HEAD
 async function getLots() {
   const resp = await fetch('/api/lots', { headers: { 'Accept': 'application/json' } });
   if (!resp.ok) throw new Error(`API error ${resp.status}`);
@@ -155,6 +177,48 @@ function refreshStyles(featureCollection) {
     if (!seen.has(id)) layer.setStyle(DEFAULT_STYLE);
   }
 }
+=======
+function getLots() {
+  //Initialize
+  let lots = {};
+  var id, name, cap, fill, geojson;
+
+  //Get data from PGSQL DB
+
+  //Store as object with keyword pairs name:data into array
+
+  //Return the lots array
+  return lots
+}
+
+function main() {
+  //Initialize
+  let lots = {};
+
+  //Get lots
+  lots = getLots();
+
+  //Set color of lot polygon
+  for (const lot of lots) {
+    //Update lots from DB over a certain amount of time
+
+    //Set the new color
+    lot.setColor();
+  }
+
+   //Push to leaflet
+
+}
+/* To Do
+ - Data base implementation
+    - 3 x 3 row x columns
+ - Need to make data read from database (SQL)
+    - Take string and parse into dict like name- pairs
+ - Special events closes parking lots
+ - Sending back to the leaflet
+ - Front end (interactive map and UI)
+ - Testing
+>>>>>>> 1597a5aa940e3c5dde53dc8ea972ba9146e3ffb4
 
 
 
