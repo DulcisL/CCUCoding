@@ -1,0 +1,1 @@
+python3 ./code/bench_stencil2d_pthreads.py --testing-dir ./data --make ./code/make-2d --N1 100 --N2 1000 --Nstep 100 --I1 5 --I2 10 --Istep 1 --T1 1 --T2 8 --Tstep 1 

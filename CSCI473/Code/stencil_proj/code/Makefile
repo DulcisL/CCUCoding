@@ -9,7 +9,7 @@ CFLAGS  = -std=c99 -Wall -Wextra -O2
 PTHREAD = -lpthread
 
 # Executables
-TARGETS = make-2d stencil-2d print-2d pth_stencil
+TARGETS = make-2d stencil-2d print-2d pth-stencil-2d
 
 # Headers (timer.h is header-only)
 HDRS    = utilities.h timer.h
@@ -32,8 +32,8 @@ print-2d: print-2d.c utilities.c $(HDRS)
 # -------------------------
 # Pthreads build
 # -------------------------
-pth_stencil: pth_stencil.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ pth_stencil.c utilities.c $(PTHREAD)
+pth-stencil-2d: pth-stencil-2d.c utilities.c $(HDRS)
+	$(CC) $(CFLAGS) -o $@ pth-stencil-2d.c utilities.c $(PTHREAD)
 
 # -------------------------
 # Housekeeping
