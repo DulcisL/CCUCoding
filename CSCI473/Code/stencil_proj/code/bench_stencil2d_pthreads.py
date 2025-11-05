@@ -158,18 +158,19 @@ def plot_lines_by_P(
     """
     plt.figure(figsize=(7, 5))
     all_ys = []
-    for P in P_values:
+    sorted_Ns = sorted(N_values)
+    for N in sorted_Ns:
         xs = []
         ys = []
-        for N in sorted(N_values):
+        for P in P_values:
             val = data_dict.get((P, N), None)
             if val is None or math.isnan(val):
                 continue
-            xs.append(N)
+            xs.append(P)
             ys.append(val)
             all_ys.append(val)
         if xs:
-            plt.plot(xs, ys, marker="o", label=f"P={P}")
+            plt.plot(xs, ys, marker="o", label=f"N={N}")
 
     if not all_ys:
         # No valid data; skip plotting
@@ -179,7 +180,7 @@ def plot_lines_by_P(
     if y_max is None:
         y_max = max(all_ys) * 1.1
 
-    plt.xlabel("Problem Size N")
+    plt.xlabel("Number of Threads P")
     plt.ylabel(ylabel)
     plt.title(title)
     plt.ylim(y_min, y_max)

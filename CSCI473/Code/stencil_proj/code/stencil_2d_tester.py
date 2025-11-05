@@ -149,8 +149,15 @@ def serial_stack_name(N: int, I: int) -> str:
 
 
 def run_cmd(cmd, cwd: Path):
-    return subprocess.run(cmd, cwd=str(cwd), text=True,
-                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Use universal_newlines=True for compatibility with older Python versions
+    return subprocess.run(
+        cmd,
+        cwd=str(cwd),
+        universal_newlines=True,  # instead of universal_newlines=True
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
 
 
 # ------------------------- Main testing loop -------------------------

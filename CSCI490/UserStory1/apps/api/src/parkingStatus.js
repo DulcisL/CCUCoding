@@ -7,14 +7,55 @@
   green, yellow, or red overlayed over the parking lots on campus.
 */
 
-//Get map and layers
-const map = L.map('map', {
-  preferCanvas: true // faster for many polygons
-}).setView([40.0, -75.0], 14); // set to your campus center
+// Map configuration + state
+const MAP_CENTER = [33.7935, -79.0106]; // Approximate CCU campus center
+const MAP_ZOOM = 15;
+const REFRESH_INTERVAL_MS = 600000; // 10 minutes
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap & friends'
-}).addTo(map);
+const API_BASE = (typeof window !== 'undefined' && window.ccuParkingApiBase)
+  ? String(window.ccuParkingApiBase).replace(/\/+$/, '')
+  : '';
+
+const DEFAULT_STYLE = {
+  color: '#8593a3',
+  weight: 1,
+  fillOpacity: 0.25,
+  opacity: 1
+};
+
+const lotLayerById = new Map();
+let lotGeoJsonLayer = null;
+let mapInstance = null;
+
+function buildApiUrl(path) {
+  if (!API_BASE) return path;
+  return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+function ensureMap() {
+  if (mapInstance) return mapInstance;
+
+  if (typeof L === 'undefined') {
+    console.error('Leaflet not available; cannot render parking map.');
+    return null;
+  }
+
+  const container = document.getElementById('map');
+  if (!container) {
+    console.warn('Map container "#map" not found; parking map skipped.');
+    return null;
+  }
+
+  mapInstance = L.map(container, {
+    preferCanvas: true // faster for many polygons
+  }).setView(MAP_CENTER, MAP_ZOOM);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap & friends'
+  }).addTo(mapInstance);
+
+  return mapInstance;
+}
 
 
 //Helper functions
@@ -83,7 +124,7 @@ Params: none
 Returns: lots(array) - will return the array of the lots with the needed information
 */
 async function getLots() {
-  const resp = await fetch('/api/lots', { headers: { 'Accept': 'application/json' } });
+  const resp = await fetch(buildApiUrl('/api/lots'), { headers: { 'Accept': 'application/json' } });
   if (!resp.ok) throw new Error(`API error ${resp.status}`);
   const data = await resp.json();
   return Array.isArray(data) ? data : [];
@@ -92,7 +133,7 @@ async function getLots() {
 function lotsToFeatureCollection(lots) {
   return {
     type: 'FeatureCollection',
-    features: lots.map(d => ({
+    features: (lots ?? []).filter(d => d && d.geom).map(d => ({
       type: 'Feature',
       geometry: d.geom, // <- your DB-provided GeoJSON geometry
       properties: {
@@ -118,6 +159,10 @@ function paintLayerFromProps(layer, props) {
 
 // First-time build of the layer and the id->layer map
 function buildGeoJsonLayer(featureCollection) {
+  const map = ensureMap();
+  if (!map) return;
+
+  lotLayerById.clear();
   lotGeoJsonLayer = L.geoJSON(featureCollection, {
     style: DEFAULT_STYLE,
     onEachFeature: (feature, layer) => {
@@ -132,14 +177,22 @@ function buildGeoJsonLayer(featureCollection) {
     }
   }).addTo(map);
 
-  map.fitBounds(lotGeoJsonLayer.getBounds(), { padding: [20, 20] });
+  const bounds = lotGeoJsonLayer.getBounds();
+  if (bounds.isValid()) {
+    map.fitBounds(bounds, { padding: [20, 20] });
+  }
 }
 
 // If a new lot appears, add it; if one disappears, gray it out.
 function refreshStyles(featureCollection) {
+  const map = ensureMap();
+  if (!map) return;
+
   const seen = new Set();
 
-  for (const feature of featureCollection.features) {
+  const features = featureCollection?.features ?? [];
+
+  for (const feature of features) {
     const id = feature.properties.lotId;
     let layer = lotLayerById.get(id);
 
@@ -148,9 +201,10 @@ function refreshStyles(featureCollection) {
       paintLayerFromProps(layer, feature.properties);
     } else {
       // brand new lot—add it and track
-      layer = L.geoJSON(feature, { style: DEFAULT_STYLE }).addTo(map);
-      lotLayerById.set(id, layer.getLayers()[0] ?? layer);
-      paintLayerFromProps(lotLayerById.get(id), feature.properties);
+      const group = L.geoJSON(feature, { style: DEFAULT_STYLE }).addTo(map);
+      const newLayer = group.getLayers()[0] ?? group;
+      lotLayerById.set(id, newLayer);
+      paintLayerFromProps(newLayer, feature.properties);
     }
     seen.add(id);
   }
@@ -162,6 +216,8 @@ function refreshStyles(featureCollection) {
 }
 async function main() {
   try {
+    if (!ensureMap()) return;
+
     const lots = await getLots();
     const fc = lotsToFeatureCollection(lots);
 
@@ -177,8 +233,9 @@ async function main() {
 
 //Set to refresh ever N seconds
 function boot() {
+  if (!ensureMap()) return;
+
   main();
-  //Refreshes every 10 minutes
-   setInterval(main, 600000);
+  setInterval(main, REFRESH_INTERVAL_MS);
 }
 document.addEventListener('DOMContentLoaded', boot);

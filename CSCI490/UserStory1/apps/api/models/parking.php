@@ -1,25 +1,37 @@
 <?php include "commheader.php"; ?>
 <main>
-	<section>
-		<h2>Parking Statuses</h2>
+	<section class="parking-intro">
+		<h2>Parking Status</h2>
 		<p>
-			Below you can see an interactive map showing the status of each
-			CCU parking lot.\nBus routes are included as well.
+			Below you can see an interactive map showing the current status of each CCU parking lot.
+			Bus routes appear when that information is available.
 		</p>
 	</section>
-	<section>
+
+	<section class="parking-map-wrapper" aria-label="Interactive parking availability map">
+		<div id="map"></div>
+		<p class="parking-map-note">
+			Lot colors shift from green (available) toward red as they fill. Planned events force a solid red overlay.
+		</p>
+	</section>
+
+	<section class="parking-selector">
 		<h2>Select A Parking Lot</h2>
 		<p>
-			Use the dropdown menu to see a specific parking lot's data.\n
-			To see a map of campus, click here: 
-			<a href="https://www.coastal.edu/map/" target="_blank">Campus Map</a>
+			Use the dropdown menu to explore a specific lot. Need the full campus layout?
+			<a href="https://www.coastal.edu/map/" target="_blank" rel="noopener">Open the campus map</a>.
 		</p>
-		<!-- All info sections are hidden initially and become visible
-			 when the user selects one. -->
-		<?php include "dropdown.php"; ?>		
-		<ul>
-			<li></li>
-		</ul>
+		<?php include "dropdown.php"; ?>
 	</section>
 </main>
+<script
+	src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+	crossorigin=""
+></script>
+<script>
+	window.ccuParkingApiBase = <?php echo json_encode(getenv('PARKING_API_BASE') ?: 'http://127.0.0.1:3000'); ?>;
+</script>
+<script>
+<?php include __DIR__ . '/../src/parkingStatus.js'; ?>
+</script>
 <?php include "commfooter.php"; ?>
