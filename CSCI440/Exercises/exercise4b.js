@@ -83,7 +83,7 @@ var rightLowerLegId = 9;
 
 
 var torsoHeight = 5.0;
-var torsoWidth = 3.5;
+var torsoWidth = 2.0;
 var upperArmHeight = 3.0;
 var lowerArmHeight = 2.0;
 var upperArmWidth  = 0.75;
@@ -93,7 +93,7 @@ var lowerLegWidth  = 0.5;
 var lowerLegHeight = 2.0;
 var upperLegHeight = 3.0;
 var headHeight = 1.5;
-var headWidth = 2.0;
+var headWidth = 1.0;
 
 var numNodes = 10;
 var numAngles = 11;
@@ -144,80 +144,80 @@ function initNodes(Id) {
 
     switch(Id) {
 
-    case torsoId:
+        case torsoId:
 
-    m = rotate(theta[torsoId], vec3(0, 1, 0) );
-    figure[torsoId] = createNode( m, torso, null, headId );
-    break;
+            m = rotate(theta[torsoId], vec3(0, 1, 0) );
+            figure[torsoId] = createNode( m, torso, null, headId );
+            break;
 
-    case headId:
-    case head1Id:
-    case head2Id:
-
-
-    m = translate(0.0, torsoHeight+0.5*headHeight, 0.0);
-	  m = mult(m, rotate(theta[head1Id], vec3(1, 0, 0)))
-	  m = mult(m, rotate(theta[head2Id], vec3(0, 1, 0)));
-    m = mult(m, translate(0.0, -0.5*headHeight, 0.0));
-    figure[headId] = createNode( m, head, leftUpperArmId, null);
-    break;
+        case headId:
+        case head1Id:
+        case head2Id:
 
 
-    case leftUpperArmId:
+            m = translate(0.0, torsoHeight+0.5*headHeight, 0.0);
+            m = mult(m, rotate(theta[head1Id], vec3(1, 0, 0)));
+            m = mult(m, rotate(theta[head2Id], vec3(0, 1, 0)));
+            m = mult(m, translate(0.0, -0.5*headHeight, 0.0));
+            figure[headId] = createNode( m, head, leftUpperArmId, null);
+            break;
 
-    m = translate(-(torsoWidth/2 + .25), 0.9*torsoHeight, 0.0);
-	  m = mult(m, rotate(theta[leftUpperArmId], vec3(1, 0, 0)));
-    figure[leftUpperArmId] = createNode( m, leftUpperArm, rightUpperArmId, leftLowerArmId );
-    break;
 
-    case rightUpperArmId:
+        case leftUpperArmId:
 
-    m = translate(torsoWidth/2 + .25, 0.9*torsoHeight, 0.0);
-	  m = mult(m, rotate(theta[rightUpperArmId], vec3(1, 0, 0)));
-    figure[rightUpperArmId] = createNode( m, rightUpperArm, leftUpperLegId, rightLowerArmId );
-    break;
+            m = translate(-(torsoWidth/2 + .25), 0.9*torsoHeight, 0.0);
+            m = mult(m, rotate(theta[leftUpperArmId], vec3(1, 0, 0)));
+            figure[leftUpperArmId] = createNode( m, leftUpperArm, rightUpperArmId, leftLowerArmId );
+            break;
 
-    case leftUpperLegId:
+        case rightUpperArmId:
 
-    m = translate(-(torsoWidth/2), 0.1*upperLegHeight, 0.0);
-	  m = mult(m , rotate(theta[leftUpperLegId], vec3(1, 0, 0)));
-    figure[leftUpperLegId] = createNode( m, leftUpperLeg, rightUpperLegId, leftLowerLegId );
-    break;
+            m = translate(torsoWidth/2 + .25, 0.9*torsoHeight, 0.0);
+            m = mult(m, rotate(theta[rightUpperArmId], vec3(1, 0, 0)));
+            figure[rightUpperArmId] = createNode( m, rightUpperArm, leftUpperLegId, rightLowerArmId );
+            break;
 
-    case rightUpperLegId:
+        case leftUpperLegId:
 
-    m = translate(torsoWidth/2, 0.1*upperLegHeight, 0.0);
-	  m = mult(m, rotate(theta[rightUpperLegId], vec3(1, 0, 0)));
-    figure[rightUpperLegId] = createNode( m, rightUpperLeg, null, rightLowerLegId );
-    break;
+            m = translate(-(torsoWidth/2), 0.1*upperLegHeight, 0.0);
+            m = mult(m , rotate(theta[leftUpperLegId], vec3(1, 0, 0)));
+            figure[leftUpperLegId] = createNode( m, leftUpperLeg, rightUpperLegId, leftLowerLegId );
+            break;
 
-    case leftLowerArmId:
+        case rightUpperLegId:
 
-    m = translate(0.0, upperArmHeight, 0.0);
-    m = mult(m, rotate(theta[leftLowerArmId], vec3(1, 0, 0)));
-    figure[leftLowerArmId] = createNode( m, leftLowerArm, null, null );
-    break;
+            m = translate(torsoWidth/2, 0.1*upperLegHeight, 0.0);
+            m = mult(m, rotate(theta[rightUpperLegId], vec3(1, 0, 0)));
+            figure[rightUpperLegId] = createNode( m, rightUpperLeg, null, rightLowerLegId );
+            break;
 
-    case rightLowerArmId:
+        case leftLowerArmId:
 
-    m = translate(0.0, upperArmHeight, 0.0);
-    m = mult(m, rotate(theta[rightLowerArmId], vec3(1, 0, 0)));
-    figure[rightLowerArmId] = createNode( m, rightLowerArm, null, null );
-    break;
+            m = translate(0.0, upperArmHeight, 0.0);
+            m = mult(m, rotate(theta[leftLowerArmId], vec3(1, 0, 0)));
+            figure[leftLowerArmId] = createNode( m, leftLowerArm, null, null );
+            break;
 
-    case leftLowerLegId:
+        case rightLowerArmId:
 
-    m = translate(0.0, upperLegHeight, 0.0);
-    m = mult(m, rotate(theta[leftLowerLegId],vec3(1, 0, 0)));
-    figure[leftLowerLegId] = createNode( m, leftLowerLeg, null, null );
-    break;
+            m = translate(0.0, upperArmHeight, 0.0);
+            m = mult(m, rotate(theta[rightLowerArmId], vec3(1, 0, 0)));
+            figure[rightLowerArmId] = createNode( m, rightLowerArm, null, null );
+            break;
 
-    case rightLowerLegId:
+        case leftLowerLegId:
 
-    m = translate(0.0, upperLegHeight, 0.0);
-    m = mult(m, rotate(theta[rightLowerLegId], vec3(1, 0, 0)));
-    figure[rightLowerLegId] = createNode( m, rightLowerLeg, null, null );
-    break;
+            m = translate(0.0, upperLegHeight, 0.0);
+            m = mult(m, rotate(theta[leftLowerLegId],vec3(1, 0, 0)));
+            figure[leftLowerLegId] = createNode( m, leftLowerLeg, null, null );
+            break;
+
+        case rightLowerLegId:
+
+            m = translate(0.0, upperLegHeight, 0.0);
+            m = mult(m, rotate(theta[rightLowerLegId], vec3(1, 0, 0)));
+            figure[rightLowerLegId] = createNode( m, rightLowerLeg, null, null );
+            break;
 
     }
 
@@ -375,35 +375,43 @@ window.onload = function init() {
     document.getElementById("Button0").onclick = function() {
         //Reset
         initialPos = true;
+        walk = run = wave = nod = shakeHead = lookAround = turnAround = false;
         
     };
     document.getElementById("Button1").onclick = function() {
-        walk = walk;
+        walk = !walk;
+        initialPos = false;
         //Walk
     };
     document.getElementById("Button2").onclick = function() {
         //Run
         run = !run;
+        initialPos = false;
     };
     document.getElementById("Button3").onclick = function() {
         //Wave
         wave = !wave;
+        initialPos = false;
     };
    document.getElementById("Button4").onclick = function() {
         //Nod
         nod = !nod;
+        initialPos = false;
     };
     document.getElementById("Button5").onclick = function() {
         //Shake Head
         shakeHead = !shakeHead
+        initialPos = false;
     };
     document.getElementById("Button1").onclick = function() {
         //Look around
         lookAround = !lookAround;
+        initialPos = false;
     };
    document.getElementById("Button2").onclick = function() {
         //Turn
         turnAround = !turnAround;
+        initialPos = false;
     };
 
     for(i=0; i<numNodes; i++) initNodes(i);
@@ -419,79 +427,84 @@ var render = function() {
         */
        if (initialPos){
             //Order: Torso, Head y, Upper LA, Lower LA, Upper RA, Lower LA, Upper LL, Lower LL, Upper RL, Lower LL, Head x
-            theta = [0, 0, 0, 0, 0, 0, -180, 0, -180, 0, 0]
-       }
-        initialPos = false;
-        var legDir = true;
-        var armDir = true;
-        var headDirX = true;
-        var headDirY = false;
-        var legStop = 0;
-        var armStop = 0;
-        var headStop = 0;
-        var speed = 0;
+            theta = [45, 0, 180, 45, 180, 45, 180, 0, 180, 0, 0];
+        }
+        if (!initialPos){
+            var legDir = true;
+            var armDir = true;
+            var headDirX = true;
+            var headDirY = false;
+            var legStop = 0;
+            var armStop = 0;
+            var headStop = 0;
+            var speed = 0;
+            //Need to fix stops, and other buttons besides reset and walks
+            if (walk){
+                speed = 1;
+                legStop = 45;
+                armStop = 45;
+            }
+            if (run){
+                speed = 2;
+                legStop = 55;
+                armStop = 55;
+            }
+            if (lookAround){
+                speed = 2;
+            }
 
-        if (walk){
-            speed = 1;
-            legStop = 45;
-            armStop = 45;
-        }
-        if (run){
-            speed = 2;
-            legStop = 55;
-            armStop = 55;
-        }
-        if (lookAround){
-            speed = 2;
-        }
+            //create stops for limbs
+            if (theta[6] >= legStop || theta[6] <= -legStop){
+                legDir = !legDir;
+            }
+            if (theta[2] == armStop || theta[2] == -armStop){
+                armDir = !armDir;
+            }
+            if (theta[1] >= headStop || theta[1] <= -headStop){
+                headDirX = !headDirX;
+            }
+            if (theta[1] >= headStop || theta[1] <= -headStop){
+                headDirY = !headDirY;
+            }
 
-        //create stops for limbs
-        if (theta[6] >= legStop || theta[6] <= -legStop){
-            legDir = !legDir;
-        }
-        if (theta[2] == armStop || theta[2] == -armStop){
-            armDir = !armDir;
-        }
-        if (theta[1] >= headStop || theta[1] <= -headStop){
-            headDirX = !headDirX;
-        }
-        if (theta[1] >= headStop || theta[1] <= -headStop){
-            headDirY = !headDirY;
-        }
+            //legs and arms move inversely so only need to check on of each limb
+            if (legDir){
+                //Go forward
+                theta[leftLowerLegId] += speed;
+                theta[rightLowerLegId] -= speed;
+            }
+            if (!legDir){
+                //Go back
+                theta[leftUpperLegId] -= speed;
+                theta[rightUpperLegId] += speed;
+            }
+            if (armDir){
+                theta[rightUpperArmId] -= speed;
+                theta[leftUpperArmId] += speed;
+            }
+            if (!armDir){
+                theta[rightUpperArmId] += speed;
+                theta[leftUpperArmId] -= speed;
+            }
+            if (headDirX){
+                theta[head1Id] += speed;
+            }
+            if (!headDirX){
+                theta[head1Id] -= speed;
+            }
+            if (headDirY & !shakeHead){
+                theta[head2Id] += (.5 * speed);
+            }
+            if (!headDirY & !shakeHead){
+                theta[head2Id] -= (.5 * speed);
+            }
 
-        //legs and arms move inversely so only need to check on of each limb
-        if (legDir){
-            //Go forward
-            theta[6] += speed;
-            theta[8] -= speed;
         }
-        if (!legDir){
-            //Go back
-            theta[6] -= speed;
-            theta[8] += speed;
-        }
-        if (armDir){
-            theta[2] -= speed;
-            theta[4] += speed;
-        }
-        if (!armDir){
-            theta[2] += speed;
-            theta[4] -= speed;
-        }
-        if (headDirX){
-            theta[1] += speed;
-        }
-        if (!headDirX){
-            theta[1] -= speed;
-        }
-        if (headDirY & !shakeHead){
-            theta[10] += (.5 * speed);
-        }
-        if (!headDirY & !shakeHead){
-            theta[10] -= (.5 * speed);
-        }
+        
 
-
+        //send new theta values
+        for(i=0; i<numNodes; i++) initNodes(i);
+        
         gl.clear( gl.COLOR_BUFFER_BIT );
         traverse(torsoId);
         requestAnimationFrame(render);
