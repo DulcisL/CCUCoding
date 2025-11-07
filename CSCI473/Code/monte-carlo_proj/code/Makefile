@@ -21,7 +21,7 @@ all: $(TARGETS)
 # Serial builds
 # -------------------------
 mc_slab: mc_slab.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ mc_slab.c utilities.c
+	$(CC) $(CFLAGS) -o $@ mc_slab.c utilities.c -lm
 
 # -------------------------
 # Pthreads build

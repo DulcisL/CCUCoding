@@ -1,0 +1,19 @@
+{
+  "C": 0.5,
+  "Cc": 0.005,
+  "Cs": 0.495,
+  "H": 1.0,
+  "n": 600,
+  "absorbed": 7,
+  "transmitted": 469,
+  "reflected": 124,
+  "scatter_events": 412,
+  "absorption_events": 7,
+  "total_collisions": 419,
+  "total_track_length": 766.6456749922,
+  "avg_collisions": 0.6983333333,
+  "avg_path_length": 1.2777427917,
+  "elapsed_seconds": 0.0004451275,
+  "trace_file": "/home/chief/git/CCUCoding/CSCI473/Code/monte-carlo_proj/code/data/movie_trace.csv",
+  "trace_segments": 1012
+}

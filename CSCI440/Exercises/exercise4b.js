@@ -16,7 +16,7 @@ var walk = false;
 var run = false;
 var wave = false;
 var nod = false;
-var shake = false;
+var shakeHead = false;
 var lookAround = false;
 var turnAround = false;
 
@@ -98,8 +98,8 @@ var headWidth = 2.0;
 var numNodes = 10;
 var numAngles = 11;
 var angle = 0;
-
-var theta = [0, 0, 0, 0, 0, 0, 180, 0, 180, 0, 0];
+//Order: Torso, Head y, Upper LA, Lower LA, Upper RA, Lower LA, Upper LL, Lower LL, Upper RL, Lower LL, Head x
+var theta = [45, 0, 180, 45, 180, 45, 180, 0, 180, 0, 0];
 
 var numVertices = 24;
 
@@ -374,28 +374,36 @@ window.onload = function init() {
 
     document.getElementById("Button0").onclick = function() {
         //Reset
+        initialPos = true;
         
     };
     document.getElementById("Button1").onclick = function() {
+        walk = walk;
         //Walk
     };
     document.getElementById("Button2").onclick = function() {
         //Run
+        run = !run;
     };
     document.getElementById("Button3").onclick = function() {
         //Wave
+        wave = !wave;
     };
    document.getElementById("Button4").onclick = function() {
         //Nod
+        nod = !nod;
     };
     document.getElementById("Button5").onclick = function() {
         //Shake Head
+        shakeHead = !shakeHead
     };
     document.getElementById("Button1").onclick = function() {
         //Look around
+        lookAround = !lookAround;
     };
    document.getElementById("Button2").onclick = function() {
         //Turn
+        turnAround = !turnAround;
     };
 
     for(i=0; i<numNodes; i++) initNodes(i);
@@ -407,46 +415,81 @@ window.onload = function init() {
 var render = function() {
         /*ToDo
         Add camera view change (look at function?)
-        */
-        //Button logic
-        /*
-        var initialPos = true;
-        var walk = false;
-        var run = false;
-        var wave = false;
-        var nod = false;
-        var shake = false;
-        var lookAround = false;
-        var turnAround = false;
+        Add color
         */
        if (initialPos){
-            theta = [0, 0, 0, 0, 0, 0, 180, 0, 180, 0, 0]
+            //Order: Torso, Head y, Upper LA, Lower LA, Upper RA, Lower LA, Upper LL, Lower LL, Upper RL, Lower LL, Head x
+            theta = [0, 0, 0, 0, 0, 0, -180, 0, -180, 0, 0]
        }
-       if (walk){
         initialPos = false;
-        var legStop = 45;
         var legDir = true;
-        var armStop = 45;
-        //create stops for legs
-        if (theta[7] == legStop){
-            //legs move in opposite directions equally only need to track one
-            if (legDir == true){
-                //Go forward
-                theta[7] += 1;
-                theta[9] -= 1;
+        var armDir = true;
+        var headDirX = true;
+        var headDirY = false;
+        var legStop = 0;
+        var armStop = 0;
+        var headStop = 0;
+        var speed = 0;
 
-            }
-            if (legDir == false){
-                //Go back
-                theta[7] -= 1;
-                theta[9] += 1;
-            }
+        if (walk){
+            speed = 1;
+            legStop = 45;
+            armStop = 45;
         }
-        //create arm stops
-        if (theta[6] == armStop){
-            //arms move in opposite directions
+        if (run){
+            speed = 2;
+            legStop = 55;
+            armStop = 55;
         }
-       }
+        if (lookAround){
+            speed = 2;
+        }
+
+        //create stops for limbs
+        if (theta[6] >= legStop || theta[6] <= -legStop){
+            legDir = !legDir;
+        }
+        if (theta[2] == armStop || theta[2] == -armStop){
+            armDir = !armDir;
+        }
+        if (theta[1] >= headStop || theta[1] <= -headStop){
+            headDirX = !headDirX;
+        }
+        if (theta[1] >= headStop || theta[1] <= -headStop){
+            headDirY = !headDirY;
+        }
+
+        //legs and arms move inversely so only need to check on of each limb
+        if (legDir){
+            //Go forward
+            theta[6] += speed;
+            theta[8] -= speed;
+        }
+        if (!legDir){
+            //Go back
+            theta[6] -= speed;
+            theta[8] += speed;
+        }
+        if (armDir){
+            theta[2] -= speed;
+            theta[4] += speed;
+        }
+        if (!armDir){
+            theta[2] += speed;
+            theta[4] -= speed;
+        }
+        if (headDirX){
+            theta[1] += speed;
+        }
+        if (!headDirX){
+            theta[1] -= speed;
+        }
+        if (headDirY & !shakeHead){
+            theta[10] += (.5 * speed);
+        }
+        if (!headDirY & !shakeHead){
+            theta[10] -= (.5 * speed);
+        }
 
 
         gl.clear( gl.COLOR_BUFFER_BIT );

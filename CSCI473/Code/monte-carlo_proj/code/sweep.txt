@@ -1,0 +1,5 @@
+Sweep:
+python3 ./sweep_mc_slab.py --exe ./mc_slab --C 0.5 --Cc 0.1 --H-min 0.5 --H-max 5.0 --H-step 0.25 --N 100000 --seed 42 --trace --trace-every 100 --make-convergence-plots
+
+Movie:
+python3 ./mc_slab_movie.py --thickness 1.0 --Sigma_t 0.5 --c 0.99 --N 600 --frames 300 --fps 30 --dpi 200 --fig-width 10 --fig-height 5 --out movie.mp4
