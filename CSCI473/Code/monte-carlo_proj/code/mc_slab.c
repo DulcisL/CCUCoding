@@ -119,7 +119,10 @@ static void write_summary(FILE *out,
                           const SimulationTallies *tallies,
                           const char *trace_path,
                           unsigned long trace_segments,
-                          double elapsed_seconds) {
+                          double elapsed_seconds,
+                          double read_seconds,
+                          double compute_seconds,
+                          double write_seconds) {
     if (!out || !cfg || !tallies) {
         return;
     }
@@ -155,6 +158,9 @@ static void write_summary(FILE *out,
             "  \"avg_collisions\": %.10f,\n"
             "  \"avg_path_length\": %.10f,\n"
             "  \"elapsed_seconds\": %.10f,\n"
+            "  \"read_seconds\": %.10f,\n"
+            "  \"compute_seconds\": %.10f,\n"
+            "  \"write_seconds\": %.10f,\n"
             "  \"trace_file\": %s,\n"
             "  \"trace_segments\": %lu\n"
             "}\n",
@@ -173,6 +179,9 @@ static void write_summary(FILE *out,
             avg_collisions,
             avg_path_length,
             elapsed_seconds,
+            read_seconds,
+            compute_seconds,
+            write_seconds,
             trace_value,
             trace_segments);
 }
@@ -200,14 +209,20 @@ static void log_trace_segment(TraceWriter *writer,
 }
 
 int main(int argc, char *argv[]) {
+    double read_seconds = 0.0;
+    double compute_seconds = 0.0;
+    double write_seconds = 0.0;
+    double stage_start = 0.0;
+    double stage_finish = 0.0;
+
     SimulationConfig cfg;
-    parse_arguments(argc, argv, &cfg);
-
-    seed_rng();
-    ensure_data_directory();
-
     TraceWriter trace_writer;
     memset(&trace_writer, 0, sizeof(trace_writer));
+
+    GET_TIME(stage_start);
+    parse_arguments(argc, argv, &cfg);
+    seed_rng();
+    ensure_data_directory();
 
     if (cfg.trace_every > 0) {
         if (strlen(cfg.trace_path) == 0) {
@@ -221,15 +236,15 @@ int main(int argc, char *argv[]) {
             trace_writer_write_header(&trace_writer);
         }
     }
+    GET_TIME(stage_finish);
+    read_seconds = stage_finish - stage_start;
 
-    SimulationTallies tallies = {0};
+    SimulationTallies tallies = (SimulationTallies){0};
     tallies.total_neutrons = cfg.n;
 
     double absorption_prob = (cfg.C > 0.0) ? (cfg.Cc / cfg.C) : 0.0;
 
-    double start_time = 0.0;
-    double finish_time = 0.0;
-    GET_TIME(start_time);
+    GET_TIME(stage_start);
 
     for (unsigned long neutron = 0; neutron < cfg.n; ++neutron) {
         bool record = (cfg.trace_every > 0) && ((neutron + 1) % cfg.trace_every == 0);
@@ -327,12 +342,16 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    GET_TIME(finish_time);
-    double elapsed_seconds = finish_time - start_time;
+    GET_TIME(stage_finish);
+    compute_seconds = stage_finish - stage_start;
 
     char trace_summary_path[512] = {0};
     const char *trace_path_ptr = NULL;
     unsigned long trace_segments = 0UL;
+    const char *summary_path = "./data/mc_slab_summary.json";
+    FILE *summary_fp = NULL;
+
+    GET_TIME(stage_start);
 
     if (trace_writer.enabled) {
         snprintf(trace_summary_path, sizeof(trace_summary_path), "%s", trace_writer.path);
@@ -341,15 +360,34 @@ int main(int argc, char *argv[]) {
         trace_writer_close(&trace_writer);
     }
 
-    const char *summary_path = "./data/mc_slab_summary.json";
-    FILE *summary_fp = open_data_file(summary_path, "w");
+    summary_fp = open_data_file(summary_path, "w");
     if (!summary_fp) {
         fprintf(stderr, "Warning: unable to open summary file '%s' for writing\n", summary_path);
     }
+    GET_TIME(stage_finish);
+    write_seconds = stage_finish - stage_start;
 
-    write_summary(stdout, &cfg, &tallies, trace_path_ptr, trace_segments, elapsed_seconds);
+    double total_seconds = read_seconds + compute_seconds + write_seconds;
+
+    write_summary(stdout,
+                  &cfg,
+                  &tallies,
+                  trace_path_ptr,
+                  trace_segments,
+                  total_seconds,
+                  read_seconds,
+                  compute_seconds,
+                  write_seconds);
     if (summary_fp) {
-        write_summary(summary_fp, &cfg, &tallies, trace_path_ptr, trace_segments, elapsed_seconds);
+        write_summary(summary_fp,
+                      &cfg,
+                      &tallies,
+                      trace_path_ptr,
+                      trace_segments,
+                      total_seconds,
+                      read_seconds,
+                      compute_seconds,
+                      write_seconds);
         fclose(summary_fp);
     }
 
