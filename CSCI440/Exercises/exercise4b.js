@@ -42,15 +42,15 @@ var vertexColors = [
     vec4( 0.0, 1.0, 1.0, 1.0 )   // cyan
 ];
 
-// RGB, Alpha
-var matAmbient = vec4();
-var matDiffuse = vec4();
-var matSpec = vec4();
-// 0-100
-var matShine = 50;
-var lightColor = vertexColors[6];
+var lightPosition = vec4(1.0, -10.0, 10.0, 0.0);
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
+var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 
-
+var materialAmbient = vec4(1.0, 0.0, 1.0, 1.0);
+var materialDiffuse = vec4(1.0, 0.8, 0.0, 1.0);
+var materialSpecular = vec4(1.0, 0.8, 0.0, 1.0);
+var materialShininess = 50.0;
 
 //Everything else
 
@@ -117,12 +117,15 @@ var stack = [];
 
 var figure = [];
 
+var normalsArray = [];
+
 for( var i=0; i<numNodes; i++) figure[i] = createNode(null, null, null, null);
 
 var vBuffer;
 var modelViewLoc;
 
 var pointsArray = [];
+
 
 //-------------------------------------------
 
@@ -325,10 +328,20 @@ function rightLowerLeg() {
 }
 
 function quad(a, b, c, d) {
+
+    var t1 = subtract(vertices[b], vertices[a]);
+    var t2 = subtract(vertices[c], vertices[b]);
+    var normal = cross(t1, t2);
+    normal = vec3(normal);
+
      pointsArray.push(vertices[a]);
+     normalsArray.push(normal);
      pointsArray.push(vertices[b]);
+     normalsArray.push(normal);
      pointsArray.push(vertices[c]);
+     normalsArray.push(normal);
      pointsArray.push(vertices[d]);
+     normalsArray.push(normal);
 }
 
 
@@ -341,7 +354,30 @@ function cube()
     quad( 4, 5, 6, 7 );
     quad( 5, 4, 0, 1 );
 }
+//-------------------------------------------
 
+function lightColor(lightAmbient, lightDiffuse, lightSpecular, materialAmbient, materialDiffuse, materialSpecular, materialShininess) {
+
+    var ambientProduct = mult(lightAmbient, materialAmbient);
+    var diffuseProduct = mult(lightDiffuse, materialDiffuse);
+    var specularProduct = mult(lightSpecular, materialSpecular);
+
+    gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProduct"),
+        ambientProduct);
+    gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
+        diffuseProduct);
+    gl.uniform4fv(gl.getUniformLocation(program, "uSpecularProduct"),
+        specularProduct);
+    gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
+        lightPosition);
+
+    gl.uniform1f(gl.getUniformLocation(program,
+        "uShininess"), materialShininess);
+
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
+        false, flatten(projectionMatrix));
+
+   }
 
 window.onload = function init() {
 
@@ -352,6 +388,7 @@ window.onload = function init() {
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
+    gl.enable( gl.DEPTH_TEST );
 
     //
     //  Load shaders and initialize attribute buffers
@@ -373,6 +410,14 @@ window.onload = function init() {
 
     cube();
 
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
+
+    var normalLoc = gl.getAttribLocation(program, "aNormal");
+    gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(normalLoc);
+
     vBuffer = gl.createBuffer();
 
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
@@ -382,9 +427,19 @@ window.onload = function init() {
     gl.vertexAttribPointer( positionLoc, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( positionLoc );
 
+    lightColor(lightAmbient, lightDiffuse, lightSpecular, materialAmbient, materialDiffuse, materialSpecular, materialShininess);
+
+
     document.getElementById("Button0").onclick = function() {
         //Reset
         initialPos = true;
+        walk = false;
+        run = false;
+        wave = false;
+        nod = false;
+        shakeHead = false;
+        lookAround = false;
+        turnAround = false;
         
     };
     document.getElementById("Button1").onclick = function() {
@@ -523,7 +578,7 @@ var render = function() {
                     if(theta[head2Id] <= headStop){
                         lookUp = !lookUp;
                     }
-                    theta[head1Id] -= 1;
+                    theta[head2Id] -= 1;
                 }
                 if (!lookAround){
                     shakeHead = false;
