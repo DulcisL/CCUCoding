@@ -20,6 +20,16 @@ var shakeHead = false;
 var lookAround = false;
 var turnAround = false;
 
+//Movement variables
+var legFWD = true;
+var armFWD = true;
+var lookLft = true;
+var lookUp = true;
+var legStop = 0;
+var armStop = 0;
+var headStop = 0;
+var speed = 0;
+
 //Color variables
 var vertexColors = [
     vec4( 0.0, 0.0, 0.0, 1.0 ),  // black
@@ -375,23 +385,26 @@ window.onload = function init() {
     document.getElementById("Button0").onclick = function() {
         //Reset
         initialPos = true;
-        walk = run = wave = nod = shakeHead = lookAround = turnAround = false;
         
     };
     document.getElementById("Button1").onclick = function() {
+        //Walk
         walk = !walk;
         initialPos = false;
-        //Walk
+        run = false;
+        
     };
     document.getElementById("Button2").onclick = function() {
         //Run
         run = !run;
         initialPos = false;
+        walk = false;
     };
     document.getElementById("Button3").onclick = function() {
         //Wave
         wave = !wave;
         initialPos = false;
+
     };
    document.getElementById("Button4").onclick = function() {
         //Nod
@@ -403,15 +416,17 @@ window.onload = function init() {
         shakeHead = !shakeHead
         initialPos = false;
     };
-    document.getElementById("Button1").onclick = function() {
+    document.getElementById("Button6").onclick = function() {
         //Look around
         lookAround = !lookAround;
         initialPos = false;
+
     };
-   document.getElementById("Button2").onclick = function() {
+   document.getElementById("Button7").onclick = function() {
         //Turn
         turnAround = !turnAround;
         initialPos = false;
+
     };
 
     for(i=0; i<numNodes; i++) initNodes(i);
@@ -426,77 +441,112 @@ var render = function() {
         Add color
         */
        if (initialPos){
-            //Order: Torso, Head y, Upper LA, Lower LA, Upper RA, Lower LA, Upper LL, Lower LL, Upper RL, Lower LL, Head x
+            //Order: Torso, Head X, Upper LA, Lower LA, Upper RA, Lower LA, Upper LL, Lower LL, Upper RL, Lower LL, Head Y
             theta = [45, 0, 180, 45, 180, 45, 180, 0, 180, 0, 0];
         }
         if (!initialPos){
-            var legDir = true;
-            var armDir = true;
-            var headDirX = true;
-            var headDirY = false;
-            var legStop = 0;
-            var armStop = 0;
-            var headStop = 0;
-            var speed = 0;
-            //Need to fix stops, and other buttons besides reset and walks
-            if (walk){
+
+            //Need to fix other buttons besides reset and walks
+
+            if (walk || run){
+                if (walk){
                 speed = 1;
                 legStop = 45;
                 armStop = 45;
+                run = false;
+                }
+                if (run){
+                    speed = 3;
+                    legStop = 55;
+                    armStop = 55;
+                    walk = false;
+                }
+                //create stops for limbs to set direction
+                //legs and arms move inversely so only need to check on of each limb
+                if (legFWD){
+                    //Change direction if greater than stop value
+                    if (theta[leftUpperLegId] >= (180 + legStop)){
+                        legFWD = !legFWD;
+                    }
+                    //otherwise move leg
+                    theta[leftUpperLegId] += speed; 
+                    theta[rightUpperLegId] -= speed;
+                    }
+                if (!legFWD){
+                    //Change direction if less than stop value
+                    if (theta[leftUpperLegId] <= (180 - legStop)){
+                        legFWD = !legFWD;
+                    }
+                    //otherwise move leg
+                    theta[leftUpperLegId] -= speed;
+                    theta[rightUpperLegId] += speed;
+                }
+
+                if (armFWD){
+                    if (theta[leftUpperArmId] >= (180 + armStop)){
+                        armFWD = !armFWD;
+                    }
+                    theta[leftUpperArmId] += speed;
+                    theta[rightUpperArmId] -= speed;
+                    
+                }
+                if (!armFWD){
+                    if (theta[leftUpperArmId] <= (180 - armStop)){
+                        armFWD = !armFWD;
+                    }
+                    theta[leftUpperArmId] -= speed;
+                    theta[rightUpperArmId] += speed;
+                    
+
+                }
             }
-            if (run){
-                speed = 2;
-                legStop = 55;
-                armStop = 55;
+
+            if(turnAround){
+                theta[torsoId] += 1;
             }
+
             if (lookAround){
-                speed = 2;
+                headStop = 45;
+                nod = true;
+                shakeHead = true;
             }
 
-            //create stops for limbs
-            if (theta[6] >= legStop || theta[6] <= -legStop){
-                legDir = !legDir;
-            }
-            if (theta[2] == armStop || theta[2] == -armStop){
-                armDir = !armDir;
-            }
-            if (theta[1] >= headStop || theta[1] <= -headStop){
-                headDirX = !headDirX;
-            }
-            if (theta[1] >= headStop || theta[1] <= -headStop){
-                headDirY = !headDirY;
+            if (nod){
+                if (lookUp){
+                    //Y
+                    if(theta[head2Id] >= headStop){
+                        lookUp = !lookUp;
+                    }
+                    theta[head2Id] += 1;
+                }
+                if (!lookUp){
+                    if(theta[head2Id] <= headStop){
+                        lookUp = !lookUp;
+                    }
+                    theta[head1Id] -= 1;
+                }
+                if (!lookAround){
+                    shakeHead = false;
+                }
             }
 
-            //legs and arms move inversely so only need to check on of each limb
-            if (legDir){
-                //Go forward
-                theta[leftLowerLegId] += speed;
-                theta[rightLowerLegId] -= speed;
-            }
-            if (!legDir){
-                //Go back
-                theta[leftUpperLegId] -= speed;
-                theta[rightUpperLegId] += speed;
-            }
-            if (armDir){
-                theta[rightUpperArmId] -= speed;
-                theta[leftUpperArmId] += speed;
-            }
-            if (!armDir){
-                theta[rightUpperArmId] += speed;
-                theta[leftUpperArmId] -= speed;
-            }
-            if (headDirX){
-                theta[head1Id] += speed;
-            }
-            if (!headDirX){
-                theta[head1Id] -= speed;
-            }
-            if (headDirY & !shakeHead){
-                theta[head2Id] += (.5 * speed);
-            }
-            if (!headDirY & !shakeHead){
-                theta[head2Id] -= (.5 * speed);
+            if (shakeHead){
+                //X
+                 if (lookLft){
+                    if(theta[head1Id] >=  (theta[torsoId] + headStop)){
+                        lookLft = !lookLft;
+                    }
+                    theta[head1Id] += 1;
+                }
+                if (!lookLft){
+                    if(theta[head1Id] <= (theta[torsoId] - headStop)){
+                        lookLft = !lookLft;
+                    }
+                    theta[head1Id] -= 1;
+                }
+                if (!lookAround){
+                    nod = false;
+                }
             }
 
         }
