@@ -119,10 +119,12 @@ class DropCalc (Variables):
             zero = self.convertZero()
             #Set range
             r = self.convertMeters()
-            #Ser Coefficient
+            #Set Coefficient
             c = self.getCoefficient()
             #Set initial velocity
-            Vo = self.getMuzVel()
+            Vo_fps = self.getMuzVel()
+            #convert to m/s
+            Vo = Vo_fps * 0.3048
             #Set line of sight
             los = self.convertLOS()
             #Set gravity
@@ -130,21 +132,24 @@ class DropCalc (Variables):
             #Set air pressure
             p = 1.2
             #Set mass / (convert to kg)
-            m = self.getWeight() / 15430
+            m = self.getWeight() * 0.00006479891
             #set bullet area
             Ab = 4.8 * 10**-5
 
             #Calculate the adjacent (hypotenuse)
-            H = sqrt(zero**2 - los**2)
-
+            H = sqrt(zero**2 + los**2)
+            theta = asin(los/H)
             #Calculate Velocity in x and y direction
-            Vx = Vo * cos(zero/H)
-            Vy = Vo * sin(los/H)
+            Vx = Vo * cos(theta)
+            Vy = Vo * sin(theta)
 
             #Calculate time of flight
-            t = sqrt(r / Vx)
+            t = r / Vx
 
-            drop = round(((((Vy * t) - ((1/2) * g * t**2)) - ((c * p * Ab * Vy**2 * t**2) / 2)))* 39.37, 1)
+            drag_drop = (c * p * Ab * Vy**2 * t**2) / (2 * m)
+            drop_m = (Vy * t) - (0.5 * g * t**2) - drag_drop
+
+            drop = round(drop_m * 39.37, 1)
             self._drop = drop
             return drop
         except Exception:

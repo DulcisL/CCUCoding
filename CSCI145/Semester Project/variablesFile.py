@@ -59,7 +59,7 @@ class Variables():
     def setZero(self, newZero):
         self._zero = newZero
     
-    def getWeight(self, weight):
+    def setWeight(self, weight):
         self._weight = weight
 
     def getRange(self):
