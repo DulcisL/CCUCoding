@@ -16,9 +16,10 @@ source /etc/profile.d/modules.sh
 
 # Clean environment and load Expanse CPU environment + compiler + Slurm tools
 module purge
-module load cpu
 module load slurm
-module load gcc
+module load cpu/0.15.4
+module load gcc/10.2.0
+module load anaconda3/2020.11
 
 # ---- Scratch setup ----
 SCRATCH_JOB_DIR=/scratch/$USER/job_$SLURM_JOB_ID

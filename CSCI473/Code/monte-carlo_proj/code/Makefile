@@ -9,7 +9,7 @@ CFLAGS  = -std=c99 -Wall -Wextra -O2 -pedantic
 PTHREAD = -lpthread
 
 # Executables
-TARGETS = mc_slab
+TARGETS = mc_slab mc_slab_pthread mc_slab_omp
 
 # Headers
 HDRS    = utilities.h timer.h
@@ -25,6 +25,15 @@ mc_slab: mc_slab.c utilities.c $(HDRS)
 
 # -------------------------
 # Pthreads build
+# -------------------------
+
+mc_slab_pthread: mc_slab_pthread.c utilities.c $(HDRS)
+	$(CC) $(CFLAGS) -pthread -o $@ mc_slab_pthread.c utilities.c -lm
+
+mc_slab_omp: mc_slab_omp.c utilities.c $(HDRS)
+	$(CC) $(CFLAGS) -fopenmp -o $@ mc_slab_omp.c utilities.c -lm
+# -------------------------
+# MPI build
 # -------------------------
 
 # -------------------------

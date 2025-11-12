@@ -1,0 +1,3 @@
+N,P,trial,serial_absorbed,parallel_absorbed,diff_absorbed,serial_transmitted,parallel_transmitted,diff_transmitted,serial_reflected,parallel_reflected,diff_reflected,pass
+16,1,0,7,6,0.0625,8,5,0.1875,1,5,0.25,1
+16,2,0,7,6,0.0625,8,5,0.1875,1,5,0.25,1

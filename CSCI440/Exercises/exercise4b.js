@@ -569,16 +569,16 @@ var render = function() {
             if (nod){
                 if (lookUp){
                     //Y
-                    if(theta[head2Id] >= headStop){
+                    if(theta[head1Id] >= headStop){
                         lookUp = !lookUp;
                     }
-                    theta[head2Id] += 1;
+                    theta[head1Id] += 1;
                 }
                 if (!lookUp){
-                    if(theta[head2Id] <= headStop){
+                    if(theta[head1Id] <= headStop){
                         lookUp = !lookUp;
                     }
-                    theta[head2Id] -= 1;
+                    theta[head1Id] -= 1;
                 }
                 if (!lookAround){
                     shakeHead = false;
@@ -588,16 +588,16 @@ var render = function() {
             if (shakeHead){
                 //X
                  if (lookLft){
-                    if(theta[head1Id] >=  (theta[torsoId] + headStop)){
+                    if(theta[head2Id] >=  (theta[torsoId] + headStop)){
                         lookLft = !lookLft;
                     }
-                    theta[head1Id] += 1;
+                    theta[head2Id] += 1;
                 }
                 if (!lookLft){
-                    if(theta[head1Id] <= (theta[torsoId] - headStop)){
+                    if(theta[head2Id] <= (theta[torsoId] - headStop)){
                         lookLft = !lookLft;
                     }
-                    theta[head1Id] -= 1;
+                    theta[head2Id] -= 1;
                 }
                 if (!lookAround){
                     nod = false;
