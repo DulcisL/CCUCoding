@@ -56,6 +56,8 @@ const TARGET = window.vec3(0.0, 0.86, -2.40); // paper center on the desk
 const ORBIT = { radius: 1.6, minR: 0.5, maxR: 8.0, theta: -0.8, phi: 0.8, minPhi: -1.2, maxPhi: 1.2 };
 const ORBIT_SENS = { rotate: 1.2, zoom: 0.25 };
 let isDragging = false; let lastX = 0, lastY = 0;
+const FLOOR_Y = 0.0;
+const CEILING_Y = 2.4;
 
 /* ===== Timeline ===== */
 let startTime = 0;
@@ -103,6 +105,8 @@ const COLOR_PALLET = [
   window.vec3(0.5, 0.2, 0.7), // 14 Purple 
   window.vec3(0.2, 0.6, 0.8), // 15 Teal 
   window.vec3(0.8, 0.4, 0.2), // 16 Orange 
+  window.vec3(1.0, 0.55, 0.45), // 17 Coral
+  window.vec3(0.0, 0.75, 0.95), // 18 sky
 ];
 
 // base primitives from the scene
@@ -154,65 +158,81 @@ function buildRoomAndDesk() {
   const positionsRoom = [], colorsRoom = [];
   const positionsDesk = [], colorsDesk = [];
 
-  // Room
+  // -------- Floor slab and baseboards --------
   const floorY = -0.001, roomHalfX = 3.0, roomHalfZ = 3.0, wallH = 1.8;
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, floorY, 0.0), roomHalfX*2.0, 0.002, roomHalfZ*2.0, COLOR_PALLET[11]);
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, floorY, 0.0), roomHalfX*2.0, 0.002, roomHalfZ*2.0, COLOR_PALLET[15]);
   const baseH = 0.05, baseT = 0.02;
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, baseH/2.0,  roomHalfZ-0.01), roomHalfX*2.0, baseH, baseT, COLOR_PALLET[9]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, baseH/2.0, -roomHalfZ+0.01), roomHalfX*2.0, baseH, baseT, COLOR_PALLET[9]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3( roomHalfX-0.01, baseH/2.0, 0.0), baseT, baseH, roomHalfZ*2.0, COLOR_PALLET[9]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-roomHalfX+0.01, baseH/2.0, 0.0), baseT, baseH, roomHalfZ*2.0, COLOR_PALLET[9]);
 
+  // -------- Wall panels --------
   pushPanel(positionsRoom, colorsRoom, window.vec3(0.0, wallH/2.0,  roomHalfZ), roomHalfX*2.0, wallH, "z", COLOR_PALLET[9]);
   pushPanel(positionsRoom, colorsRoom, window.vec3(0.0, wallH/2.0, -roomHalfZ), roomHalfX*2.0, wallH, "z", COLOR_PALLET[9]);
   pushPanel(positionsRoom, colorsRoom, window.vec3( roomHalfX, wallH/2.0, 0.0), roomHalfZ*2.0, wallH, "x", COLOR_PALLET[9]);
   pushPanel(positionsRoom, colorsRoom, window.vec3(-roomHalfX, wallH/2.0, 0.0), roomHalfZ*2.0, wallH, "x", COLOR_PALLET[9]);
 
+  // -------- Crown molding --------
   const trimY = wallH - 0.02;
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, trimY,  roomHalfZ - 0.02), roomHalfX*2.0, 0.015, 0.03, COLOR_PALLET[13]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, trimY, -roomHalfZ + 0.02), roomHalfX*2.0, 0.015, 0.03, COLOR_PALLET[13]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3( roomHalfX - 0.02, trimY, 0.0), 0.03, 0.015, roomHalfZ*2.0, COLOR_PALLET[13]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-roomHalfX + 0.02, trimY, 0.0), 0.03, 0.015, roomHalfZ*2.0, COLOR_PALLET[13]);
 
+  // -------- Window frame, glass, and exterior accent --------
   const winW = 1.2, winH = 0.7, winY = 1.1, winZ = roomHalfZ - 0.005;
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, winY, winZ), winW+0.05, winH+0.05, 0.03, COLOR_PALLET[13]);
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, winY, winZ), winW+0.05, winH+0.05, 0.03, COLOR_PALLET[11]);
   pushPanel(positionsRoom, colorsRoom, window.vec3(0.0, winY, winZ - 0.015), winW, winH, "z", COLOR_PALLET[5]);
-  pushPanel(positionsRoom, colorsRoom, window.vec3(0.0, winY, winZ - 0.06), winW*1.2, winH*1.2, "z", COLOR_PALLET[2]);
+  pushPanel(positionsRoom, colorsRoom, window.vec3(0.0, winY, winZ - 0.06), winW*1.2, winH*1.2, "z", COLOR_PALLET[18]);
 
+  // -------- Door slab, trim, and knob --------
   const doorW = 0.8, doorH = 1.6, doorX = roomHalfX, doorY = doorH/2.0, doorZ = -1.2;
   pushPanel(positionsRoom, colorsRoom, window.vec3(doorX - 0.004, doorY, doorZ), doorH, doorW, "x", COLOR_PALLET[13]);
   pushPanel(positionsRoom, colorsRoom, window.vec3(doorX - 0.02,  doorY, doorZ), doorH*0.98, doorW*0.98, "x", COLOR_PALLET[8]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3(doorX - 0.04, 0.95, doorZ + doorW*0.3), 0.03, 0.03, 0.03, COLOR_PALLET[6]);
 
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-0.0, 0.001, -2.25), 2.0, 0.002, 0.8, COLOR_PALLET[2]);
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-0.8, 0.18, -2.35), 0.18, 0.36, 0.18, COLOR_PALLET[7]);
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-0.8, 0.37, -2.35), 0.20, 0.02, 0.20, COLOR_PALLET[10]);
+  // -------- Rug, planter, lamp, and couch props --------
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-0.0, 0.001, -2.25), 3.0, 0.002, 1.5, COLOR_PALLET[17]);
+  //Planter
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-1.0, 0.15, -2.75), 0.4, 0.3, 0.4, COLOR_PALLET[10]);
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-1.0, 0.2, -2.75), 0.32, 0.23, 0.32, COLOR_PALLET[11]);
+  //light
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3( 1.1, 0.02, -2.7), 0.22, 0.02, 0.22, COLOR_PALLET[10]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3( 1.1, 0.7,  -2.7), 0.04, 1.36, 0.04, COLOR_PALLET[10]);
   pushBoxCentered(positionsRoom, colorsRoom, window.vec3( 1.1, 1.35, -2.7), 0.35, 0.18, 0.35, COLOR_PALLET[13]);
+  //Couch
+  const couchCenter = window.vec3(0, 0.15, 2.7);
+  pushBoxCentered(positionsRoom, colorsRoom, couchCenter, 1.2, 0.3, 0.5, COLOR_PALLET[11]); // seat
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(couchCenter[0], couchCenter[1] + 0.25, couchCenter[2] + 0.15), 1.2, 0.4, 0.25, COLOR_PALLET[11]); // back
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(couchCenter[0] - 0.525, couchCenter[1] + 0.05, couchCenter[2]), 0.12, 0.4, 0.45, COLOR_PALLET[10]); // left arm
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(couchCenter[0] + 0.525, couchCenter[1] + 0.05, couchCenter[2]), 0.12, 0.4, 0.45, COLOR_PALLET[10]); // right arm
+  // -------- Chair: seat, back, and legs --------
   // Chair seat (raised to match desk height): center y=0.48, size ~ 0.35x0.05x0.35
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-0.25, 0.48, -2.25), 0.35, 0.05, 0.35, COLOR_PALLET[6]);
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, 0.48, -2.0), 0.35, 0.05, 0.35, COLOR_PALLET[6]);
   // Chair back (bottom aligns with seat top): center y=0.68, height 0.40
-  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(-0.25, 0.68, -2.20), 0.35, 0.4, 0.06, COLOR_PALLET[6]);
+  pushBoxCentered(positionsRoom, colorsRoom, window.vec3(0.0, 0.5, -1.85), 0.25, 0.5, 0.06, COLOR_PALLET[6]);
   // Chair legs: extend from floor (y=0) up to seat bottom (~0.455).
 // Height ~= 0.455, center y ~= 0.2275 (rounded to 0.228)
-[window.vec3(-0.38, 0.228, -2.25), window.vec3(-0.12, 0.228, -2.25),
- window.vec3(-0.38, 0.228, -2.20), window.vec3(-0.12, 0.228, -2.20)].forEach(c =>
+[window.vec3(-0.12, 0.228, -1.85), window.vec3(0.12, 0.228, -1.85),
+ window.vec3(-0.12, 0.228, -2.15), window.vec3(0.12, 0.228, -2.15)].forEach(c =>
   pushBoxCentered(positionsRoom, colorsRoom, c, 0.04, 0.456, 0.04, COLOR_PALLET[7])
 );
+  // -------- Floating shelves and books --------
   const shelfX = -roomHalfX + 0.12;
   [0.2,0.5,0.8,1.1].forEach(h =>
-    pushBoxCentered(positionsRoom, colorsRoom, window.vec3(shelfX, h, -0.9), 0.22, 0.03, 0.48, COLOR_PALLET[11])
+    pushBoxCentered(positionsRoom, colorsRoom, window.vec3(shelfX, h, -0.9), 0.22, 0.03, 0.48, COLOR_PALLET[6])
   );
   const bookYs = [0.22,0.52,0.82,1.12];
   bookYs.forEach((h,i)=>{
     for(let k=0;k<4;k++){
       const z = -0.9 - 0.18 + k*0.12;
-      const col = [COLOR_PALLET[14], COLOR_PALLET[15], COLOR_PALLET[16]][(i+k)%3];
+      const col = [COLOR_PALLET[14], COLOR_PALLET[15], COLOR_PALLET[17]][(i+k)%3];
       pushBoxCentered(positionsRoom, colorsRoom, window.vec3(shelfX, h+0.08, z), 0.06, 0.16, 0.08, col);
     }
   });
 
+  // -------- Desk top slab --------
   // Desk (top + legs)
   // Desk top (raised): top y=0.85, bottom y=0.75
   const deskTop = [
@@ -231,8 +251,8 @@ function buildRoomAndDesk() {
 
   // Desk legs: centers at underside of desk (y=0.75) with vertical scale 0.75 so feet touch floor
   const legCenters = [
-    window.vec3(-0.575, 0.75, -2.99), window.vec3(0.575, 0.75, -2.99),
-    window.vec3(-0.575, 0.75, -1.99), window.vec3(0.575, 0.75, -1.99),
+    window.vec3(-0.6, 0.75, -2.90), window.vec3(0.6, 0.75, -2.90),
+    window.vec3(-0.6, 0.75, -2.1), window.vec3(0.6, 0.75, -2.1),
   ];
   legCenters.forEach((c)=>{
     // Leg thickness and height (height=0.75 so bottom ~ 0.0 if center at 0.75)
@@ -283,7 +303,7 @@ function buildRoomAndDesk() {
    to form the left half. The folding shader conditions which side rotates.
 */
 function createRightHalfGrid(cols = 36, rows = 24) {
-  const W = 0.5, H = 0.35;
+  const W = 0.35, H = 0.5;
   const xC = 0.0, xR = +W * 0.5;
   const yB = -H * 0.5, yT = +H * 0.5;
 
@@ -341,6 +361,46 @@ function createRightHalfGrid(cols = 36, rows = 24) {
 /* ============ One-sided airplane folds (RIGHT half only) ============ */
 const folds = [];
 const foldDur = [];
+let totalFoldTimeMs = 0;
+
+
+const FLIGHT_PATH = {
+  delay: 600,              // pause after final fold before launch (ms)
+  duration: 4000,          // full travel time once airborne (ms)
+  maxHeight: 0.90,         // lift above desk (target height)
+  forwardDistance: 3.0,    // no glide section
+  lateralArc: 0.0,
+  bankAngle: 0.0,
+  pitchDown: 0
+};
+const CRUISE_PATH = {
+  duration: 4800,
+  turnRadius: 1.0,
+  dropHeight: 0.05,
+  bankAngle: 22,
+  pitchDown: -6,
+  yawTurn: 140,
+  turnDirection: 1
+};
+const CRUISE_PATH2 = {
+  duration: 4200,
+  turnRadius: 0.7,
+  dropHeight: 0.2,
+  bankAngle: 28,
+  pitchDown: -4,
+  yawTurn: 80,
+  turnDirection: 1
+};
+
+const LANDING_PATH = {
+  duration: 3200,
+  forward: -3.0,
+  lateral: 0.6,
+  dropHeight: 0.05,
+  bankAngle: 28,
+  pitchDown: -10,
+  yawTurn: 80,
+};
 
 
 /* [PAPER] Define the fold sequence (times and crease lines) for a one-sided
@@ -359,7 +419,7 @@ function buildRightFolds(W, H) {
     const axisDir = norm2([b[0]-a[0], b[1]-a[1]]);
     const n = norm2(perp2(axisDir));
     // Fold 1: diagonal corner toward centerline (~90°)
-    folds.push({ p: v3(a[0], a[1], 0), axis: v3(axisDir[0], axisDir[1], 0), normal: v2(n[0], n[1]), side: +1, target: Math.PI/2, useOrig: true });
+    folds.push({ p: v3(a[0], a[1], 0), axis: v3(axisDir[0], axisDir[1], 0), normal: v2(n[0], n[1]), side: +1, target: Math.PI, useOrig: true });
     foldDur.push(1400);
   }
   // 2) Fuse along x = 0 (centerline)
@@ -375,6 +435,8 @@ function buildRightFolds(W, H) {
     folds.push({ p: v3(+wingX,0,0), axis: v3(0,1,0), normal: v2(1,0), side: +1, target: -Math.PI/3, useOrig: true });
     foldDur.push(1200);
   }
+
+  totalFoldTimeMs = foldDur.reduce((sum, dur) => sum + dur, 0);
 }
 
 /* ==================== Animate folds sequentially ==================== */
@@ -400,6 +462,99 @@ function foldProgress(nowMs) {
     }
   }
   return ang;
+}
+
+/* =========================== Paper flight path =========================== */
+
+function launchPhaseState(progress) {
+  const p = clamp(progress, 0, 1);
+  const height = easeInOut(p) * FLIGHT_PATH.maxHeight;
+  const forward = lerp(0, FLIGHT_PATH.forwardDistance, p);
+  return { pos: [0, height, forward], pitch: FLIGHT_PATH.pitchDown * p, bank: FLIGHT_PATH.bankAngle * p, yaw: 0 };
+}
+
+function cruisePhaseState(config, timeMs) {
+  const v = clamp(timeMs / Math.max(1, config.duration), 0, 1);
+  const angle = v * Math.PI; // half circle
+  const radius = config.turnRadius;
+  const dir = config.turnDirection || 1;
+  const forward = radius * Math.sin(angle);
+  const lateral = dir * radius * (1 - Math.cos(angle));
+  const drop = easeInOut(Math.max(0, (v - 0.2) / 0.8));
+  const height = -drop * config.dropHeight;
+  const pitch = config.pitchDown * v;
+  const bank = Math.sin(angle) * config.bankAngle * dir;
+  const yaw = config.yawTurn * v * dir;
+  return { pos: [lateral, height, forward], pitch, bank, yaw };
+}
+
+function composeTransform(state) {
+  let M = window.mat4();
+  M = window.mult(window.translate(state.pos[0], state.pos[1], state.pos[2]), M);
+  M = window.mult(window.rotate(state.yaw || 0, window.vec3(0,1,0)), M);
+  M = window.mult(window.rotate(state.pitch || 0, window.vec3(1,0,0)), M);
+  M = window.mult(window.rotate(state.bank || 0, window.vec3(0,0,1)), M);
+  return M;
+}
+
+function combineStates(base, delta) {
+  const yawRad = (base.yaw || 0) * Math.PI / 180;
+  const cosY = Math.cos(yawRad), sinY = Math.sin(yawRad);
+  const dx = delta.pos[0], dz = delta.pos[2];
+  const rotX = dx * cosY - dz * sinY;
+  const rotZ = dx * sinY + dz * cosY;
+  return {
+    pos: [
+      base.pos[0] + rotX,
+      base.pos[1] + delta.pos[1],
+      base.pos[2] + rotZ,
+    ],
+    pitch: base.pitch + delta.pitch,
+    bank: base.bank + delta.bank,
+    yaw: (base.yaw || 0) + (delta.yaw || 0),
+  };
+}
+
+function landingPhaseState(timeMs, baseHeight = 0) {
+  const v = clamp(timeMs / Math.max(1, LANDING_PATH.duration), 0, 1);
+  const drop = easeInOut(v);
+  const forward = easeInOut(v) * LANDING_PATH.forward;
+  const lateral = easeInOut(v) * LANDING_PATH.lateral;
+  const height = -(baseHeight + LANDING_PATH.dropHeight) * drop;
+  const pitch = LANDING_PATH.pitchDown * v;
+  const bank = LANDING_PATH.bankAngle * Math.sin(v * Math.PI);
+  const yaw = LANDING_PATH.yawTurn * v;
+  return { pos: [lateral, height, forward], pitch, bank, yaw };
+}
+
+function paperFlightMatrix(nowMs) {
+  if (!startTime) return window.mat4();
+  const elapsed = nowMs - startTime;
+  const launchStart = totalFoldTimeMs + FLIGHT_PATH.delay;
+  if (elapsed <= launchStart) return window.mat4();
+
+  const flightTime = elapsed - launchStart;
+  const launchDur = FLIGHT_PATH.duration;
+  const launchProgress = clamp(flightTime / launchDur, 0, 1);
+  const launchState = launchPhaseState(launchProgress);
+
+  if (flightTime <= launchDur) return composeTransform(launchState);
+
+  let phaseTime = flightTime - launchDur;
+  const cruiseLocal1 = cruisePhaseState(CRUISE_PATH, phaseTime);
+  const cruiseState1 = combineStates({ pos: launchState.pos.slice(), pitch: launchState.pitch, bank: launchState.bank, yaw: launchState.yaw }, cruiseLocal1);
+  if (phaseTime <= CRUISE_PATH.duration) return composeTransform(cruiseState1);
+
+  phaseTime -= CRUISE_PATH.duration;
+  const cruiseLocal2 = cruisePhaseState(CRUISE_PATH2, phaseTime);
+  const cruiseState2 = combineStates(cruiseState1, cruiseLocal2);
+  if (phaseTime <= CRUISE_PATH2.duration) return composeTransform(cruiseState2);
+
+  // Landing
+  const landingTime = phaseTime - CRUISE_PATH2.duration;
+  const landingLocal = landingPhaseState(landingTime, cruiseState2.pos[1]);
+  const landingState = combineStates(cruiseState2, landingLocal);
+  return composeTransform(landingState);
 }
 
 /* ============================= Resize / View ============================ */
@@ -553,7 +708,7 @@ function render(now) {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   // Camera
-  const eye = orbitToEye();
+  const eye = vec3(-3, 6.0, -6)//orbitToEye();
   // Camera looks at desk height so scene is framed around the action
   // Camera closer, above-left, looking down to paper center
   const V = window.lookAt(eye, TARGET, window.vec3(0,1,0));
@@ -581,7 +736,16 @@ function render(now) {
   const Tdesk = window.translate(0.0, 0.86, -2.40);
   // Rotate paper from XY plane to lie flat on desk (XZ plane)
   const Rx = window.rotate(-90, window.vec3(1,0,0));
-  const Mpaper = window.mult(Tdesk, Rx);
+  const basePaper = window.mult(Tdesk, Rx);
+  let Mpaper = window.mult(paperFlightMatrix(now), basePaper);
+  const worldOrigin = window.mult(Mpaper, window.vec4(0,0,0,1));
+  if (worldOrigin[1] < FLOOR_Y) {
+    const lift = window.translate(0, FLOOR_Y - worldOrigin[1], 0);
+    Mpaper = window.mult(lift, Mpaper);
+  } else if (worldOrigin[1] > CEILING_Y) {
+    const drop = window.translate(0, CEILING_Y - worldOrigin[1], 0);
+    Mpaper = window.mult(drop, Mpaper);
+  }
 
   // PASS 1: right half
   gl.uniformMatrix4fv(uModelLoc, false, window.flatten(Mpaper));

@@ -1,4 +1,4 @@
-''' Name: Lakota Dolce4444
+''' Name: Lakota Dolce
 Date:
 Assignment: Semester Project Part C
 Pseudocode (as needed):

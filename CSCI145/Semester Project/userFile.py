@@ -164,14 +164,17 @@ class User ():
 
         # if coefficient not known, use average coefficient
         if coefficientTrue == 3:
-            if caliber == 1:
-                coefficient = aver556
-            if caliber == 2:
-                coefficient = aver300
-            if caliber == 3:
-                coefficient = aver308
-            if caliber == 4:
-                coefficient = aver65
+            average_map = {
+                1: aver556,
+                556: aver556,
+                2: aver300,
+                300: aver300,
+                3: aver308,
+                308: aver308,
+                4: aver65,
+                65: aver65
+            }
+            coefficient = average_map.get(caliber, aver308)
 
         # if yes use user coefficient
         if coefficientTrue == 1:
