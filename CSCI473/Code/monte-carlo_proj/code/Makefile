@@ -1,46 +1,59 @@
 # =====================================================
-# Makefile — Stencil 2D (serial + pthread)
-# All code/executables live in ./code
-# All data files are read/written in ../data (handled in the programs)
+# Monte Carlo slab Makefile (serial + pthread + OpenMP)
+# All executables live in ./code
 # =====================================================
 
-CC      = gcc
-CFLAGS  = -std=c99 -Wall -Wextra -O2 -pedantic
-PTHREAD = -lpthread
+CC       = gcc
+CFLAGS   = -std=c99 -Wall -Wextra -O2 -pedantic
+LDLIBS   = -lm
 
-# Executables
-TARGETS = mc_slab mc_slab_pthread mc_slab_omp
+TARGETS      = mc_slab mc_slab_pthread mc_slab_omp
+COMMON_OBJS  = utilities.o
+HDRS         = utilities.h timer.h
 
-# Headers
-HDRS    = utilities.h timer.h
+DATA_DIRS = perf_results_mc consistency_results_mc sweep_results_mc
 
-# Default build
+.PHONY: all clean clean-data rebuild
+
 all: $(TARGETS)
 
-# -------------------------
-# Serial builds
-# -------------------------
-mc_slab: mc_slab.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -o $@ mc_slab.c utilities.c -lm
+rebuild: clean all
 
 # -------------------------
-# Pthreads build
+# Object rules
 # -------------------------
+%.o: %.c $(HDRS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-mc_slab_pthread: mc_slab_pthread.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -pthread -o $@ mc_slab_pthread.c utilities.c -lm
+mc_slab.o: mc_slab.c
+mc_slab_pthread.o: mc_slab_pthread.c
+mc_slab_pthread.o: CFLAGS += -pthread
+mc_slab_omp.o: mc_slab_omp.c
+mc_slab_omp.o: CFLAGS += -fopenmp
 
-mc_slab_omp: mc_slab_omp.c utilities.c $(HDRS)
-	$(CC) $(CFLAGS) -fopenmp -o $@ mc_slab_omp.c utilities.c -lm
 # -------------------------
-# MPI build
+# Executable builds
 # -------------------------
+mc_slab: mc_slab.o $(COMMON_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+mc_slab_pthread: CFLAGS += -pthread
+mc_slab_pthread: LDFLAGS += -pthread
+mc_slab_pthread: mc_slab_pthread.o $(COMMON_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+mc_slab_omp: CFLAGS += -fopenmp
+mc_slab_omp: LDFLAGS += -fopenmp
+mc_slab_omp: mc_slab_omp.o $(COMMON_OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 # -------------------------
 # Housekeeping
 # -------------------------
-.PHONY: all clean clean-data
-
 clean:
 	@echo "Cleaning binaries and objects..."
 	rm -f $(TARGETS) *.o
+
+clean-data:
+	@echo "Removing generated data directories..."
+	rm -rf $(DATA_DIRS)

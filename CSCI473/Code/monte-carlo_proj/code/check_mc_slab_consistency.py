@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
-Usage: python check_mc_slab_consistency.py --serial SERIAL --parallel PARALLEL --C C --Cc CC --H H
-                                           --n_start N_START --n_max N_MAX --Ps P_LIST
+Usage: python check_mc_slab_consistency.py --serial SERIAL --pthread PTHREAD --omp OMP
+                                           --C C --Cc CC --H H --n_start N_START --n_max N_MAX --Ps P_LIST
                                            [--seed SEED] [--trials TRIALS] [--abs_threshold THRESH]
                                            [--results-dir DIR]
 
     --serial SERIAL     Path to serial executable (default: ./mc_slab)
-    --parallel PARALLEL Path to pthread executable (default: ./mc_slab_pthread)
+    --pthread PTHREAD   Path to pthread executable (default: ./mc_slab_pthread)
+    --omp OMP           Path to OpenMP executable (default: ./mc_slab_omp)
     --C C               Total interaction coefficient
     --Cc CC             Absorption coefficient
     --H H               Slab thickness
-    --seed SEED         Base RNG seed used for both solvers
+    --seed SEED         Base RNG seed used for all solvers
     --n_start N_START   Minimum particle count (doubling until n_max)
     --n_max N_MAX       Maximum particle count (inclusive)
     --Ps P_LIST         Comma-separated list of thread counts to validate (e.g., 1,2,4)
@@ -22,8 +23,8 @@ Usage: python check_mc_slab_consistency.py --serial SERIAL --parallel PARALLEL -
 Console output:
     - Prints trial progress: "[i/total] Trial ... N=... P=..."
     - Final summary with pass/fail counts and CSV paths.
-Artfacts:
-    - consistency_raw_runs.csv   Per-trial comparisons
+Artifacts:
+    - consistency_raw_runs.csv   Per-trial comparisons across all solvers
     - consistency_summary.csv    Aggregated pass/fail statistics
 """
 
@@ -40,13 +41,21 @@ import time
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
+METRICS: Tuple[str, ...] = ("absorbed", "transmitted", "reflected")
+PAIRINGS: Tuple[Tuple[str, str], ...] = (
+    ("serial", "pthread"),
+    ("serial", "omp"),
+    ("pthread", "omp"),
+)
+
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Cross-check serial vs pthread mc_slab results across test ranges."
+        description="Cross-check serial vs pthread vs OpenMP mc_slab results across test ranges."
     )
     parser.add_argument("--serial", default="./mc_slab", help="Path to serial executable")
-    parser.add_argument("--parallel", default="./mc_slab_pthread", help="Path to pthread executable")
+    parser.add_argument("--pthread", default="./mc_slab_pthread", help="Path to pthread executable")
+    parser.add_argument("--omp", default="./mc_slab_omp", help="Path to OpenMP executable")
     parser.add_argument("--C", type=float, required=True, help="Total interaction coefficient")
     parser.add_argument("--Cc", type=float, required=True, help="Absorption coefficient")
     parser.add_argument("--H", type=float, required=True, help="Slab thickness")
@@ -114,11 +123,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
 
     serial_path = Path(args.serial).resolve()
-    parallel_path = Path(args.parallel).resolve()
+    pthread_path = Path(args.pthread).resolve()
+    omp_path = Path(args.omp).resolve()
     if not serial_path.exists():
         raise FileNotFoundError(f"Serial executable not found: {serial_path}")
-    if not parallel_path.exists():
-        raise FileNotFoundError(f"Parallel executable not found: {parallel_path}")
+    if not pthread_path.exists():
+        raise FileNotFoundError(f"Pthread executable not found: {pthread_path}")
+    if not omp_path.exists():
+        raise FileNotFoundError(f"OpenMP executable not found: {omp_path}")
 
     n_values = doubling_range(args.n_start, args.n_max)
     p_values = parse_thread_list(args.P_s)
@@ -142,24 +154,30 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 sys.stdout.write("\r" + status)
                 sys.stdout.flush()
 
-                serial_args = [
+                base_args = [
                     f"{args.C:.10g}",
                     f"{args.Cc:.10g}",
                     f"{args.H:.10g}",
                     str(n),
                 ]
-                parallel_args = serial_args + [str(p)]
+                solver_invocations = {
+                    "serial": (serial_path, base_args),
+                    "pthread": (pthread_path, base_args + [str(p)]),
+                    "omp": (omp_path, base_args + [str(p)]),
+                }
 
-                serial_res = run_solver(serial_path, serial_args, seed)
-                parallel_res = run_solver(parallel_path, parallel_args, seed)
+                results: Dict[str, Dict[str, float]] = {}
+                for label, (exe_path, cli_args) in solver_invocations.items():
+                    results[label] = run_solver(exe_path, list(cli_args), seed)
 
                 total = n
-                diffs = {
-                    "absorbed": abs(fraction(serial_res["absorbed"], total) - fraction(parallel_res["absorbed"], total)),
-                    "transmitted": abs(fraction(serial_res["transmitted"], total) - fraction(parallel_res["transmitted"], total)),
-                    "reflected": abs(fraction(serial_res["reflected"], total) - fraction(parallel_res["reflected"], total)),
-                }
-                passed = all(diff <= args.abs_threshold for diff in diffs.values())
+                diff_map: Dict[Tuple[str, str, str], float] = {}
+                for left, right in PAIRINGS:
+                    for metric in METRICS:
+                        diff = abs(fraction(results[left][metric], total) - fraction(results[right][metric], total))
+                        diff_map[(left, right, metric)] = diff
+
+                passed = all(diff <= args.abs_threshold for diff in diff_map.values())
 
                 summary_entry = summary_map[(n, p)]
                 summary_entry["tests"] += 1
@@ -168,21 +186,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 else:
                     summary_entry["fail"] += 1
 
-                raw_rows.append([
-                    n,
-                    p,
-                    trial,
-                    serial_res["absorbed"],
-                    parallel_res["absorbed"],
-                    diffs["absorbed"],
-                    serial_res["transmitted"],
-                    parallel_res["transmitted"],
-                    diffs["transmitted"],
-                    serial_res["reflected"],
-                    parallel_res["reflected"],
-                    diffs["reflected"],
-                    int(passed),
-                ])
+                row: List[object] = [n, p, trial]
+                for metric in METRICS:
+                    row.extend([
+                        results["serial"][metric],
+                        results["pthread"][metric],
+                        results["omp"][metric],
+                    ])
+                for metric in METRICS:
+                    for left, right in PAIRINGS:
+                        row.append(diff_map[(left, right, metric)])
+                row.append(int(passed))
+                raw_rows.append(row)
 
     sys.stdout.write("\n")
     sys.stdout.flush()
@@ -193,21 +208,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     with raw_path.open("w", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([
-            "N",
-            "P",
-            "trial",
-            "serial_absorbed",
-            "parallel_absorbed",
-            "diff_absorbed",
-            "serial_transmitted",
-            "parallel_transmitted",
-            "diff_transmitted",
-            "serial_reflected",
-            "parallel_reflected",
-            "diff_reflected",
-            "pass",
-        ])
+        header: List[str] = ["N", "P", "trial"]
+        for metric in METRICS:
+            header.extend([
+                f"serial_{metric}",
+                f"pthread_{metric}",
+                f"omp_{metric}",
+            ])
+        for metric in METRICS:
+            for left, right in PAIRINGS:
+                header.append(f"diff_{left}_{right}_{metric}")
+        header.append("pass")
+        writer.writerow(header)
         writer.writerows(raw_rows)
 
     total_pass = sum(entry["pass"] for entry in summary_map.values())
