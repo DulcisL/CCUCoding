@@ -1,6 +1,3 @@
-// sw2d_pthread.c — 2D shallow-water (linearized) with pthreads-based spatial parallelism.
-// Build: cc -O3 -march=native -Wall -Wextra -pthread -o sw2d_pthread sw2d_pthread.c -lm
-
 #define _POSIX_C_SOURCE 200809L
 #include <errno.h>
 #include <getopt.h>
@@ -13,10 +10,6 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 typedef struct {
     int rows, cols, steps;
@@ -33,31 +26,36 @@ typedef struct {
 } Params;
 
 typedef struct {
-    int rows, cols, steps;
-    double inv2dx, inv2dy;
-    double g, H0, dt;
-    double *h, *u, *v;
-    double *h_new, *u_new, *v_new;
-    pthread_barrier_t barrier;
+    Params *params;
+    int rows, cols;
     int save_interval;
-    FILE *fout;
-    size_t frame_elems;
-    int32_t nframes;
     int stats_interval;
     int progress_bar;
-    double last_t;
+    double g, H0, dt;
+    double inv2dx, inv2dy;
+    double bytes_per_cell_update_est;
+    double ema_alpha;
     double ema_updates;
     double ema_GBps;
-    double ema_alpha;
-    double bytes_per_cell_update_est;
+    double last_t;
+    double t0;
+    FILE *fout;
+    int32_t nframes;
+    double *h;
+    double *u;
+    double *v;
+    double *h_new;
+    double *u_new;
+    double *v_new;
+    pthread_barrier_t barrier;
     int error;
-} SharedData;
+} SharedState;
 
 typedef struct {
-    SharedData *shared;
-    int tid;
+    SharedState *shared;
     int row_start;
     int row_end;
+    int tid;
 } WorkerCtx;
 
 static double now_sec(void) {
@@ -66,12 +64,12 @@ static double now_sec(void) {
     return (double)tv.tv_sec + 1e-6 * (double)tv.tv_usec;
 }
 
-static inline int idx(int r, int c, int cols) { return r * cols + c; }
 static inline int clampi(int x, int lo, int hi) {
     if (x < lo) return lo;
     if (x > hi) return hi;
     return x;
 }
+static inline int idx(int r, int c, int cols) { return r * cols + c; }
 static inline double getH(const double *A, int r, int c, int R, int C) {
     r = clampi(r, 0, R - 1);
     c = clampi(c, 0, C - 1);
@@ -166,29 +164,6 @@ static int load_init(const char *path, int *rows, int *cols, double **h, double 
     return 0;
 }
 
-static void usage(const char *prog) {
-    fprintf(stderr,
-            "Usage: %s [options]\n"
-            "  --rows INT            grid rows (N) [200]\n"
-            "  --cols INT            grid cols (M) [200]\n"
-            "  --steps INT           number of time steps [2000]\n"
-            "  --dx DOUBLE           cell size x [1.0]\n"
-            "  --dy DOUBLE           cell size y [1.0]\n"
-            "  --dt DOUBLE           time step (<=0 => CFL) [auto]\n"
-            "  --g DOUBLE            gravity [9.81]\n"
-            "  --H0 DOUBLE           mean depth [1.0]\n"
-            "  --cfl DOUBLE          CFL number [0.4]\n"
-            "  --height DOUBLE       displaced column height if no init [0.5]\n"
-            "  --threads INT         number of pthread workers [auto]\n"
-            "  --init PATH           optional binary init/prior (h or h,u,v)\n"
-            "  --out PATH            output movie filename (h,u,v per frame)\n"
-            "  --save-interval INT   save every k steps (0 disables) [0]\n"
-            "  --stats-interval INT  stats update every k steps [100]\n"
-            "  --no-progress         disable progress bar\n"
-            "  --help\n",
-            prog);
-}
-
 static void draw_progress(int step, int steps, double ema_upd, double ema_GBps) {
     const int width = 40;
     double frac = steps > 0 ? (double)step / (double)steps : 1.0;
@@ -209,50 +184,67 @@ static long logical_cores(void) {
 
 static void *worker_main(void *arg) {
     WorkerCtx *ctx = (WorkerCtx *)arg;
-    SharedData *S = ctx->shared;
+    SharedState *S = ctx->shared;
     const int start_row = ctx->row_start;
     const int end_row = ctx->row_end;
-    const int cols = S->cols;
-    const int rows = S->rows;
+    const int R = S->rows;
+    const int C = S->cols;
     const double inv2dx = S->inv2dx;
     const double inv2dy = S->inv2dy;
     const double g = S->g;
     const double H0 = S->H0;
     const double dt = S->dt;
-    for (int step = 1; step <= S->steps && !S->error; ++step) {
+    for (int step = 1; step <= S->params->steps && !S->error; ++step) {
         double *h = S->h;
         double *u = S->u;
         double *v = S->v;
         double *u_new = S->u_new;
         double *v_new = S->v_new;
-        double *h_new = S->h_new;
         for (int r = start_row; r < end_row; ++r) {
-            for (int c = 0; c < cols; ++c) {
-                double hL = getH(h, r, c - 1, rows, cols);
-                double hR = getH(h, r, c + 1, rows, cols);
-                double hD = getH(h, r - 1, c, rows, cols);
-                double hU = getH(h, r + 1, c, rows, cols);
-                double dhdx = (hR - hL) * inv2dx;
-                double dhdy = (hU - hD) * inv2dy;
-                int id = idx(r, c, cols);
+            const int r_down = (r == 0) ? 0 : r - 1;
+            const int r_up = (r == R - 1) ? R - 1 : r + 1;
+            const int base = r * C;
+            const int base_down = r_down * C;
+            const int base_up = r_up * C;
+            for (int c = 0; c < C; ++c) {
+                const int c_left = (c == 0) ? 0 : c - 1;
+                const int c_right = (c == C - 1) ? C - 1 : c + 1;
+                const double hL = h[base + c_left];
+                const double hR = h[base + c_right];
+                const double hD = h[base_down + c];
+                const double hU = h[base_up + c];
+                const double dhdx = (hR - hL) * inv2dx;
+                const double dhdy = (hU - hD) * inv2dy;
+                const int id = base + c;
                 u_new[id] = u[id] + (-g * dhdx) * dt;
                 v_new[id] = v[id] + (-g * dhdy) * dt;
             }
         }
         pthread_barrier_wait(&S->barrier);
+
+        h = S->h;
+        double *h_new = S->h_new;
         for (int r = start_row; r < end_row; ++r) {
-            for (int c = 0; c < cols; ++c) {
-                double uL = getH(u_new, r, c - 1, rows, cols);
-                double uR = getH(u_new, r, c + 1, rows, cols);
-                double vD = getH(v_new, r - 1, c, rows, cols);
-                double vU = getH(v_new, r + 1, c, rows, cols);
-                double dudx = (uR - uL) * inv2dx;
-                double dvdy = (vU - vD) * inv2dy;
-                int id = idx(r, c, cols);
+            const int r_down = (r == 0) ? 0 : r - 1;
+            const int r_up = (r == R - 1) ? R - 1 : r + 1;
+            const int base = r * C;
+            const int base_down = r_down * C;
+            const int base_up = r_up * C;
+            for (int c = 0; c < C; ++c) {
+                const int c_left = (c == 0) ? 0 : c - 1;
+                const int c_right = (c == C - 1) ? C - 1 : c + 1;
+                const double uL = u_new[base + c_left];
+                const double uR = u_new[base + c_right];
+                const double vD = v_new[base_down + c];
+                const double vU = v_new[base_up + c];
+                const double dudx = (uR - uL) * inv2dx;
+                const double dvdy = (vU - vD) * inv2dy;
+                const int id = base + c;
                 h_new[id] = h[id] + (-H0 * (dudx + dvdy)) * dt;
             }
         }
         pthread_barrier_wait(&S->barrier);
+
         if (ctx->tid == 0) {
             double *tmp;
             tmp = S->h;
@@ -265,8 +257,8 @@ static void *worker_main(void *arg) {
             S->v = S->v_new;
             S->v_new = tmp;
 
-            if (!S->error && S->fout && S->save_interval > 0 && (step % S->save_interval == 0)) {
-                size_t count = S->frame_elems;
+            if (S->fout && S->save_interval > 0 && (step % S->save_interval) == 0) {
+                size_t count = (size_t)S->rows * (size_t)S->cols;
                 if (fwrite(S->h, sizeof(double), count, S->fout) != count ||
                     fwrite(S->u, sizeof(double), count, S->fout) != count ||
                     fwrite(S->v, sizeof(double), count, S->fout) != count) {
@@ -277,13 +269,12 @@ static void *worker_main(void *arg) {
                 }
             }
 
-            if (!S->error && (S->progress_bar ||
-                              (S->stats_interval > 0 && (step % S->stats_interval) == 0))) {
+            if (!S->error && (S->progress_bar || (S->stats_interval > 0 && (step % S->stats_interval) == 0))) {
                 double t1 = now_sec();
                 double dt_wall = t1 - S->last_t;
                 S->last_t = t1;
                 if (dt_wall > 0) {
-                    double upd = (double)rows * (double)cols *
+                    double upd = (double)S->rows * (double)S->cols *
                                  (double)((step < S->stats_interval) ? step : S->stats_interval);
                     double upd_s = upd / dt_wall;
                     double GBps = (upd * S->bytes_per_cell_update_est) / (dt_wall * 1e9);
@@ -295,14 +286,16 @@ static void *worker_main(void *arg) {
                         S->ema_GBps = S->ema_alpha * GBps + (1.0 - S->ema_alpha) * S->ema_GBps;
                     }
                     if (S->progress_bar)
-                        draw_progress(step, S->steps, S->ema_updates, S->ema_GBps);
+                        draw_progress(step, S->params->steps, S->ema_updates, S->ema_GBps);
                     else
-                        fprintf(stderr, "[%d/%d] upd/s~%.2e  BW~%.2f GB/s\n", step, S->steps,
-                                S->ema_updates, S->ema_GBps);
+                        fprintf(stderr, "[%d/%d] upd/s~%.2e  BW~%.2f GB/s\n", step, S->params->steps, S->ema_updates,
+                                S->ema_GBps);
                 }
             }
         }
+
         pthread_barrier_wait(&S->barrier);
+        if (S->error) break;
     }
     return NULL;
 }
@@ -326,17 +319,25 @@ int main(int argc, char **argv) {
                 .progress_bar = 1,
                 .threads = (int)logical_cores()};
 
-    static struct option long_opts[] = {
-        {"rows", required_argument, 0, 0},          {"cols", required_argument, 0, 0},
-        {"steps", required_argument, 0, 0},         {"dx", required_argument, 0, 0},
-        {"dy", required_argument, 0, 0},            {"dt", required_argument, 0, 0},
-        {"g", required_argument, 0, 0},             {"H0", required_argument, 0, 0},
-        {"cfl", required_argument, 0, 0},           {"height", required_argument, 0, 0},
-        {"col", required_argument, 0, 0},           {"threads", required_argument, 0, 0},
-        {"init", required_argument, 0, 0},          {"out", required_argument, 0, 0},
-        {"save-interval", required_argument, 0, 0}, {"stats-interval", required_argument, 0, 0},
-        {"no-progress", no_argument, 0, 0},         {"help", no_argument, 0, 0},
-        {0, 0, 0, 0}};
+    static struct option long_opts[] = {{"rows", required_argument, 0, 0},
+                                        {"cols", required_argument, 0, 0},
+                                        {"steps", required_argument, 0, 0},
+                                        {"dx", required_argument, 0, 0},
+                                        {"dy", required_argument, 0, 0},
+                                        {"dt", required_argument, 0, 0},
+                                        {"g", required_argument, 0, 0},
+                                        {"H0", required_argument, 0, 0},
+                                        {"cfl", required_argument, 0, 0},
+                                        {"height", required_argument, 0, 0},
+                                        {"col", required_argument, 0, 0},
+                                        {"threads", required_argument, 0, 0},
+                                        {"init", required_argument, 0, 0},
+                                        {"out", required_argument, 0, 0},
+                                        {"save-interval", required_argument, 0, 0},
+                                        {"stats-interval", required_argument, 0, 0},
+                                        {"no-progress", no_argument, 0, 0},
+                                        {"help", no_argument, 0, 0},
+                                        {0, 0, 0, 0}};
     int optidx;
     while (1) {
         int c = getopt_long(argc, argv, "", long_opts, &optidx);
@@ -378,37 +379,50 @@ int main(int argc, char **argv) {
         else if (strcmp(on, "no-progress") == 0)
             P.progress_bar = 0;
         else if (strcmp(on, "help") == 0) {
-            usage(argv[0]);
+            fprintf(stderr,
+                    "Usage: %s [options]\n"
+                    "  --rows INT            grid rows (N) [200]\n"
+                    "  --cols INT            grid cols (M) [200]\n"
+                    "  --steps INT           number of time steps [2000]\n"
+                    "  --dx DOUBLE           cell size x [1.0]\n"
+                    "  --dy DOUBLE           cell size y [1.0]\n"
+                    "  --dt DOUBLE           time step (<=0 => CFL) [auto]\n"
+                    "  --g DOUBLE            gravity [9.81]\n"
+                    "  --H0 DOUBLE           mean depth [1.0]\n"
+                    "  --cfl DOUBLE          CFL number [0.4]\n"
+                    "  --height DOUBLE       displaced column height if no init [0.5]\n"
+                    "  --threads INT         number of pthread workers [auto]\n"
+                    "  --init PATH           optional binary init/prior (h or h,u,v)\n"
+                    "  --out PATH            output movie filename (h,u,v per frame)\n"
+                    "  --save-interval INT   save every k steps (0 disables) [0]\n"
+                    "  --stats-interval INT  stats update every k steps [100]\n"
+                    "  --no-progress         disable progress bar\n"
+                    "  --help\n",
+                    argv[0]);
             return 0;
         }
     }
 
     if (P.rows <= 0 || P.cols <= 0 || P.steps < 0) {
-        usage(argv[0]);
+        fprintf(stderr, "[error] invalid rows/cols/steps\n");
         return 1;
     }
-    if (P.save_interval < 0) P.save_interval = 0;
-    if (P.stats_interval <= 0) P.stats_interval = 100;
-    if (P.threads <= 0) P.threads = 1;
-
-    int R = P.rows, C = P.cols;
-    size_t N = (size_t)R * (size_t)C;
+    if (P.threads <= 0) {
+        fprintf(stderr, "[error] invalid thread count\n");
+        return 1;
+    }
 
     double *h = NULL, *u = NULL, *v = NULL;
     if (P.init_file) {
-        int r2, c2;
-        if (load_init(P.init_file, &r2, &c2, &h, &u, &v) != 0) return 1;
-        if (r2 != R || c2 != C) {
-            fprintf(stderr, "[error] Init dims %dx%d != requested %dx%d\n", r2, c2, R, C);
-            free(h);
-            free(u);
-            free(v);
+        if (load_init(P.init_file, &P.rows, &P.cols, &h, &u, &v) != 0) {
             return 1;
         }
     } else {
-        h = (double *)calloc(N, sizeof(double));
-        u = (double *)calloc(N, sizeof(double));
-        v = (double *)calloc(N, sizeof(double));
+        int R = P.rows, C = P.cols;
+        size_t cells = (size_t)R * (size_t)C;
+        h = (double *)calloc(cells, sizeof(double));
+        u = (double *)calloc(cells, sizeof(double));
+        v = (double *)calloc(cells, sizeof(double));
         if (!h || !u || !v) {
             fprintf(stderr, "[error] OOM\n");
             free(h);
@@ -416,29 +430,27 @@ int main(int argc, char **argv) {
             free(v);
             return 1;
         }
-        const double cx = 0.5 * (C - 1) * P.dx;
-        const double cy = 0.5 * (R - 1) * P.dy;
-        const double radius = (C * P.dx) / 8.0;
-        const double r2_max = radius * radius;
-
+        double cx = 0.5 * P.cols;
+        double cy = 0.5 * P.rows;
+        double radius = 0.25 * ((P.cols * P.dx < P.rows * P.dy) ? (P.cols * P.dx) : (P.rows * P.dy));
+        double radius2 = radius * radius;
         for (int r = 0; r < R; ++r) {
-            const double y = r * P.dy;
             for (int c = 0; c < C; ++c) {
-                const double x = c * P.dx;
-                const double dx = x - cx;
-                const double dy = y - cy;
-                const double d2 = dx * dx + dy * dy;
-                if (d2 <= r2_max)
+                double dx = (c - cx) * P.dx;
+                double dy = (r - cy) * P.dy;
+                double dist2 = dx * dx + dy * dy;
+                if (dist2 <= radius2) {
                     h[idx(r, c, C)] = P.init_height;
-                else
-                    h[idx(r, c, C)] = 0.0;
+                }
             }
         }
     }
 
-    double *h_new = (double *)malloc(N * sizeof(double));
-    double *u_new = (double *)malloc(N * sizeof(double));
-    double *v_new = (double *)malloc(N * sizeof(double));
+    int R = P.rows, C = P.cols;
+    size_t cells = (size_t)R * (size_t)C;
+    double *h_new = (double *)calloc(cells, sizeof(double));
+    double *u_new = (double *)calloc(cells, sizeof(double));
+    double *v_new = (double *)calloc(cells, sizeof(double));
     if (!h_new || !u_new || !v_new) {
         fprintf(stderr, "[error] OOM\n");
         free(h);
@@ -462,6 +474,12 @@ int main(int argc, char **argv) {
         fout = fopen(P.out_file, "wb");
         if (!fout) {
             fprintf(stderr, "[error] open out '%s': %s\n", P.out_file, strerror(errno));
+            free(h);
+            free(u);
+            free(v);
+            free(h_new);
+            free(u_new);
+            free(v_new);
             return 1;
         }
         const char magic[4] = {'S', 'W', '2', 'D'};
@@ -486,8 +504,7 @@ int main(int argc, char **argv) {
         fwrite(&H0v, sizeof(double), 1, fout);
 
         size_t count = (size_t)R * (size_t)C;
-        if (fwrite(h, sizeof(double), count, fout) != count ||
-            fwrite(u, sizeof(double), count, fout) != count ||
+        if (fwrite(h, sizeof(double), count, fout) != count || fwrite(u, sizeof(double), count, fout) != count ||
             fwrite(v, sizeof(double), count, fout) != count) {
             fprintf(stderr, "[error] write frame failed\n");
             fclose(fout);
@@ -502,43 +519,50 @@ int main(int argc, char **argv) {
         nframes = 1;
     }
 
-    SharedData shared = {
+    SharedState shared = {
+        .params = &P,
         .rows = R,
         .cols = C,
-        .steps = P.steps,
-        .inv2dx = 1.0 / (2.0 * P.dx),
-        .inv2dy = 1.0 / (2.0 * P.dy),
+        .save_interval = P.save_interval,
+        .stats_interval = P.stats_interval,
+        .progress_bar = P.progress_bar,
         .g = P.g,
         .H0 = P.H0,
         .dt = P.dt,
+        .inv2dx = 1.0 / (2.0 * P.dx),
+        .inv2dy = 1.0 / (2.0 * P.dy),
+        .bytes_per_cell_update_est = 3.0 * (5 + 1) * 8.0,
+        .ema_alpha = 0.2,
+        .ema_updates = 0.0,
+        .ema_GBps = 0.0,
+        .last_t = now_sec(),
+        .t0 = now_sec(),
+        .fout = fout,
+        .nframes = nframes,
         .h = h,
         .u = u,
         .v = v,
         .h_new = h_new,
         .u_new = u_new,
         .v_new = v_new,
-        .save_interval = P.save_interval,
-        .fout = fout,
-        .frame_elems = (size_t)R * (size_t)C,
-        .nframes = nframes,
-        .stats_interval = P.stats_interval,
-        .progress_bar = P.progress_bar,
-        .ema_updates = 0.0,
-        .ema_GBps = 0.0,
-        .ema_alpha = 0.2,
-        .bytes_per_cell_update_est = 3.0 * (5 + 1) * 8.0,
         .error = 0};
 
-    pthread_barrier_init(&shared.barrier, NULL, P.threads);
-    double sim_start = now_sec();
-    shared.last_t = sim_start;
+    pthread_barrier_init(&shared.barrier, NULL, (unsigned int)P.threads);
 
-    pthread_t *threads = (pthread_t *)malloc(sizeof(pthread_t) * (size_t)P.threads);
-    WorkerCtx *ctx = (WorkerCtx *)malloc(sizeof(WorkerCtx) * (size_t)P.threads);
-    if (!threads || !ctx) {
+    WorkerCtx *workers = (WorkerCtx *)calloc((size_t)P.threads, sizeof(WorkerCtx));
+    pthread_t *threads = (pthread_t *)calloc((size_t)P.threads, sizeof(pthread_t));
+    if (!workers || !threads) {
         fprintf(stderr, "[error] OOM\n");
+        free(workers);
         free(threads);
-        free(ctx);
+        pthread_barrier_destroy(&shared.barrier);
+        free(h);
+        free(u);
+        free(v);
+        free(h_new);
+        free(u_new);
+        free(v_new);
+        if (fout) fclose(fout);
         return 1;
     }
 
@@ -548,45 +572,42 @@ int main(int argc, char **argv) {
     for (int t = 0; t < P.threads; ++t) {
         int extra = (t < rem) ? 1 : 0;
         int end = start + base + extra;
-        ctx[t].shared = &shared;
-        ctx[t].tid = t;
-        ctx[t].row_start = start;
-        ctx[t].row_end = end;
-        pthread_create(&threads[t], NULL, worker_main, &ctx[t]);
+        workers[t].shared = &shared;
+        workers[t].row_start = start;
+        workers[t].row_end = end;
+        workers[t].tid = t;
+        pthread_create(&threads[t], NULL, worker_main, &workers[t]);
         start = end;
     }
 
-    for (int t = 0; t < P.threads; ++t) pthread_join(threads[t], NULL);
+    for (int t = 0; t < P.threads; ++t) {
+        pthread_join(threads[t], NULL);
+    }
     pthread_barrier_destroy(&shared.barrier);
 
-    if (shared.error) {
-        fprintf(stderr, "[error] simulation aborted due to earlier failures.\n");
-    }
-
     if (fout) {
-        nframes = shared.nframes;
         long endpos = ftell(fout);
         fseek(fout, 20L, SEEK_SET);
-        fwrite(&nframes, sizeof(int32_t), 1, fout);
+        fwrite(&shared.nframes, sizeof(int32_t), 1, fout);
         fseek(fout, endpos, SEEK_SET);
         fclose(fout);
     }
 
     double t1 = now_sec();
-    double wall = t1 - sim_start;
+    double wall = t1 - shared.t0;
     double total_updates = (double)R * (double)C * (double)P.steps;
     double upd_s = (wall > 0) ? total_updates / wall : 0.0;
     double GBps = (wall > 0) ? (total_updates * shared.bytes_per_cell_update_est) / (wall * 1e9) : 0.0;
-    fprintf(stderr, "\nDone. Wall=%.3fs  Updates=%.3e  Updates/s=%.2e  Apparent BW=%.2f GB/s\n", wall,
-            total_updates, upd_s, GBps);
+    fprintf(stderr, "\nDone. Wall=%.3fs  Updates=%.3e  Updates/s=%.2e  Apparent BW=%.2f GB/s\n", wall, total_updates,
+            upd_s, GBps);
 
     free(threads);
-    free(ctx);
-    free(h);
-    free(u);
-    free(v);
-    free(h_new);
-    free(u_new);
-    free(v_new);
+    free(workers);
+    free(shared.h);
+    free(shared.u);
+    free(shared.v);
+    free(shared.h_new);
+    free(shared.u_new);
+    free(shared.v_new);
     return shared.error ? 1 : 0;
 }

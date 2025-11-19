@@ -28,26 +28,36 @@ To benchmark the pthread solver across rows/cols/steps/thread counts (and produc
 iso-efficiency plots), run sweep_sw2d_pthread.py. Example:
 
 python3 sweep_sw2d_pthread.py \
-  --rows 1000:1500:2000 \
-  --cols 1000 \
-  --steps 2000 \
+  --rows 100:300:100 \
+  --cols 100:300:100 \
+  --steps 1000,2000 \
   --threads 1,2,4,8,10,12,14,16,18,20 \
   --save-interval 100 \
   --repeat 5 \
-  --out-dir sw2d_pthread_sweep \
-  --keep-movies
+  --out-dir ../data/pthread 
 
 To benchmark the OpenMP solver, use sweep_sw2d_omp.py (same CLI as the pthread version). Example:
 
 python3 sweep_sw2d_omp.py \
-  --rows 1000:1500:2000 \
-  --cols 1000 \
-  --steps 2000 \
+  --rows 100:300:100 \
+  --cols 100:300:100 \
+  --steps 1000,2000 \
   --threads 1,2,4,8,10,12,14,16,18,20 \
   --save-interval 100 \
   --repeat 5 \
-  --out-dir sw2d_omp_sweep \
-  --keep-movies
+  --out-dir ../data/omp 
+
+To cross-check that the serial/pthread/OpenMP solvers produce the same results, use check_sw2d.py.
+Example:
+
+python3 check_sw2d.py \
+  --rows 64,128 \
+  --cols 64 \
+  --steps 200 \
+  --Ps 1,2,4 \
+  --trials 2 \
+  --save-interval 200 \
+  --results-dir data/checks
 
 To run the pthread-parallel solver, build sw2d_pthread (see sw2d_pthread.c for compile flags) and call it
 with the same options plus `--threads` to set the worker count, for example:

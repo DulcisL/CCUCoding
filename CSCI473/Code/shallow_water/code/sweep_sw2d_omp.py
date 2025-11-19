@@ -204,18 +204,67 @@ def aggregate_runs(rows: List[Dict]) -> List[Dict]:
     return summary_entries
 
 
+def group_entries_by_problem(summary_entries: List[Dict]) -> List[Tuple[Tuple[int, int, int], List[Dict]]]:
+    per_problem: Dict[Tuple[int, int, int], List[Dict]] = defaultdict(list)
+    for entry in summary_entries:
+        per_problem[(entry["rows"], entry["cols"], entry["steps"])].append(entry)
+    grouped: List[Tuple[Tuple[int, int, int], List[Dict]]] = []
+    for key, entries in per_problem.items():
+        entries.sort(key=lambda e: e["threads"])
+        grouped.append((key, entries))
+    grouped.sort(key=lambda item: item[0][0] * item[0][1] * item[0][2])
+    return grouped
+
+
+def build_problem_speedup_rows(
+    grouped_entries: List[Tuple[Tuple[int, int, int], List[Dict]]]
+) -> List[Dict]:
+    rows: List[Dict] = []
+    for (rows_val, cols_val, steps_val), entries in grouped_entries:
+        if not entries:
+            continue
+        best = max(entries, key=lambda e: e.get("speedup", float("-inf")))
+        rows.append(
+            {
+                "rows": rows_val,
+                "cols": cols_val,
+                "steps": steps_val,
+                "problem": rows_val * cols_val * steps_val,
+                "best_threads": best["threads"],
+                "best_speedup": best.get("speedup", float("nan")),
+                "best_efficiency": best.get("efficiency", float("nan")),
+            }
+        )
+    rows.sort(key=lambda e: e["problem"])
+    return rows
+
+
+def print_speedup_summary(
+    grouped_entries: List[Tuple[Tuple[int, int, int], List[Dict]]]
+) -> None:
+    if not grouped_entries:
+        print("[info] no speedup data available for summary")
+        return
+    print("[summary] speedup by problem size:")
+    for (rows_val, cols_val, steps_val), entries in grouped_entries:
+        series = ", ".join(f"{entry['threads']}t={entry.get('speedup', float('nan')):.2f}x" for entry in entries)
+        best = max(entries, key=lambda e: e.get("speedup", float("-inf")))
+        best_speed = best.get("speedup", float("nan"))
+        best_threads = best["threads"]
+        best_eff = best.get("efficiency", float("nan"))
+        label = f"{rows_val}x{cols_val}x{steps_val}"
+        print(f"    {label}: {series} (best {best_speed:.2f}x @ {best_threads} threads, eff {best_eff:.2f})")
+
+
 def generate_plots(summary_entries: List[Dict], eff_targets: List[float], out_dir: Path) -> None:
-    if not summary_entries:
+    grouped_entries = group_entries_by_problem(summary_entries)
+    if not grouped_entries:
         print("[warn] no summary data to plot", file=sys.stderr)
         return
     try:
         import matplotlib.pyplot as plt
     except Exception as exc:
         raise RuntimeError("matplotlib is required for plotting") from exc
-
-    per_problem: Dict[Tuple[int, int, int], List[Dict]] = defaultdict(list)
-    for entry in summary_entries:
-        per_problem[(entry["rows"], entry["cols"], entry["steps"])].append(entry)
 
     runtime_plot = out_dir / "sw2d_omp_runtime.png"
     speedup_plot = out_dir / "sw2d_omp_speedup.png"
@@ -227,17 +276,20 @@ def generate_plots(summary_entries: List[Dict], eff_targets: List[float], out_di
     fig_eff, ax_eff = plt.subplots(figsize=(8, 5))
     iso_map: Dict[float, Dict[int, float]] = {target: {} for target in eff_targets}
 
-    for (rows_val, cols_val, steps_val), entries in sorted(
-        per_problem.items(), key=lambda item: item[0][0] * item[0][1] * item[0][2]
-    ):
-        entries.sort(key=lambda e: e["threads"])
+    for (rows_val, cols_val, steps_val), entries in grouped_entries:
         threads = [e["threads"] for e in entries]
+        read_times = [e["avg_read_time_s"] for e in entries]
         compute_times = [e["avg_compute_time_s"] for e in entries]
+        write_times = [e["avg_write_time_s"] for e in entries]
         speedups = [e.get("speedup", float("nan")) for e in entries]
         efficiencies = [e.get("efficiency", float("nan")) for e in entries]
         label = f"{rows_val}x{cols_val}x{steps_val}"
 
-        ax_runtime.plot(threads, compute_times, marker="o", label=label)
+        ax_runtime.plot(threads, compute_times, marker="o", label=f"{label} compute")
+        if any(val > 0 for val in read_times):
+            ax_runtime.plot(threads, read_times, marker="o", linestyle="--", label=f"{label} read")
+        if any(val > 0 for val in write_times):
+            ax_runtime.plot(threads, write_times, marker="o", linestyle=":", label=f"{label} write")
         ax_speed.plot(threads, speedups, marker="o", label=label)
         ax_eff.plot(threads, efficiencies, marker="o", label=label)
 
@@ -255,12 +307,12 @@ def generate_plots(summary_entries: List[Dict], eff_targets: List[float], out_di
         ax.set_ylabel(ylabel)
         ax.set_title(title)
         ax.grid(True, linestyle="--", alpha=0.4)
-        ax.legend()
+        ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5))
         ax.figure.tight_layout()
 
-    fig_runtime.savefig(runtime_plot)
-    fig_speed.savefig(speedup_plot)
-    fig_eff.savefig(efficiency_plot)
+    fig_runtime.savefig(runtime_plot, bbox_inches="tight")
+    fig_speed.savefig(speedup_plot, bbox_inches="tight")
+    fig_eff.savefig(efficiency_plot, bbox_inches="tight")
     plt.close(fig_runtime)
     plt.close(fig_speed)
     plt.close(fig_eff)
@@ -279,9 +331,9 @@ def generate_plots(summary_entries: List[Dict], eff_targets: List[float], out_di
     ax_iso.set_ylabel("Problem size (rows*cols*steps)")
     ax_iso.set_title("Iso-efficiency curves")
     ax_iso.grid(True, linestyle="--", alpha=0.4)
-    ax_iso.legend()
+    ax_iso.legend(loc="center left", bbox_to_anchor=(1.02, 0.5))
     fig_iso.tight_layout()
-    fig_iso.savefig(isoeff_plot)
+    fig_iso.savefig(isoeff_plot, bbox_inches="tight")
     plt.close(fig_iso)
     print(f"[info] wrote iso-efficiency plot to {isoeff_plot}")
 
@@ -426,6 +478,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(f"[info] wrote raw runs to {raw_csv}")
 
     summary_entries = aggregate_runs(raw_rows)
+    grouped_entries = group_entries_by_problem(summary_entries)
     with csv_path.open("w", newline="") as f:
         writer = csv.DictWriter(
             f,
@@ -446,7 +499,27 @@ def main(argv: Sequence[str] | None = None) -> int:
         writer.writeheader()
         writer.writerows(summary_entries)
 
+    problem_rows = build_problem_speedup_rows(grouped_entries)
+    problem_csv = csv_path.with_name(f"{csv_path.stem}_problems.csv")
+    with problem_csv.open("w", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "rows",
+                "cols",
+                "steps",
+                "problem",
+                "best_threads",
+                "best_speedup",
+                "best_efficiency",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(problem_rows)
+
+    print_speedup_summary(grouped_entries)
     print(f"[done] wrote {len(summary_entries)} summary rows to {csv_path}")
+    print(f"[done] wrote {len(problem_rows)} problem-level speedup rows to {problem_csv}")
 
     if not args.no_plots:
         try:
