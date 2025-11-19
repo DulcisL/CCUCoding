@@ -430,18 +430,18 @@ int main(int argc, char **argv) {
             free(v);
             return 1;
         }
-        double cx = 0.5 * P.cols;
-        double cy = 0.5 * P.rows;
-        double radius = 0.25 * ((P.cols * P.dx < P.rows * P.dy) ? (P.cols * P.dx) : (P.rows * P.dy));
-        double radius2 = radius * radius;
+        const double cx = 0.5 * (C - 1) * P.dx;
+        const double cy = 0.5 * (R - 1) * P.dy;
+        const double radius = (C * P.dx) / 8.0;
+        const double r2_max = radius * radius;
         for (int r = 0; r < R; ++r) {
+            const double y = r * P.dy;
             for (int c = 0; c < C; ++c) {
-                double dx = (c - cx) * P.dx;
-                double dy = (r - cy) * P.dy;
-                double dist2 = dx * dx + dy * dy;
-                if (dist2 <= radius2) {
-                    h[idx(r, c, C)] = P.init_height;
-                }
+                const double x = c * P.dx;
+                const double dx = x - cx;
+                const double dy = y - cy;
+                const double dist2 = dx * dx + dy * dy;
+                h[idx(r, c, C)] = (dist2 <= r2_max) ? P.init_height : 0.0;
             }
         }
     }

@@ -29,6 +29,7 @@ PTHREAD_BIN := sw2d_pthread
 OMP_SRC     := sweep_sw2d_omp.c
 OMP_OBJ     := $(OMP_SRC:.c=.o)
 OMP_BIN     := sw2d_omp
+PROJECT_GENDIRS := data sw2d_consistency tmp
 
 # ---- Default target ---------------------------------------------------------
 
@@ -73,7 +74,8 @@ run: $(TARGET)
 
 .PHONY: clean
 clean:
-	$(RM) $(OBJ) $(PTHREAD_OBJ) $(OMP_OBJ) $(TARGET) $(PTHREAD_BIN) $(OMP_BIN) movie.bin movie_p.bin movie_omp.bin
+	$(RM) $(OBJ) $(PTHREAD_OBJ) $(OMP_OBJ) $(TARGET) $(PTHREAD_BIN) $(OMP_BIN) movie.bin movie_p.bin movie_omp.bin _timer_helper.so
+	$(RM) -r $(PROJECT_GENDIRS)
 
 .PHONY: format
 format:

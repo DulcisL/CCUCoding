@@ -19,6 +19,7 @@ import shlex
 import struct
 import subprocess
 import sys
+import time
 from array import array
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
@@ -87,11 +88,17 @@ def build_cli() -> argparse.ArgumentParser:
     ap.add_argument("--stats-interval", type=int, default=0, help="Stats interval passed to solvers.")
     ap.add_argument("--trials", type=int, default=1, help="Repeat count per configuration.")
     ap.add_argument("--abs-threshold", type=float, default=5e-3, help="Max allowed absolute difference per field.")
-    ap.add_argument("--abs_threshold", dest="abs_threshold", help=argparse.SUPPRESS)
+    ap.add_argument("--abs_threshold", dest="abs_threshold", type=float, help=argparse.SUPPRESS)
     ap.add_argument("--results-dir", default="sw2d_consistency", help="Output directory for CSVs/movies.")
     ap.add_argument("--keep-movies", action="store_true", help="Preserve solver movie outputs.")
     ap.add_argument("--extra", default="", help="Additional solver flags (applied to all solvers).")
     ap.add_argument("--keep-progress", action="store_true", help="Keep solver progress bars.")
+    ap.add_argument(
+        "--allow-unstable-dt",
+        action="store_true",
+        help="Pass the requested dt through even if it violates the CFL stability estimate.",
+    )
+    ap.add_argument("--verbose", action="store_true", help="Show detailed per-test logging.")
     return ap
 
 
@@ -147,6 +154,50 @@ def max_abs_diff(left: array, right: array) -> float:
     return max((abs(a - b) for a, b in zip(left, right)), default=0.0)
 
 
+def format_duration(seconds: float) -> str:
+    if not math.isfinite(seconds) or seconds < 0:
+        return "--:--"
+    total = int(round(seconds))
+    mins, secs = divmod(total, 60)
+    hours, mins = divmod(mins, 60)
+    if hours > 99:
+        return ">99h"
+    if hours > 0:
+        return f"{hours:02d}:{mins:02d}:{secs:02d}"
+    return f"{mins:02d}:{secs:02d}"
+
+
+def print_progress(current: int, total: int, start_time: float) -> None:
+    if total <= 0:
+        return
+    frac = min(max(current / total, 0.0), 1.0)
+    bar_len = 40
+    filled = int(bar_len * frac)
+    bar = "=" * filled + " " * (bar_len - filled)
+    eta = "--:--"
+    elapsed = time.monotonic() - start_time
+    if current > 0:
+        remaining = elapsed * (total - current) / current
+        eta = format_duration(max(0.0, remaining))
+    else:
+        eta = format_duration(elapsed)
+    msg = f"\r[{bar}] {frac * 100:6.2f}% {current}/{total} ETA {eta}"
+    sys.stdout.write(msg)
+    sys.stdout.flush()
+    if current >= total:
+        sys.stdout.write("\n")
+
+
+def estimate_stable_dt(args: argparse.Namespace) -> Optional[float]:
+    if args.cfl <= 0 or args.dx <= 0 or args.dy <= 0:
+        return None
+    wavespeed = math.sqrt(args.g * args.H0)
+    if not math.isfinite(wavespeed) or wavespeed <= 0:
+        return None
+    dmin = min(args.dx, args.dy)
+    return args.cfl * dmin / wavespeed
+
+
 def run_solver(
     exe: Path,
     rows: int,
@@ -196,7 +247,8 @@ def run_solver(
     extra_args = shlex.split(args.extra)
     cmd.extend(extra_args)
 
-    print(f"    running: {' '.join(cmd)}")
+    if args.verbose:
+        print(f"    running: {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         sys.stderr.write(result.stdout)
@@ -216,6 +268,25 @@ def main(argv: Sequence[str] | None = None) -> int:
     ensure_executable(pthread_path)
     ensure_executable(omp_path)
 
+    requested_dt = args.dt
+    stable_dt = estimate_stable_dt(args)
+    if requested_dt > 0 and stable_dt is not None and requested_dt > stable_dt:
+        if args.allow_unstable_dt:
+            msg = (
+                f"[warning] requested dt={requested_dt:g} exceeds estimated stable dt={stable_dt:g} "
+                "and may lead to invalid movie data."
+            )
+            if args.verbose:
+                print(msg)
+        else:
+            msg = (
+                f"[info] requested dt={requested_dt:g} exceeds estimated stable dt={stable_dt:g}; "
+                "clamping to preserve accuracy (use --allow-unstable-dt to skip this)."
+            )
+            if args.verbose:
+                print(msg)
+            args.dt = stable_dt
+
     rows_values = parse_range(args.rows, "rows")
     cols_values = parse_range(args.cols, "cols")
     steps_values = parse_range(args.steps, "steps")
@@ -234,12 +305,16 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     raw_rows: List[List[object]] = []
     summary_map: Dict[Tuple[int, int, int, int], Dict[str, int]] = {}
+    fail_details: List[str] = []
 
     test_index = 0
+    start_time = time.monotonic()
+    print_progress(0, total_tests, start_time)
     for rows, cols, steps in combos:
         for trial in range(1, args.trials + 1):
             base_tag = f"r{rows}_c{cols}_s{steps}_trial{trial}"
-            print(f"[problem {base_tag}]")
+            if args.verbose:
+                print(f"[problem {base_tag}]")
             serial_movie = movie_dir / f"serial_{base_tag}.bin"
             if serial_movie.exists():
                 serial_movie.unlink()
@@ -251,7 +326,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             for thread in thread_values:
                 test_index += 1
                 tag = f"{base_tag}_t{thread}"
-                print(f"  [{test_index}/{total_tests}] threads={thread}")
+                if args.verbose:
+                    print(f"  [{test_index}/{total_tests}] threads={thread}")
                 summary_entry = summary_map.setdefault((rows, cols, steps, thread), {"tests": 0, "pass": 0, "fail": 0})
                 summary_entry["tests"] += 1
 
@@ -287,6 +363,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     summary_entry["pass"] += 1
                 else:
                     summary_entry["fail"] += 1
+                    for (left, right, field), diff in diffs.items():
+                        if diff > args.abs_threshold:
+                            fail_details.append(
+                                f"{tag}: diff_{left}_{right}_{field}={diff:.6g} (threshold {args.abs_threshold:g})"
+                            )
 
                 row: List[object] = [rows, cols, steps, thread, trial]
                 for left, right in PAIRINGS:
@@ -294,6 +375,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                         row.append(diffs[(left, right, field)])
                 row.append(int(passed))
                 raw_rows.append(row)
+                print_progress(test_index, total_tests, start_time)
 
     raw_csv = results_dir / "sw2d_consistency_raw.csv"
     summary_csv = results_dir / "sw2d_consistency_summary.csv"
@@ -316,15 +398,22 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     total_pass = sum(entry["pass"] for entry in summary_map.values())
     total_fail = sum(entry["fail"] for entry in summary_map.values())
+    total_elapsed = time.monotonic() - start_time
     print("\nConsistency summary")
     print("===================")
     print(f"Total tests : {total_tests}")
     print(f"Passed      : {total_pass}")
     print(f"Failed      : {total_fail}")
+    print(f"Elapsed     : {format_duration(total_elapsed)}")
     print(f"Raw data    : {raw_csv}")
     print(f"Summary     : {summary_csv}")
     if args.keep_movies:
         print(f"Movies kept in: {movie_dir}")
+    if fail_details:
+        print("\nDifferences above threshold")
+        print("===========================")
+        for detail in fail_details:
+            print(detail)
     return 0
 
 

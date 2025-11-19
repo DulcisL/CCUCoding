@@ -21,7 +21,7 @@ python3 sweep_sw2d.py \
   --steps 1000,2000 \
   --save-interval 50 \
   --repeat 2 \
-  --out-dir sw2d_sweep_results \
+  --out-dir ../data/serial
   --csv sweeps.csv
 
 To benchmark the pthread solver across rows/cols/steps/thread counts (and produce runtime/speedup/efficiency/
@@ -51,13 +51,17 @@ To cross-check that the serial/pthread/OpenMP solvers produce the same results, 
 Example:
 
 python3 check_sw2d.py \
-  --rows 64,128 \
-  --cols 64 \
+  --serial ./sw2d \
+  --pthread ./sw2d_pthread \
+  --omp ./sw2d_omp \
+  --rows 100,200 \
+  --cols 100 \
   --steps 200 \
-  --Ps 1,2,4 \
-  --trials 2 \
+  --Ps 1,2,4,8 \
+  --trials 5 \
+  --abs_threshold .005 \
   --save-interval 200 \
-  --results-dir data/checks
+  --results-dir ../data/checks
 
 To run the pthread-parallel solver, build sw2d_pthread (see sw2d_pthread.c for compile flags) and call it
 with the same options plus `--threads` to set the worker count, for example:
@@ -68,7 +72,7 @@ with the same options plus `--threads` to set the worker count, for example:
   --steps 5000 \
   --threads 8 \
   --save-interval 100 \
-  --out movie_p.bin
+  --out ../data/movie_p.bin
 
 To run the OpenMP solver (sw2d_omp), build it via the Makefile and invoke similarly with `--threads`:
 
@@ -78,4 +82,4 @@ To run the OpenMP solver (sw2d_omp), build it via the Makefile and invoke simila
   --steps 5000 \
   --threads 8 \
   --save-interval 100 \
-  --out movie_omp.bin
+  --out ../data/movie_omp.bin
