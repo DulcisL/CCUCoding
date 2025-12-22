@@ -1,7 +1,7 @@
 /*
  * my_queue.h - header file for the prototype functions of credit_rating.c
  *
- * Author: Lakota Dolce
+ * Author:
  *
  * Course: CSCI 356
  * Version 1.0
@@ -13,7 +13,8 @@
 // Included libraries
 #include <stdlib.h>
 
-struct credit_rating {
+struct credit_rating
+{
     // Person's name up to 25 characters
     char name[25];
     // Person's score
@@ -22,6 +23,6 @@ struct credit_rating {
 
 // Function prototype for ToString
 // Takes a pointer to a credit_rating struct and returns a string representation of it
-char* ToString(const struct credit_rating* rating);
+char *ToString(const struct credit_rating *rating);
 
 #endif /* CREDIT_RATING_H_ */

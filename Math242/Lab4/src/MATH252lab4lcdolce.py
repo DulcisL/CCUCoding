@@ -1,4 +1,5 @@
-"""Lakota Dolce
+"""
+##### ######
 Math 252
 Lab 4
 Dr. Debendra

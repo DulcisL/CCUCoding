@@ -1,5 +1,5 @@
 War Networked Project 
-Lakota Dolce
+
 CSCI 356
 Dr. Fuchs
 

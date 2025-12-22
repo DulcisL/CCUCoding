@@ -2,7 +2,7 @@
  * my_queue.h - prototype functions for a queue
  *
  * Author: clintf
- * Student Name: Lakota Dolce
+ * Student Name:
  *
  * Course: CSCI 356
  * Version 1.0
@@ -12,26 +12,28 @@
 #define MY_QUEUE_H_
 
 // Define the queue element structure
-struct q_elementS {
-    void* contents;     // the queue item          
-    struct q_elementS* next;    // pointer to the next item in the queue    
+struct q_elementS
+{
+    void *contents;          // the queue item
+    struct q_elementS *next; // pointer to the next item in the queue
 };
 
-//Clint change stack to queue
-typedef struct q_elementS* q_element;   // a queue is a pointer
+// Clint change stack to queue
+typedef struct q_elementS *q_element; // a queue is a pointer
 
 /*
  * creates a queue
  * returns: a pointer to a queue
  */
-struct queueS {
+struct queueS
+{
     // pointer to the front of the queue
     q_element front;
     // pointer to the rear of the queue
     q_element rear;
 };
 
-typedef struct queueS* queue;
+typedef struct queueS *queue;
 
 // Creates a queue
 // Returns: a pointer to a queue
@@ -50,7 +52,7 @@ int isempty(const queue q);
  * void* item:	a pointer to an item to be enqueued onto queue
  * returns:		item appended to queue
  */
-void enqueue(queue q, void* item);
+void enqueue(queue q, void *item);
 
 /*
  * dequeues first item from queue
@@ -58,7 +60,7 @@ void enqueue(queue q, void* item);
  * returns: item returned was front of queue and next element
  * 			is new head of queue
  */
-void* dequeue(queue q);
+void *dequeue(queue q);
 
 /*
  * allows fo first item from queue to be examined
@@ -66,7 +68,7 @@ void* dequeue(queue q);
  * returns: item returned is current front of queue and
  * 			queue is left unaltered
  */
-void* peek(queue q);
+void *peek(queue q);
 
 // Frees all elements in the queue
 // queue q: a queue to free; q must not be NULL

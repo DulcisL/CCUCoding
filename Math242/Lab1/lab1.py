@@ -1,7 +1,7 @@
 import numpy as np
 
 """
-Lakota Dolce
+
 Lab 1
 """
 

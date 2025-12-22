@@ -1,4 +1,4 @@
-Lakota Dolce lcdolce
+
 Filesystem                                    Size  Used Avail Use% Mounted on
 devtmpfs                                       63G     0   63G   0% /dev
 tmpfs                                          63G     0   63G   0% /dev/shm

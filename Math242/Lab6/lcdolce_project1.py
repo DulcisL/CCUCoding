@@ -1,5 +1,5 @@
 """
-Lakota Dolce
+##### #####
 Project 1
 October 8, 2024
 Dr. Debendra

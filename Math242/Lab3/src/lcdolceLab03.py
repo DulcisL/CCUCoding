@@ -1,6 +1,6 @@
 """
 MATH 252 Lab 03
-Lakota Dolce
+#### #####
 Dr. Banjade
 """
 

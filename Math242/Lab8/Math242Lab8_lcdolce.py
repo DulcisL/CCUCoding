@@ -1,5 +1,5 @@
 """
-Lakota Dolce
+##### #####
 Math 242
 Lab 8
 Dr. Debendra

@@ -3,9 +3,9 @@
 #---------------------------------------------#                                 
 #lakotadHw01.txt - Shell script for homework 1                                  
 #                                                                               
-#Name: Lakota Dolce                                                             
+#Name:                                                           
 #Assignment: Homework 1                                                         
-#Email: lcdolce@coastal.edu                                                     
+#Email:                                                    
 #Date: 9/17/2024                                                                
 #---------------------------------------------#                                 
                                                                                 
@@ -57,13 +57,13 @@ echo "-----------------------------------------"|tee -a ~/temp/9.out
 echo "Lakota Dolce lcdolce" |tee ~/lcdolce_hw01.txt
 cat ~/temp/5.out ~/temp/6.out ~/temp/7.out ~/temp/8.out ~/temp/9.out |tee -a ~/lcdolce_hw01.txt
 #!/bin/bash
-#Lakota Dolce lcdolce
+#
 #---------------------------------------------#                                 
 #lakotadHw01.txt - Shell script for homework 1                                  
 #                                                                               
-#Name: Lakota Dolce                                                             
+#Name:                                                            
 #Assignment: Homework 1                                                         
-#Email: lcdolce@coastal.edu                                                     
+#Email:                                                     
 #Date: 9/17/2024                                                                
 #---------------------------------------------#                                 
                                                                                 

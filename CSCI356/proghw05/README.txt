@@ -1,5 +1,5 @@
 Program Homework 5
-Lakota Dolce
+
 CSCI 356
 Dr. Fuchs
 
